@@ -4,6 +4,8 @@ from app.checks import bp
 from app.models.checks import Check
 from app.models.headers import Header
 from app.extensions import db
+from app import iox_dbapi
+from config import Config
 
 @bp.route('/')
 @login_required
@@ -34,8 +36,18 @@ def new_header(check_id):
 @login_required
 def graph():
     check_id = request.args.get('check_id')
+    sql = f"select status, elapsed, time from check where  time > now() - interval'20 minutes' and  id = {check_id}"
     
-    return "boo", 200
+    connection = iox_dbapi.connect(
+                    host = Config.INFLUXDB_HOST,
+                    org = Config.INFLUXDB_ORG_ID,
+                    bucket = Config.INFLUXDB_BUCKET,
+                    token = Config.INFLUXDB_READ_TOKEN)
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    result = str(cursor.fetchone())
+    print(result)
+    return "****", 200
 
 @bp.route('/new', methods=["GET","POST"])
 @login_required
