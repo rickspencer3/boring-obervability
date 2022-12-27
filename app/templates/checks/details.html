@@ -9,6 +9,12 @@
 </div>
     <div>
         <h3>headers</h3>
-        <div><a href="{{ url_for('checks.new_header', id=check.id) }}">Add Header</a></div>
+        <TABLE>
+            <TR><TH>Key</TH><TH>Value</TH></TR>
+        {% for header in check.headers %}
+        <TR><TD>{{header.key}}</TD><TD>{{header.value}}</TD></TR>
+        {% endfor %}
+        </TABLE>
+        <div><a href="{{ url_for('checks.new_header', check_id=check.id) }}">Add Header</a></div>
     </div>
 {% endblock %}
