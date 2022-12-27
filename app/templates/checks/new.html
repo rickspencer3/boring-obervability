@@ -16,6 +16,10 @@
                    placeholder="https://"
                    value="{{ request.form['url'] }}"></input>
             <br>
+            <input type="text" name="method"
+                   placeholder="GET"
+                   value="{{ request.form['method'] }}"></input>
+            <br>         
             <textarea name="content" value="{{ request.form['content'] }}"></textarea>
             <button type="submit">Submit</button>
         </form>

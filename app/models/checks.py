@@ -7,4 +7,5 @@ class Check(db.Model):
     name = db.Column(db.String(100))
     url = db.Column(db.String(100))
     content = db.Column(db.String(600))
+    method = db.Column(db.String(10))
     user = db.relationship("User", back_populates = "checks")

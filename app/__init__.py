@@ -6,15 +6,22 @@ from app.extensions import db
 from app.models.users import User
 from app.models.checks import Check
 from app.models.headers import Header
+from app.check_job import run_checks
+
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     # Initialize Flask extensions here
     db.init_app(app)
+    db.app = app
 
-    User.checks = db.relationship("Check", order_by = Check.id, back_populates = "user")
-    Check.headers = db.relationship("Header", order_by = Header.id, back_populates = "check")
+    User.checks = db.relationship(
+        "Check", order_by=Check.id, back_populates="user")
+    Check.headers = db.relationship(
+        "Header", order_by=Header.id, back_populates="check")
     with app.app_context():
         db.create_all()
         user_manager = UserManager(app, db, User)
@@ -31,6 +38,15 @@ def create_app(config_class=Config):
 
     from app.headers import bp as headers_bp
     app.register_blueprint(headers_bp, url_prefix='/headers')
+
+    # schedule the checks
+    scheduler = BackgroundScheduler()
+    with app.app_context():
+        checks = Check.query.all()
+        for check in checks:
+            scheduler.add_job(run_checks, 'interval',  
+                            str(check.id),  seconds=5)
+    scheduler.start()
 
     @app.route('/test/')
     def test_page():
