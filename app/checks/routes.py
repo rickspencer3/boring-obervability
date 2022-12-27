@@ -6,6 +6,10 @@ from app.models.headers import Header
 from app.extensions import db
 from app import iox_dbapi
 from config import Config
+import matplotlib.pyplot as plt, mpld3
+import matplotlib
+
+matplotlib.pyplot.switch_backend('Agg') 
 
 @bp.route('/')
 @login_required
@@ -36,7 +40,7 @@ def new_header(check_id):
 @login_required
 def graph():
     check_id = request.args.get('check_id')
-    sql = f"select status, elapsed, time from check where  time > now() - interval'20 minutes' and  id = {check_id}"
+    sql = f"select status, elapsed, time from check where  time > now() - interval'60 minutes' and  id = {check_id} order by time"
     
     connection = iox_dbapi.connect(
                     host = Config.INFLUXDB_HOST,
@@ -45,9 +49,25 @@ def graph():
                     token = Config.INFLUXDB_READ_TOKEN)
     cursor = connection.cursor()
     cursor.execute(sql)
-    result = str(cursor.fetchone())
-    print(result)
-    return "****", 200
+
+    fig = plt.figure()
+    times = []
+    millis = []
+    response_codes = []
+
+    result = cursor.fetchone()
+    while result != None:
+        response_codes.append(result[2])
+        millis.append(result[3] / 1000)
+        times.append(result[4])
+
+        result = cursor.fetchone()
+    plt.plot(times, millis, label = "millisecond latency")
+    plt.plot(times, response_codes, label="response codes")
+    plt.legend()
+    grph = mpld3.fig_to_html(fig)
+
+    return grph, 200
 
 @bp.route('/new', methods=["GET","POST"])
 @login_required

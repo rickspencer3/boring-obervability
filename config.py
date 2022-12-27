@@ -2,7 +2,6 @@ import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-
 class Config:
     """ Flask application config """
 
@@ -33,5 +32,4 @@ class Config:
     INFLUXDB_WRITE_TOKEN = "03awSTehpseNiWN1Jo9mw_N7zSBxP7qb2IgvNkJ4l4r9U1bqriRwGacd_DBx9hIh4T1hGeHFev4xnnJTND8YLA=="
     INFLUXDB_READ_TOKEN = "03awSTehpseNiWN1Jo9mw_N7zSBxP7qb2IgvNkJ4l4r9U1bqriRwGacd_DBx9hIh4T1hGeHFev4xnnJTND8YLA=="
     INFLUXDB_HOST = "https://us-east-1-1.aws.cloud2.influxdata.com/"
-    INFLUXDB_PG_HOST = "us-east-1-1.aws.cloud2.influxdata.com"
     INFLUXDB_ORG_ID = "847e9dbb25976492"
