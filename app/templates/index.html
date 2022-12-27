@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <span class="title"><h1>{% block title %} The Home Page of FlaskApp {% endblock %}</h1></span>
+    <div class="content">
+        <a href="{{ url_for('checks.new') }}">Add Check</a>
+    </div>
+{% endblock %}

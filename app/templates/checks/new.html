@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content">
+        <h2>Add Check</h2>
+        <form method="post">
+            <label for="name">Check Name</label>
+            <br>
+            <input type="text" name="name"
+                   placeholder=""
+                   value="{{ request.form['name'] }}"></input>
+            <br>
+            <label for="url">URL</label>
+            <br>
+            <input type="text" name="url"
+                   placeholder="https://"
+                   value="{{ request.form['url'] }}"></input>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <TABLE>
+        <TR><TD>name:</TD><TD>{{check.name}}</TD></TR>
+        <TR><TD>url:</TD><TD>{{check.url}}</TD></TR>
+    </TABLE>
+</div>
+    <div>
+        <h3>headers</h3>
+        <div><a href="{{ url_for('checks.new_header', id=check.id) }}">Add Header</a></div>
+    </div>
+{% endblock %}
