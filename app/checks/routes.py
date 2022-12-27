@@ -39,6 +39,7 @@ def new():
     if request.method == "POST":
         new_check = Check(name = request.form['name'], 
         url = request.form['url'],
+        content = request.form['content'],
         user_id = current_user.id)
         db.session.add(new_check)
         db.session.commit()
