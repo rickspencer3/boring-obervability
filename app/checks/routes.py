@@ -14,7 +14,7 @@ matplotlib.pyplot.switch_backend('Agg')
 @bp.route('/')
 @login_required
 def index():
-    all_checks = Check.query.all()
+    all_checks = current_user.checks
     return render_template('checks/index.html', checks = all_checks)
 
 @bp.route('/<check_id>')

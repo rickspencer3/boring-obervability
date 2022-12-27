@@ -2,6 +2,7 @@ from app.models.checks import Check
 from requests import request, post
 from app.extensions import db
 from config import Config
+import app
 
 def run_checks(check_id):
     with db.app.app_context():
