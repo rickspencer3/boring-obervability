@@ -1,8 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <span class="title"><h1>{% block title %} The Home Page of FlaskApp {% endblock %}</h1></span>
-    <div class="content">
-        <a href="{{ url_for('checks.new') }}">Add Check</a>
-    </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    You currently have {{checks|length}} checks
+    {% for check in checks %}
+    <div>{{check.name}}</div>
+    <div id="graph_{{check.id}}"></div>
+    <script>
+        $.ajax({
+            url: "{{url_for('checks.graph')}}",
+            type: "get",
+            data: {check_id: "{{check.id}}"},
+            success: function(response){
+                $("#graph_{{check.id}}").html(response);}
+        });
+    </script>
+    {% endfor %}
 {% endblock %}

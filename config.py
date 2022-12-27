@@ -27,3 +27,10 @@ class Config:
     USER_ENABLE_EMAIL = False      # Disable email authentication
     USER_ENABLE_USERNAME = True    # Enable username authentication
     USER_REQUIRE_RETYPE_PASSWORD = False    # Simplify register form
+
+    # InfluxDB settings
+    INFLUXDB_BUCKET = "boring-observability"
+    INFLUXDB_WRITE_TOKEN = "03awSTehpseNiWN1Jo9mw_N7zSBxP7qb2IgvNkJ4l4r9U1bqriRwGacd_DBx9hIh4T1hGeHFev4xnnJTND8YLA=="
+    INFLUXDB_READ_TOKEN = "03awSTehpseNiWN1Jo9mw_N7zSBxP7qb2IgvNkJ4l4r9U1bqriRwGacd_DBx9hIh4T1hGeHFev4xnnJTND8YLA=="
+    INFLUXDB_HOST = "https://us-east-1-1.aws.cloud2.influxdata.com/"
+    INFLUXDB_ORG_ID = "847e9dbb25976492"

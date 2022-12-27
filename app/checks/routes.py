@@ -30,6 +30,13 @@ def new_header(check_id):
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))
 
+@bp.route('/graph', methods=["GET"])
+@login_required
+def graph():
+    check_id = request.args.get('check_id')
+    
+    return "boo", 200
+
 @bp.route('/new', methods=["GET","POST"])
 @login_required
 def new():

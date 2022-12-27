@@ -45,7 +45,7 @@ def create_app(config_class=Config):
         checks = Check.query.all()
         for check in checks:
             scheduler.add_job(run_checks, 'interval',  
-                            str(check.id),  seconds=5)
+                            str(check.id),  minutes=1)
     scheduler.start()
 
     @app.route('/test/')
