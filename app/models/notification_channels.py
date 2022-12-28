@@ -13,5 +13,5 @@ class EmailChannel(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     name = db.Column(db.String(100))
-    number = db.Column(db.String(100))
+    address = db.Column(db.String(100))
     user = db.relationship("User", back_populates = "email_channels")

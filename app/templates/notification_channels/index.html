@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content">
+    <h3>email channels</h3>
+    <div>You currently have {{email_channels|length}} email notificaiton channels set up</div>
+    <TABLE>
+        <TR>
+            <TH>name</TH>
+            <TH>address</TH>
+        </TR>
+        {% for chan in email_channels %}
+        <TR>
+            <TD>{{chan.name}}</TD>
+            <TD>{{chan.address}}</TD>
+        </TR>
+        {% endfor %}
+    </TABLE>
+    <a href="{{url_for('notification_channels.new', channel_type='email')}}">new email notification channel</a>
+
+    <h3>sms channels</h3>
+    <div>You currently have {{sms_channels|length}} sms notificaiton channels set up</div>
+    <TABLE>
+    <TR>
+        <TH>name</TH>
+        <TH>address</TH>
+    </TR>
+    {% for chan in sms_channels %}
+    <TR>
+        <TD>{{chan.name}}</TD>
+        <TD>{{chan.number}}</TD>
+    </TR>
+    {% endfor %}
+    </TABLE>
+    <a href="{{url_for('notification_channels.new', channel_type='sms')}}">new sms notification channel</a>
+
+</div>
+{% endblock %}
