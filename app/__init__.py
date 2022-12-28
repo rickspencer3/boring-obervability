@@ -17,6 +17,7 @@ def create_app(config_class=Config):
     # Initialize Flask extensions here
     db.init_app(app)
     db.app = app
+    db.logger = app.logger
 
     User.checks = db.relationship(
         "Check", order_by=Check.id, back_populates="user")

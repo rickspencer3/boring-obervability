@@ -5,6 +5,7 @@ from config import Config
 import app
 
 def run_checks(check_id):
+    db.logger.info(f"running check {check_id}")
     with db.app.app_context():
         check = Check.query.get(check_id)
         headers = {}
