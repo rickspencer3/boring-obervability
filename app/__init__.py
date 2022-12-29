@@ -56,19 +56,16 @@ def create_app(config_class=Config):
     from app.notification_channels import bp as channel_bp
     app.register_blueprint(channel_bp, url_prefix='/channels')
 
-
-
     # schedule the checks
     scheduler = BackgroundScheduler()
     with app.app_context():
         checks = Check.query.all()
         for check in checks:
             scheduler.add_job(run_checks, 'interval',  
-                            str(check.id),  minutes=1)
+                            args=[str(check.id)],  minutes=1)
     scheduler.start()
 
     @app.route('/test/')
     def test_page():
         return '<h1>Testing the Flask Application Factory Pattern</h1>'
-
     return app

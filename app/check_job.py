@@ -3,9 +3,9 @@ from requests import request, post
 from app.extensions import db
 from config import Config
 from app.notify import notify
-from app.extensions import logger
+
 def run_checks(check_id):
-    logger.info(f"running check {check_id}")
+    db.app.logger.info(f"running check {check_id}")
     with db.app.app_context():
         check = Check.query.get(check_id)
         headers = {}
@@ -15,7 +15,7 @@ def run_checks(check_id):
                             url=check.url,
                             data=check.content,
                             headers=headers)
-        logger.info(f"check {check.id} has {len(check.notifications)} notifications")
+        db.app.logger.info(f"check {check.id} has {len(check.notifications)} notifications")
         for notification in check.notifications:
             notify(notification, check, check_response)
 

@@ -23,6 +23,12 @@ def details(check_id):
     check = Check.query.get(check_id)
     return render_template('checks/details.html', check=check)
 
+@bp.route('<check_id>/add_notification')
+@login_required
+def add_notification(check_id):
+    check = Check.query.get(check_id)
+    return render_template('checks/add_notification.html', check=check)
+
 @bp.route('/<check_id>/headers', methods=["GET","POST"])
 @login_required
 def new_header(check_id):

@@ -18,7 +18,7 @@
             {% for notification in check.notifications %}
                 <TR><TD>{{notification.name}}</TD><TD>{{notification.type}}</TD></TR>
             {% endfor %}
-        <div><A HREF = " {{url_for('notifications.new')}}">Create Notification</A></div>
+        <div><A HREF = " {{url_for('checks.add_notification', check_id=check.id)}}">Add Notification</A></div>
         <HR>
         <h3>Headers</h3>
         <TABLE>
