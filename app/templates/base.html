@@ -44,7 +44,8 @@
 </head>
 <body>
     <nav>
-        <a href="{{ url_for('main.index') }}">Boring Observability</a>
+        
+        <a href="{{ url_for('main.index') }}"><img style="width:75px;height:75px;" src="{{url_for('static', filename='mrbunny.jpeg')}}"</IMG>Boring Observability</a>
         <a href="{{ url_for('checks.index') }}">Checks</a>
         <a href="{{ url_for('notifications.index') }}">Notifications</a>
         <a href="{{ url_for('notification_channels.index') }}">Notification Channels</a>

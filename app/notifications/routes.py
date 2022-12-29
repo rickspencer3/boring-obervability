@@ -10,6 +10,12 @@ def index():
     notifications = current_user.notifications
     return render_template('notifications/index.html', notifications=notifications)
 
+@bp.route('/<check_id>')
+@login_required
+def details(notification_id):
+    notification = Notification.query.get(notification_id)
+    return render_template('notifications/details.html', notification=notification)
+
 @bp.route('/new', methods=["GET","POST"])
 @login_required
 def new():

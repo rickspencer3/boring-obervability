@@ -9,8 +9,18 @@
         <TR><TD>content:</TD><TD>{{check.content}}</TD></TR>
     </TABLE>
 </div>
-    <div>
-        <h3>headers</h3>
+        <HR>
+            <h3>Notifications</h3>
+            <DIV>this check has {{check.notifications|length}} notifications</DIV>
+            <TABLE>
+                <TR><TH>Name</TH><TH>Type</TH></TR>
+            </TABLE>
+            {% for notification in check.notifications %}
+                <TR><TD>{{notification.name}}</TD><TD>{{notification.type}}</TD></TR>
+            {% endfor %}
+        <div><A HREF = " {{url_for('notifications.new')}}">Create Notification</A></div>
+        <HR>
+        <h3>Headers</h3>
         <TABLE>
             <TR><TH>Key</TH><TH>Value</TH></TR>
         {% for header in check.headers %}
