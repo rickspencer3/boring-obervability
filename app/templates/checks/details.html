@@ -14,9 +14,10 @@
             <DIV>this check has {{check.notifications|length}} notifications</DIV>
             <TABLE>
                 <TR><TH>Name</TH><TH>Type</TH></TR>
-            </TABLE>
+         
             {% for notification in check.notifications %}
                 <TR><TD>{{notification.name}}</TD><TD>{{notification.type}}</TD></TR>
+            </TABLE>
             {% endfor %}
         <div><A HREF = " {{url_for('checks.add_notification', check_id=check.id)}}">Add Notification</A></div>
         <HR>

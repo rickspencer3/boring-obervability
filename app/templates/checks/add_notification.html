@@ -3,6 +3,15 @@
 {% block content %}
 <div class="content">
     <h2>Add Notification to {{check.name}}</h2>
-
+    <FORM method="post">
+        <label for="notification_id">Notification</label>
+        <select name="notification_id" id="notification_id">
+            {% for notification in notifications %}
+            <option value="{{notification.id}}">{{notification.name}}</option>
+            {% endfor %}
+        </select>
+        <BR>
+        <button type="submit">Submit</button>
+    </FROM>
 </div>
 {% endblock %}
