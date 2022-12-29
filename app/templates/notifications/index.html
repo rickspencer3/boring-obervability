@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    boo
+You current have {{notifications|length}} notifications setup
+<HR>
+<a href="{{ url_for('notifications.new') }}">Add Notification</a>
 {% endblock %}

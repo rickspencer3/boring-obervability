@@ -6,7 +6,7 @@ from app.extensions import db
 from app.models.users import User
 from app.models.checks import Check
 from app.models.headers import Header
-from app.models.notification_channels import EmailChannel, SMSChannel
+from app.models.notification_channels import NotificationChannel
 from app.models.notifications import Notification
 from app.check_job import run_checks
 
@@ -22,18 +22,17 @@ def create_app(config_class=Config):
     db.logger = app.logger
 
     # associate models here
-
     User.checks = db.relationship(
         "Check", order_by=Check.id, back_populates="user")
     Check.headers = db.relationship(
         "Header", order_by=Header.id, back_populates="check")
-    User.email_channels = db.relationship(
-        "EmailChannel", order_by=EmailChannel.id, back_populates="user")
-    User.sms_channels = db.relationship(
-        "SMSChannel", order_by=SMSChannel.id, back_populates="user")
     User.notifications = db.relationship(
         "Notification", order_by=Notification.id, back_populates="user")
-
+    User.notification_channels = db.relationship(
+        "NotificationChannel", order_by=NotificationChannel.id, back_populates="user")
+    NotificationChannel.notifications = db.relationship(
+        "Notification", order_by=Notification.id, back_populates="notification_channel")
+   
     with app.app_context():
         db.create_all()
         user_manager = UserManager(app, db, User)

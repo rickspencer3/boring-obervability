@@ -1,13 +1,17 @@
 from app.extensions import db
-from app.models.notification_notification_channel import notification_email_channel, notification_sms_channel
-from app.models.notification_channels import EmailChannel
+from app.models.notification_channels import NotificationChannel
+from app.models.notification_check import notification_check
+
 class Notification(db.Model):
     __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key = True)
-    check_id = db.Column(db.Integer, db.ForeignKey('checks.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    notification_channel_id = db.Column(db.Integer, db.ForeignKey('notification_channels.id'))
+    name = db.Column(db.String(100))
     key = db.Column(db.String(100))
     value = db.Column(db.String(100))
-    email_channels = db.relationship('EmailChannel', secondary=notification_email_channel, backref='notifications')
-    sms_channels = db.relationship('SMSChannel', secondary=notification_sms_channel, backref='notifications')
+    type = db.Column(db.String(10))
+    checks = db.relationship('Check', secondary=notification_check, backref='notifications')
     user = db.relationship("User", back_populates = "notifications")
+    notification_channel = db.relationship("NotificationChannel", back_populates = "notifications")
+    

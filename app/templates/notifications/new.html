@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<FORM method="post">
+    <label for="name">Name</label>
+    <input type="text" name="name" placeholder="" value="{{ request.form['Name'] }}"></input>
+    <BR>
+    <label for="type">Notification Type</label>
+    <select id="type" name="type">
+        <option value="error">Error</option>
+        <option value="latency">Latency</option>
+    </select>
+    <BR>
+    <label for="value">Value</label>
+    <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
+    <BR>
+    <select id="channels" name="channels" multiple>
+        <option value="a">A</option>
+        <option value="b">B</option>
+    </select>
+    <button type="submit">Submit</button>
+</FORM>
+{% endblock %}
