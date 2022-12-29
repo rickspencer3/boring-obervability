@@ -14,9 +14,11 @@
     <label for="value">Value</label>
     <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
     <BR>
-    <select id="channels" name="channels" multiple>
-        <option value="a">A</option>
-        <option value="b">B</option>
+    <label for="channel">Notification Channel</label>
+    <select id="channel" name="channel">
+        {% for channel in notification_channels %}
+        <option value="{{channel.id}}">{{channel.name}}</option>
+        {% endfor %}
     </select>
     <button type="submit">Submit</button>
 </FORM>

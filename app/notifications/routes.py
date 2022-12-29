@@ -1,7 +1,8 @@
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from flask_user import login_required, current_user
 from app.notifications import bp
 from app.extensions import db
+from app.models.notifications import Notification
 
 @bp.route('/')
 @login_required
@@ -13,11 +14,17 @@ def index():
 @login_required
 def new():
     if request.method == "GET": 
-        email_channels = current_user.email_channels
-        sms_channels = current_user.email_channels
+        notification_channels = current_user.notification_channels
         return render_template('notifications/new.html',
-        email_channels=email_channels, sms_channels=sms_channels)
+        notification_channels=notification_channels)
     if request.method == "POST":
-        print(request.form['channels'])
-        notifications = current_user.notifications
-        return render_template('notifications/index.html', notifications=notifications)
+        new_notification = Notification(
+            name=request.form['name'],
+            type=request.form['type'],
+            value=request.form['value'],
+            notification_channel_id = request.form['channel'],
+            user_id = current_user.id
+        )
+        db.session.add(new_notification)
+        db.session.commit()
+        return redirect(url_for('notifications.index'))

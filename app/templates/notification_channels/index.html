@@ -5,7 +5,7 @@
     <h3>Notification Channels</h3>
     <div>You currently have {{notification_channels|length}} notificaiton channels set up</div>
     <TABLE>
-        <TR><TH>Name</TH><THD>Type</TH><TH>Value</TH>/TR>
+        <TR><TH>Name</TH><TH>Type</TH><TH>Value</TH></TR>
         {% for channel in notification_channels %}
         <TR>
             <TD>{{channel.name}}</TD>
