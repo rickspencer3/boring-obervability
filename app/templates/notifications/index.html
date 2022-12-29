@@ -2,6 +2,12 @@
 
 {% block content %}
 You current have {{notifications|length}} notifications setup
+<TABLE>
+    <TR><TH>Name</TH><TH>Type</TH></TR>
+    {% for notification in notifications %}
+    <TR><TD>{{notification.name}}</TD><TD>{{notification.type}}</TD></TR>
+    {% endfor %}
+</TABLE>
 <HR>
 <a href="{{ url_for('notifications.new') }}">Add Notification</a>
 {% endblock %}

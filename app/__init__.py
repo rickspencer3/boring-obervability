@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_user.user_manager import UserManager
 from config import Config
-from app.extensions import db
+from app.extensions import db, logger
 
 from app.models.users import User
 from app.models.checks import Check
@@ -19,7 +19,7 @@ def create_app(config_class=Config):
     # Initialize Flask extensions here
     db.init_app(app)
     db.app = app
-    db.logger = app.logger
+    logger = app.logger
 
     # associate models here
     User.checks = db.relationship(
