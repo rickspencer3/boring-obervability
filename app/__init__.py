@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_user.user_manager import UserManager
+from flask_mail import Mail
 from config import Config
-from app.extensions import db, logger
+from app.extensions import db, mail, influxdb_write
 
 from app.models.users import User
 from app.models.checks import Check
@@ -19,7 +20,8 @@ def create_app(config_class=Config):
     # Initialize Flask extensions here
     db.init_app(app)
     db.app = app
-    logger = app.logger
+    mail.init_app(app)
+    app.influxdb_write = influxdb_write
 
     # associate models here
     User.checks = db.relationship(
@@ -32,7 +34,7 @@ def create_app(config_class=Config):
         "NotificationChannel", order_by=NotificationChannel.id, back_populates="user")
     NotificationChannel.notifications = db.relationship(
         "Notification", order_by=Notification.id, back_populates="notification_channel")
-   
+
     with app.app_context():
         db.create_all()
         user_manager = UserManager(app, db, User)

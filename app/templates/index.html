@@ -17,4 +17,14 @@
         });
     </script>
     {% endfor %}
+    <HR>
+    <div id="detected_table"></div>
+    <script>
+        $.ajax({
+            url: "{{url_for('notifications.issues_table')}}",
+            type: "get",
+            success: function(response){
+                $("#detected_table").html(response);}
+        });
+    </script>
 {% endblock %}

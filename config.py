@@ -19,7 +19,7 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'richard.linger.spencer.3@gmail.com'
     MAIL_PASSWORD = 'I8BzV0v4FWgjX5Rh'
-    MAIL_DEFAULT_SENDER = '"MyApp" <noreply@example.com>'
+    MAIL_DEFAULT_SENDER = '"Boring Observability" <noreply@boring-observability.com>'
 
     # Flask-User settings
     USER_APP_NAME = "Boring Observability"      # Shown in and email templates and page footers
