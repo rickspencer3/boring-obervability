@@ -15,7 +15,7 @@ def run_checks(check_id):
                             url=check.url,
                             data=check.content,
                             headers=headers)
-        db.app.logger.info(f"check {check.id} has {len(check.notifications)} notifications")
+        db.app.logger.info(f"check {check.name} ({check.id}) has {len(check.notifications)} notifications")
         for notification in check.notifications:
             notify(notification, check, check_response)
 

@@ -8,24 +8,24 @@ def notify(notification, check, response):
     if notification.type == "error":
         _compare(response.status_code, notification, check)
     if notification.type == "latency":
-        pass
+        _compare(response.elapsed.microseconds, notification, check)
 
 def _send_notifications(notification):
     if notification.notification_channel is not None:
         channel = notification.notification_channel
         current_app.logger.info(f"notifying {channel.name} {channel.type}")
         if channel.type == "email":
-            subj = f"notification {notification.type}from notification {notification.name}"
+            subj = f"notification {notification.type} from notification {notification.name}"
             message = Message(subj,
                 sender=Config.MAIL_DEFAULT_SENDER,
                 recipients=[channel.value])
-            # mail.send(message)
+            mail.send(message)
             
 def _compare(comparitor, notification, check):
     if comparitor >= int(notification.value):
-        current_app.logger.info(f"notification {notification.id} conditions met for check {check.id}")
+        current_app.logger.info(f"notification {notification.name} ({notification.id}) conditions met for check {check.name} ({check.id})")
         lp = f"detected,user_id={notification.user.id},check={check.id},type={notification.type} value={notification.value}"
         influxdb_write(lp)
         _send_notifications(notification)
     else:
-        current_app.logger.info(f"notification {notification.id} conditions not metfor check {check.id}")
+        current_app.logger.info(f"notification {notification.name} ({notification.id}) conditions not met for check {check.name} ({check.id})")
