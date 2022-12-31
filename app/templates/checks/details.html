@@ -10,16 +10,16 @@
     </TABLE>
 </div>
         <HR>
-            <h3>Notifications</h3>
-            <DIV>this check has {{check.notifications|length}} notifications</DIV>
+            <h3>Anomaly Detectors</h3>
+            <DIV>this check has {{check.anomaly_detectors|length}} Anomaly Detectors</DIV>
             <TABLE>
                 <TR><TH>Name</TH><TH>Type</TH></TR>
          
-            {% for notification in check.notifications %}
-                <TR><TD>{{notification.name}}</TD><TD>{{notification.type}}</TD></TR>
+            {% for anomaly_detector in check.anomaly_detectors %}
+                <TR><TD>{{anomaly_detector.name}}</TD><TD>{{anomaly_detector.type}}</TD></TR>
             </TABLE>
             {% endfor %}
-        <div><A HREF = " {{url_for('checks.add_notification', check_id=check.id)}}">Add Notification</A></div>
+        <div><A HREF = " {{url_for('checks.add_anomaly_detector', check_id=check.id)}}">Add Anomoly Detector</A></div>
         <HR>
         <h3>Headers</h3>
         <TABLE>

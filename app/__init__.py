@@ -8,7 +8,7 @@ from app.models.users import User
 from app.models.checks import Check
 from app.models.headers import Header
 from app.models.notification_channels import NotificationChannel
-from app.models.notifications import Notification
+from app.models.anomaly_detectors import AnomalyDetector
 from app.check_job import run_checks
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -28,12 +28,12 @@ def create_app(config_class=Config):
         "Check", order_by=Check.id, back_populates="user")
     Check.headers = db.relationship(
         "Header", order_by=Header.id, back_populates="check")
-    User.notifications = db.relationship(
-        "Notification", order_by=Notification.id, back_populates="user")
+    User.anomaly_detectors = db.relationship(
+        "AnomalyDetector", order_by=AnomalyDetector.id, back_populates="user")
     User.notification_channels = db.relationship(
         "NotificationChannel", order_by=NotificationChannel.id, back_populates="user")
-    NotificationChannel.notifications = db.relationship(
-        "Notification", order_by=Notification.id, back_populates="notification_channel")
+    NotificationChannel.anomaly_detectors = db.relationship(
+        "AnomalyDetector", order_by=AnomalyDetector.id, back_populates="notification_channel")
 
     with app.app_context():
         db.create_all()
@@ -46,8 +46,8 @@ def create_app(config_class=Config):
     from app.checks import bp as checks_bp
     app.register_blueprint(checks_bp, url_prefix='/checks')
 
-    from app.notifications import bp as notifications_bp
-    app.register_blueprint(notifications_bp, url_prefix='/notifications')
+    from app.anomaly_detectors import bp as anomaly_detectors_bp
+    app.register_blueprint(anomaly_detectors_bp, url_prefix='/anomaly_detectors')
     
     from app.users import bp as users_bp
     app.register_blueprint(users_bp, url_prefix='/users')

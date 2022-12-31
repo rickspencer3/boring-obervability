@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+You current have {{anomaly_detectors|length}} Anomaly Detectors setup
+<TABLE>
+    <TR><TH>Name</TH><TH>Type</TH></TR>
+    {% for anomaly_detector in anomaly_detectors %}
+    <TR><TD><A HREF="{{url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id)}}">{{anomaly_detector.name}}</A></TD><TD>{{anomaly_detector.type}}</TD></TR>
+    {% endfor %}
+</TABLE>
+<HR>
+<a href="{{ url_for('anomaly_detectors.new') }}">Add Anomaly Detector</a>
+{% endblock %}

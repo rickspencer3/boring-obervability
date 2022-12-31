@@ -3,7 +3,7 @@ from flask_user import login_required, current_user
 from app.checks import bp
 from app.models.checks import Check
 from app.models.headers import Header
-from app.models.notifications import Notification
+from app.models.anomaly_detectors import AnomalyDetector
 from app.extensions import db
 from app import iox_dbapi
 from config import Config
@@ -24,18 +24,18 @@ def details(check_id):
     check = Check.query.get(check_id)
     return render_template('checks/details.html', check=check)
 
-@bp.route('<check_id>/add_notification', methods = ["GET","POST"])
+@bp.route('<check_id>/add_anomaly_detector', methods = ["GET","POST"])
 @login_required
-def add_notification(check_id):
+def add_anomaly_detector(check_id):
     if request.method == "GET":
         check = Check.query.get(check_id)
-        notifications = current_user.notifications
-        return render_template('checks/add_notification.html', 
-                                check=check, notifications=notifications)
+        anomaly_detectors = current_user.anomaly_detectors
+        return render_template('checks/add_anomaly_detector.html', 
+                                check=check, anomaly_detectors=anomaly_detectors)
     elif request.method == "POST":
         check = Check.query.get(check_id)
-        notification = Notification.query.get(request.form['notification_id'])
-        check.notifications.append(notification)
+        anomaly_detector = AnomalyDetector.query.get(request.form['anomaly_detector_id'])
+        check.anomaly_detectors.append(anomaly_detector)
         db.session.add(check)
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))

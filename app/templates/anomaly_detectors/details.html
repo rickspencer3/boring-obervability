@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<H3>{{anomaly_detector.name}}</H3>
+<TABLE>
+    <TR>
+        <TD>type</TD>
+        <TD>{{anomaly_detector.type}}</TD>
+    </TR>
+    <TR>
+        <TD>anomaly_detector channel</TD>
+        <TD>{{anomaly_detector.notification_channel.name}}</TD>
+    </TR>
+    <TR>
+        <TD>value</TD>
+        <TD>{{anomaly_detector.value}}</TD>
+    </TR>
+</TABLE>
+<BR>
+<A HREF="{{url_for('anomaly_detectors.edit', anomaly_detector_id=anomaly_detector.id)}}">Edit</A>
+<FORM method="post" action="{{url_for('anomaly_detectors.delete', anomaly_detector_id=anomaly_detector.id)}}">
+    <BUTTON type="submit">Delete</BUTTON>
+</FORM>
+{% endblock %}
