@@ -5,7 +5,7 @@ You current have {{notifications|length}} notifications setup
 <TABLE>
     <TR><TH>Name</TH><TH>Type</TH></TR>
     {% for notification in notifications %}
-    <TR><TD>{{notification.name}}</TD><TD>{{notification.type}}</TD></TR>
+    <TR><TD><A HREF="{{url_for('notifications.details', notification_id=notification.id)}}">{{notification.name}}</A></TD><TD>{{notification.type}}</TD></TR>
     {% endfor %}
 </TABLE>
 <HR>

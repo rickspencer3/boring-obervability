@@ -2,5 +2,23 @@
 
 {% block content %}
 <H3>{{notification.name}}</H3>
-{{notification.notification_channel.name}}
+<TABLE>
+    <TR>
+        <TD>type</TD>
+        <TD>{{notification.type}}</TD>
+    </TR>
+    <TR>
+        <TD>notification channel</TD>
+        <TD>{{notification.notification_channel.name}}</TD>
+    </TR>
+    <TR>
+        <TD>value</TD>
+        <TD>{{notification.value}}</TD>
+    </TR>
+</TABLE>
+<BR>
+<A HREF="{{url_for('notifications.edit', notification_id=notification.id)}}">Edit</A>
+<FORM method="post" action="{{url_for('notifications.delete', notification_id=notification.id)}}">
+    <BUTTON type="submit">Delete</BUTTON>
+</FORM>
 {% endblock %}
