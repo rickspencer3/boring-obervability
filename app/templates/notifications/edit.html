@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<FORM method="post">
+    <h3>Edit {{notification.name}}</h3>
+    <label for="name">Name</label>
+    <input type="text" name="name" value="{{notification.name}}"></input>
+    
+    <BR>
+    <label for="type">Notification Type</label>
+    <select id="type" name="type">
+        {% for type in ["error", "latency"] %}
+        {% if type == notification.type %}
+        <option value="{{type}}" selected>{{type}}</option>
+        {% else %}
+        <option value="{{type}}">{{type}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+    <BR>
+    <label for="value">Value</label>
+    <input type="text" name="value" value="{{ notification.value }}"></input>
+    <BR>
+    <label for="channel">Notification Channel</label>
+    <select id="channel" name="channel">
+        {% for channel in notification.user.notification_channels %}
+        {% if channel.id == notification.notification_channel.id %}
+        <option value="{{channel.id}}" selected>{{channel.name}}</option>
+        {% else %}
+        <option value="{{channel.id}}">{{channel.name}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+    <button type="submit">Submit</button>
+</FORM>
+{% endblock %}
