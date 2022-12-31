@@ -8,7 +8,7 @@ def notify(anomaly_detector, check, response):
     if anomaly_detector.type == "error":
         _compare(response.status_code, anomaly_detector, check)
     if anomaly_detector.type == "latency":
-        _compare(response.elapsed.microseconds, anomaly_detector, check)
+        _compare(response.elapsed.microseconds * 1000, anomaly_detector, check)
 
 def _send_notifications(anomaly_detector):
     if anomaly_detector.notification_channel is not None:
