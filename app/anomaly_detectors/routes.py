@@ -53,7 +53,7 @@ def edit(anomaly_detector_id):
 @bp.route('/issues')
 @login_required
 def issues_table():
-    sql = f"select check, type, value, time from anomalies where user_id = {current_user.id} and time > now() - interval'1 hour'"
+    sql = f"select check, type, value, time from anomalies where user_id = {current_user.id} and time > now() - interval'1 hour' order by time desc"
     connection = iox_dbapi.connect(
         host=Config.INFLUXDB_HOST,
         org=Config.INFLUXDB_ORG_ID,
