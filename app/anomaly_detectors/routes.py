@@ -7,7 +7,6 @@ from app.models.checks import Check
 from app import iox_dbapi
 from config import Config
 
-
 @bp.route('/')
 @login_required
 def index():
@@ -63,14 +62,18 @@ def issues_table():
     cursor.execute(sql)
     t = "<TABLE><TR><TH>check name</TH><TH>check id</TH><TH>type</TH><TH>value</TH><TH>time</TH><TR>"
     d = cursor.fetchone()
-
+    row_count = 0
     while d is not None:
+        row_count += 1
         check = Check.query.get(d[2])
         t += f"<TR><TD>{check.name}</TD><TD>{d[2]}</TD><TD>{d[3]}</TD><TD>{d[4]}</TD><TD>{d[5]}</TD></TR>"
         d = cursor.fetchone()
     t += "</TABLE>"
 
-    return t, 200
+    if row_count == 0:
+        return "no anomaliles detected"
+    else:
+        return t, 200
 
 
 @bp.route('/new', methods=["GET", "POST"])

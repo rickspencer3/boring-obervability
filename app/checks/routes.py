@@ -85,8 +85,9 @@ order by
     while result is not None:
         if result[2] != check_id:
             series.append((millis,times, check_name))
-            check = Check.query.get(result[2])
-            check_name = check.name
+            next_check = Check.query.get(result[2])
+            check_id = result[2]
+            check_name = next_check.name
             millis = []
             times = []
         millis.append(result[3] / 1000)
@@ -134,8 +135,9 @@ order by
     while result is not None:
         if result[2] != check_id:
             series.append((statuses,times, check_name))
-            check = Check.query.get(result[2])
-            check_name = check.name
+            next_check = Check.query.get(result[2])
+            check_id = result[2]
+            check_name = next_check.name
             statuses = []
             times = []
         statuses.append(result[3] / 1000)
