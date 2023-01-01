@@ -53,12 +53,19 @@ def new_header(check_id):
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))
 
-@bp.route('/graph', methods=["GET"])
+@bp.route('/latency_graph', methods=["GET"])
 @login_required
-def graph():
-    check_id = request.args.get('check_id')
-    sql = f"select status, elapsed, time from check where  time > now() - interval'60 minutes' and  id = {check_id} order by time"
-    
+def latency_graph():
+    sql = f"""
+select 
+    id, elapsed, time 
+from check where  
+    time > now() - interval'60 minutes' 
+and 
+    user_id = {current_user.id}
+order by 
+    id, time
+    """
     connection = iox_dbapi.connect(
                     host = Config.INFLUXDB_HOST,
                     org = Config.INFLUXDB_ORG_ID,
@@ -66,24 +73,82 @@ def graph():
                     token = Config.INFLUXDB_READ_TOKEN)
     cursor = connection.cursor()
     cursor.execute(sql)
-
-    fig = plt.figure()
-    times = []
-    millis = []
-    response_codes = []
-
+    
+    series = []
     result = cursor.fetchone()
-    while result != None:
-        response_codes.append(result[2])
+
+    check_id = result[2]
+    check = Check.query.get(result[2])
+    check_name = check.name
+    millis = []
+    times = []
+    while result is not None:
+        if result[2] != check_id:
+            series.append((millis,times, check_name))
+            check = Check.query.get(result[2])
+            check_name = check.name
+            millis = []
+            times = []
         millis.append(result[3] / 1000)
         times.append(result[4])
-
         result = cursor.fetchone()
-    plt.plot(times, millis, label = "millisecond latency")
-    plt.plot(times, response_codes, label="response codes")
+        if result is None:
+            series.append((millis, times, check_name))
+    
+    fig = plt.figure()
+    for series in series:
+        plt.plot(series[1], series[0], label = series[2 ])
     plt.legend()
     grph = mpld3.fig_to_html(fig)
+    return grph, 200
 
+@bp.route('/status_graph', methods=["GET"])
+@login_required
+def status_graph():
+    sql = f"""
+select 
+    id, status, time 
+from check where  
+    time > now() - interval'60 minutes' 
+and 
+    user_id = {current_user.id}
+order by 
+    id, time
+    """
+    connection = iox_dbapi.connect(
+                    host = Config.INFLUXDB_HOST,
+                    org = Config.INFLUXDB_ORG_ID,
+                    bucket = Config.INFLUXDB_BUCKET,
+                    token = Config.INFLUXDB_READ_TOKEN)
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    
+    series = []
+    result = cursor.fetchone()
+
+    check_id = result[2]
+    check = Check.query.get(result[2])
+    check_name = check.name
+    statuses = []
+    times = []
+    while result is not None:
+        if result[2] != check_id:
+            series.append((statuses,times, check_name))
+            check = Check.query.get(result[2])
+            check_name = check.name
+            statuses = []
+            times = []
+        statuses.append(result[3] / 1000)
+        times.append(result[4])
+        result = cursor.fetchone()
+        if result is None:
+            series.append((statuses, times, check_name))
+    
+    fig = plt.figure()
+    for series in series:
+        plt.plot(series[1], series[0], label = series[2 ])
+    plt.legend()
+    grph = mpld3.fig_to_html(fig)
     return grph, 200
 
 @bp.route('/new', methods=["GET","POST"])

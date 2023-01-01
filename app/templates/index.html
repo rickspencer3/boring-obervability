@@ -4,21 +4,28 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
     You currently have {{checks|length}} checks
-    {% for check in checks %}
-    <div>{{check.name}}</div>
-    <div id="graph_{{check.id}}"></div>
+    <h3>Check Latencies</h3>
+    <div id="latency_graph"></div>
     <script>
         $.ajax({
-            url: "{{url_for('checks.graph')}}",
+            url: "{{url_for('checks.latency_graph')}}",
             type: "get",
-            data: {check_id: "{{check.id}}"},
             success: function(response){
-                $("#graph_{{check.id}}").html(response);}
+                $("#latency_graph").html(response);}
         });
     </script>
-    {% endfor %}
+     <h3>Check Statuses</h3>
+     <div id="status_graph"></div>
+     <script>
+         $.ajax({
+             url: "{{url_for('checks.status_graph')}}",
+             type: "get",
+             success: function(response){
+                 $("#status_graph").html(response);}
+         });
+     </script>
     <HR>
-    <H3>Anomalies Detected Last Hour</H3>
+    <H3>Anomalies Detected Last</H3>
     <div id="anomalies_table"></div>
     <script>
         $.ajax({
