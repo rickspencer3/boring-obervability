@@ -140,7 +140,7 @@ order by
             check_name = next_check.name
             statuses = []
             times = []
-        statuses.append(result[3] / 1000)
+        statuses.append(result[3])
         times.append(result[4])
         result = cursor.fetchone()
         if result is None:

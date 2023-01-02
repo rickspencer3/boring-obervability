@@ -2,7 +2,7 @@
 
 {% block content %}
     <span class="title">{% block title %} Your Checks {% endblock %}</span>
-    <div class="content">
+    <div>
 
       {% for check in checks %}
       <div><a href="{{ url_for('checks.details', check_id=check.id) }}">{{check.name}}</a></div>
