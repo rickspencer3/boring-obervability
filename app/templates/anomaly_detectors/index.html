@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<script>
+    $("#detectors-nav").addClass("selected-nav");
+</script>
+
 You current have {{anomaly_detectors|length}} Anomaly Detectors setup
 <TABLE>
     <TR><TH>Name</TH><TH>Type</TH></TR>

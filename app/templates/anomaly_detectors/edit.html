@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<script>
+    $("#detectors-nav").addClass("selected-nav");
+</script>
+
 <FORM method="post">
     <h3>Edit {{anomaly_detector.name}}</h3>
     <label for="name">Name</label>

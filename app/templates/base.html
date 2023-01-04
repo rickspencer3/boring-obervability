@@ -51,6 +51,10 @@
             background-color: whitesmoke;
         }
 
+        nav .selected-nav {
+            background-color: whitesmoke;
+        }
+
         nav img {
             height: 40px;
             width: 40px;
@@ -74,6 +78,7 @@
 </head>
 
 <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <div>
         <H1 style="font-style: italic; padding: 10px;">B</H1>
     </div>
@@ -84,18 +89,18 @@
                         class="tab-title">{{current_user.username}}</span>
             </div>
         </div>
-        <div><a href="{{ url_for('main.index') }}"><img src="{{url_for('static', filename='dashboard.png')}}" </IMG>
+        <div id="dashboard-nav"><a href="{{ url_for('main.index') }}"><img src="{{url_for('static', filename='dashboard.png')}}" </IMG>
                 <span class="tab-title">Dashboard</span></a>
         </div>
-        <div><a href="{{ url_for('checks.index') }}"><img src="{{url_for('static', filename='checks.png')}}" </IMG>
+        <div id="checks-nav"><a href="{{ url_for('checks.index') }}"><img src="{{url_for('static', filename='checks.png')}}" </IMG>
                 <span class="tab-title">Checks</span></a>
         </div>
-        <div><a href="{{ url_for('anomaly_detectors.index') }}"><img
+        <div id="detectors-nav"><a href="{{ url_for('anomaly_detectors.index') }}"><img
                     src="{{url_for('static', filename='anomaly-detectors.png')}}" </IMG> <span class="tab-title">Anomaly
                     Detectors</span></a>
         </div>
 
-        <div><a href="{{ url_for('notification_channels.index') }}"><img
+        <div id="channels-nav" ><a href="{{ url_for('notification_channels.index') }}"><img
                     src="{{url_for('static', filename='notification-channels.png')}}" </IMG>
                 <span class="tab-title">Notification Channels</span></a>
         </div>

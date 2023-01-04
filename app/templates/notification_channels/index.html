@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<script>
+    $("#channels-nav").addClass("selected-nav");
+  </script>
 <div>
     <h3>Notification Channels</h3>
     <div>You currently have {{notification_channels|length}} notificaiton channels set up</div>
