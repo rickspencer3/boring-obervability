@@ -3,15 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %} {% endblock %} Boring Observability</title>
+    <title>{% block title %} {% endblock %} - Boring Observability</title>
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
         }
 
-        h2 {
-            width: 100%;
+        h1,
+        h2, h3 {
+            font-style: italic;
+            padding: 10px;
         }
+
+        
 
         .title {
             margin: 5px;
@@ -64,6 +68,22 @@
             padding-left: 15px;
         }
 
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid;
+            padding: 10px;
+        }
+        th {
+            padding-bottom: 10px;
+        }
+
+        div .add-to {
+            padding-top: 20px;
+        }
+
         .content {
             width: 100%;
             height: 100%;
@@ -80,7 +100,7 @@
 <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <div>
-        <H1 style="font-style: italic; padding: 10px;">B</H1>
+        <H1>Boring</H1>
     </div>
     <nav>
         <div>
@@ -89,10 +109,12 @@
                         class="tab-title">{{current_user.username}}</span>
             </div>
         </div>
-        <div id="dashboard-nav"><a href="{{ url_for('main.index') }}"><img src="{{url_for('static', filename='dashboard.png')}}" </IMG>
+        <div id="dashboard-nav"><a href="{{ url_for('main.index') }}"><img
+                    src="{{url_for('static', filename='dashboard.png')}}" </IMG>
                 <span class="tab-title">Dashboard</span></a>
         </div>
-        <div id="checks-nav"><a href="{{ url_for('checks.index') }}"><img src="{{url_for('static', filename='checks.png')}}" </IMG>
+        <div id="checks-nav"><a href="{{ url_for('checks.index') }}"><img
+                    src="{{url_for('static', filename='checks.png')}}" </IMG>
                 <span class="tab-title">Checks</span></a>
         </div>
         <div id="detectors-nav"><a href="{{ url_for('anomaly_detectors.index') }}"><img
@@ -100,7 +122,7 @@
                     Detectors</span></a>
         </div>
 
-        <div id="channels-nav" ><a href="{{ url_for('notification_channels.index') }}"><img
+        <div id="channels-nav"><a href="{{ url_for('notification_channels.index') }}"><img
                     src="{{url_for('static', filename='notification-channels.png')}}" </IMG>
                 <span class="tab-title">Notification Channels</span></a>
         </div>

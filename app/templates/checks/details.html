@@ -4,26 +4,26 @@
 <script>
     $("#checks-nav").addClass("selected-nav");
   </script>
-<div>
+  <h2>{% block title %}Check Details {% endblock %}</h2>
+
     <TABLE>
-        <TR><TD>name:</TD><TD>{{check.name}}</TD></TR>
-        <TR><TD>url:</TD><TD>{{check.url}}</TD></TR>
-        <TR><TD>method:</TD><TD>{{check.method}}</TD></TR>
-        <TR><TD>content:</TD><TD>{{check.content}}</TD></TR>
+        <TR><TH></TH></TR>
+        <TR><TD>name</TD><TD>{{check.name}}</TD></TR>
+        <TR><TD>url</TD><TD>{{check.url}}</TD></TR>
+        <TR><TD>method</TD><TD>{{check.method}}</TD></TR>
+        <TR><TD>content</TD><TD>{{check.content}}</TD></TR>
     </TABLE>
-</div>
-        <HR>
-            <h3>Anomaly Detectors</h3>
-            <DIV>this check has {{check.anomaly_detectors|length}} Anomaly Detectors</DIV>
+
+        <h3>Anomaly Detectors</h3>
             <TABLE>
                 <TR><TH>Name</TH><TH>Type</TH></TR>
-         
             {% for anomaly_detector in check.anomaly_detectors %}
                 <TR><TD>{{anomaly_detector.name}}</TD><TD>{{anomaly_detector.type}}</TD></TR>
             </TABLE>
             {% endfor %}
-        <div><A HREF = " {{url_for('checks.add_anomaly_detector', check_id=check.id)}}">Add Anomoly Detector</A></div>
-        <HR>
+
+        <div class="add-to"><A HREF = " {{url_for('checks.add_anomaly_detector', check_id=check.id)}}">Add Anomoly Detector</A></div>
+        
         <h3>Headers</h3>
         <TABLE>
             <TR><TH>Key</TH><TH>Value</TH></TR>
@@ -31,6 +31,6 @@
         <TR><TD>{{header.key}}</TD><TD>{{header.value}}</TD></TR>
         {% endfor %}
         </TABLE>
-        <div><a href="{{ url_for('checks.new_header', check_id=check.id) }}">Add Header</a></div>
+        <div class="add-to"><a href="{{ url_for('checks.new_header', check_id=check.id) }}">Add Header</a></div>
     </div>
 {% endblock %}

@@ -4,13 +4,20 @@
 <script>
   $("#checks-nav").addClass("selected-nav");
 </script>
-    <span class="title">{% block title %} Your Checks {% endblock %}</span>
-    <div>
-
-      {% for check in checks %}
-      <div><a href="{{ url_for('checks.details', check_id=check.id) }}">{{check.name}}</a></div>
-      {% endfor %}
-    </div>
-    <hr>
-    <a href="{{ url_for('checks.new') }}">Add Check</a>
+<h2>{% block title %}Checks{% endblock %}</h2>
+<div>
+  <table>
+    <TR>
+      <TH>Check Name</TH>
+    </TR>
+    {% for check in checks %}
+    <TR>
+      <TD><a href="{{ url_for('checks.details', check_id=check.id) }}">{{check.name}}</a>
+</div>
+{% endfor %}
+</TD>
+</TR>
+</table>
+<hr>
+<a href="{{ url_for('checks.new') }}">Add Check</a>
 {% endblock %}
