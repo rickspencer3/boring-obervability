@@ -4,7 +4,6 @@
 <script>
        $("#checks-nav").addClass("selected-nav");
 </script>
-<div class="content">
        <h2>Add Check</h2>
        <form method="post">
               <label for="name">Check Name</label>
@@ -20,5 +19,4 @@
               <textarea name="content" value="{{ request.form['content'] }}"></textarea>
               <button type="submit">Submit</button>
        </form>
-</div>
 {% endblock %}

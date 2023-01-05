@@ -7,7 +7,8 @@
 
     <h2>Add Anomoly Detector to {{check.name}}</h2>
     <FORM method="post">
-        <label for="anomaly_detector_id">Anomaly Detector</label>
+        <label for="anomaly_detector_id">Choose Anomaly Detector</label>
+        <BR>
         <select name="anomaly_detector_id" id="anomaly_detector_id">
             {% for anomaly_detector in anomaly_detectors %}
             <option value="{{anomaly_detector.id}}">{{anomaly_detector.name}}</option>
