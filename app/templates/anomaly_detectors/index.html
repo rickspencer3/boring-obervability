@@ -4,8 +4,7 @@
 <script>
     $("#detectors-nav").addClass("selected-nav");
 </script>
-
-You current have {{anomaly_detectors|length}} Anomaly Detectors setup
+<h2>{% block title %}Anomaly Detectors{% endblock %}</h2>
 <TABLE>
     <TR><TH>Name</TH><TH>Type</TH></TR>
     {% for anomaly_detector in anomaly_detectors %}

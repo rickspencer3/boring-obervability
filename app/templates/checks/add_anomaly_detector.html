@@ -5,8 +5,9 @@
     $("#checks-nav").addClass("selected-nav");
 </script>
 
-    <h2>Add Anomoly Detector to {{check.name}}</h2>
-    <FORM method="post">
+<h2>{% block title %}Add Anomoly Detector to {{check.name}}{% endblock %}</h2>
+<FORM method="post">
+    <div class="input-div">
         <label for="anomaly_detector_id">Choose Anomaly Detector</label>
         <BR>
         <select name="anomaly_detector_id" id="anomaly_detector_id">
@@ -14,8 +15,8 @@
             <option value="{{anomaly_detector.id}}">{{anomaly_detector.name}}</option>
             {% endfor %}
         </select>
-        <BR>
-        <button type="submit">Submit</button>
+    </div>
+    <button type="submit">Submit</button>
     </FROM>
 
-{% endblock %}
+    {% endblock %}

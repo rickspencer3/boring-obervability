@@ -3,22 +3,28 @@
 {% block content %}
 <script>
     $("#channels-nav").addClass("selected-nav");
-  </script>
+</script>
 <div>
-    <h2>New Notification Channel</h2>
+    <h2>{% block title %}New Notification Channel{% endblock %}</h2>
     <form method="post">
-        <label for="name">Name</label>
-        <input type="text" name="name" placeholder="" value="{{ request.form['name'] }}"></input>
-        <br>
-        <label for="type">Notification Channel Type</label>
-        <select name="type" id="type">
-            <option value="sms">SMS</option>
-            <option value="email">EMail</option>
-        </select>
-        <br>
-        <label for="name">Email Address / Phone Number</label>
-        <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
-        <br>
+        <div class="input-div">
+            <label for="name">Name</label>
+            <br>
+            <input type="text" name="name" placeholder="" value="{{ request.form['name'] }}"></input>
+        </div>
+        <div class="input-div">
+            <label for="type">Notification Channel Type</label>
+            <br>
+            <select name="type" id="type">
+                <option value="sms">SMS</option>
+                <option value="email">EMail</option>
+            </select>
+        </div>
+        <div class="input-div">
+            <label for="name">Email Address / Phone Number</label>
+            <br>
+            <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
+        </div>
         <button type="submit">Submit</button>
     </form>
 </div>

@@ -4,26 +4,35 @@
 <script>
     $("#detectors-nav").addClass("selected-nav");
 </script>
-
+<h2>{% block title %}New Anonaly Detector{% endblock %}</h2>
 <FORM method="post">
-    <label for="name">Name</label>
-    <input type="text" name="name" placeholder="" value="{{ request.form['Name'] }}"></input>
-    <BR>
-    <label for="type">Anomaly Detector Type</label>
-    <select id="type" name="type">
-        <option value="error">Error</option>
-        <option value="latency">Latency</option>
-    </select>
-    <BR>
+    <div class="input-div">
+        <label for="name">Name</label>
+        <br>
+        <input type="text" name="name" placeholder="" value="{{ request.form['Name'] }}"></input>
+    </div>
+    <div class="input-div">
+        <label for="type">Anomaly Detector Type</label>
+        <br>
+        <select id="type" name="type">
+            <option value="error">Error</option>
+            <option value="latency">Latency</option>
+        </select>
+    </div>
+    <div class="input-div">
     <label for="value">Value</label>
+    <br>
     <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
-    <BR>
+    </div>
+    <div class="input-div">
     <label for="channel">Notification Channel</label>
+    <br>
     <select id="channel" name="channel">
         {% for channel in notification_channels %}
         <option value="{{channel.id}}">{{channel.name}}</option>
         {% endfor %}
     </select>
+    </div>
     <button type="submit">Submit</button>
 </FORM>
 {% endblock %}

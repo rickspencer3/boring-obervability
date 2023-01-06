@@ -5,7 +5,7 @@
     $("#channels-nav").addClass("selected-nav");
   </script>
 <div>
-    <h3>Notification Channels</h3>
+    <h2>{% block title %}Notification Channels{% endblock %}</h2>
     <div>You currently have {{notification_channels|length}} notificaiton channels set up</div>
     <TABLE>
         <TR><TH>Name</TH><TH>Type</TH><TH>Value</TH></TR>

@@ -3,20 +3,20 @@
 {% block content %}
 <script>
     $("#checks-nav").addClass("selected-nav");
-  </script>
-<div class="content">
-    <h2>Add Header</h2>
-    <form method="post">
+</script>
+<h2>{% block title %}Add Header{% endblock %}</h2>
+<form method="post">
+    <div class="input-div">
         <label for="name">Key</label>
         <br>
         <input type="text" name="key" placeholder="" value="{{ request.form['key'] }}"></input>
-        <br>
-        <label for="url">Value</label>
-        <br>
-        <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
-        <br>
-        <input type="hidden" name="check_id" value="{{check_id}}"></input>
-        <button type="submit">Submit</button>
-    </form>
-</div>
+    </div>
+    <div class="input-div">
+    <label for="url">Value</label>
+    <br>
+    <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
+    </div>
+    <input type="hidden" name="check_id" value="{{check_id}}"></input>
+    <button type="submit">Add</button>
+</form>
 {% endblock %}

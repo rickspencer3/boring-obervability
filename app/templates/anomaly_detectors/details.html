@@ -5,7 +5,7 @@
     $("#detectors-nav").addClass("selected-nav");
 </script>
 
-<H3>{{anomaly_detector.name}}</H3>
+<H2>{% block title %}{{anomaly_detector.name}}{% endblock %}</H2>
 <TABLE>
     <TR>
         <TD>type</TD>

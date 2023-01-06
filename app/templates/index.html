@@ -5,7 +5,7 @@
 <script>
     $("#dashboard-nav").addClass("selected-nav");
 </script>
-
+    <h2>{% block title %}Dashboard{% endblock %}</h2>
     You currently have {{checks|length}} checks
     <h3>Check Latencies</h3>
     <div id="latency_graph"></div>
