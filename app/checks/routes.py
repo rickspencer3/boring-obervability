@@ -61,10 +61,10 @@ def latency_graph(time_range=None):
         grph = _latency_graph_1h()
         return grph, 200
     elif time_range == "d":
-        grph = _latency_graph_1h()
+        grph = _latency_graph_aggregated('1 hour', '1 day')
         return grph, 200
     elif time_range == "w":
-        grph = _latency_graph_1h()
+        grph = _latency_graph_aggregated('1 day', '1 week')
         return grph, 200
 
 @bp.route('/status_graph', methods=["GET"])
@@ -134,6 +134,22 @@ def new():
        
         return redirect(url_for('checks.index'))
 
+def _latency_graph_aggregated(interval, time_range_start):
+    sql = f"""
+SELECT
+    date_bin(interval '{interval}', time, TIMESTAMP '2001-01-01 00:00:00Z') as x,
+  avg(elapsed),
+  id
+
+FROM check
+WHERE time > now() - INTERVAL '{time_range_start}'
+AND user_id = {current_user.id}
+GROUP BY id, x
+ORDER BY id, x
+    """
+ 
+    return _graph_from_query(sql, time_col=2, elapsed_col=3,check_col=4)
+
 def _latency_graph_1h():
     sql = f"""
 select 
@@ -145,6 +161,9 @@ and
 order by 
     id, time
     """
+    return _graph_from_query(sql)
+
+def _graph_from_query(sql, check_col=2, elapsed_col=3, time_col=4):
     connection = iox_dbapi.connect(
                     host = Config.INFLUXDB_HOST,
                     org = Config.INFLUXDB_ORG_ID,
@@ -156,21 +175,21 @@ order by
     series = []
     result = cursor.fetchone()
 
-    check_id = result[2]
-    check = Check.query.get(result[2])
+    check_id = result[check_col]
+    check = Check.query.get(result[check_col])
     check_name = check.name
     millis = []
     times = []
     while result is not None:
-        if result[2] != check_id:
+        if result[check_col] != check_id:
             series.append((millis,times, check_name))
-            next_check = Check.query.get(result[2])
-            check_id = result[2]
+            next_check = Check.query.get(result[check_col])
+            check_id = result[check_col]
             check_name = next_check.name
             millis = []
             times = []
-        millis.append(result[3] / 1000)
-        times.append(result[4])
+        millis.append(result[elapsed_col] / 1000)
+        times.append(result[time_col])
         result = cursor.fetchone()
         if result is None:
             series.append((millis, times, check_name))
