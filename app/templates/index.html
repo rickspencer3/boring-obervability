@@ -7,11 +7,33 @@
 </script>
     <h2>{% block title %}Dashboard{% endblock %}</h2>
     You currently have {{checks|length}} checks
+    <BR>
+    <h3>Time Range</h3>
+  
+    {% if time_range == "h" %}
+    Last Hour
+    {% else %}
+    <a href="{{url_for('main.index', time_range='h')}}">Last Hour</a>
+    {% endif %}
+    |
+    {% if time_range == "d" %}
+    Last Day
+    {% else %}
+    <a href="{{url_for('main.index', time_range='d')}}">Last Day</a>
+    {% endif %}
+    |
+    {% if time_range == "w" %}
+    Last Week
+    {% else %}
+    <a href="{{url_for('main.index', time_range='w')}}">Last Week</a>
+    {% endif %}
+    <script>
+    </script>
     <h3>Check Latencies</h3>
     <div id="latency_graph"></div>
     <script>
         $.ajax({
-            url: "{{url_for('checks.latency_graph')}}",
+            url: "{{url_for('checks.latency_graph', time_range=time_range)}}",
             type: "get",
             success: function(response){
                 $("#latency_graph").html(response);}

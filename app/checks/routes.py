@@ -53,55 +53,19 @@ def new_header(check_id):
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))
 
-@bp.route('/latency_graph', methods=["GET"])
+@bp.route('/latency_graph/<time_range>', methods=["GET"])
 @login_required
-def latency_graph():
-    sql = f"""
-select 
-    id, elapsed, time 
-from check where  
-    time > now() - interval'60 minutes' 
-and 
-    user_id = {current_user.id}
-order by 
-    id, time
-    """
-    connection = iox_dbapi.connect(
-                    host = Config.INFLUXDB_HOST,
-                    org = Config.INFLUXDB_ORG_ID,
-                    bucket = Config.INFLUXDB_BUCKET,
-                    token = Config.INFLUXDB_READ_TOKEN)
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    
-    series = []
-    result = cursor.fetchone()
-
-    check_id = result[2]
-    check = Check.query.get(result[2])
-    check_name = check.name
-    millis = []
-    times = []
-    while result is not None:
-        if result[2] != check_id:
-            series.append((millis,times, check_name))
-            next_check = Check.query.get(result[2])
-            check_id = result[2]
-            check_name = next_check.name
-            millis = []
-            times = []
-        millis.append(result[3] / 1000)
-        times.append(result[4])
-        result = cursor.fetchone()
-        if result is None:
-            series.append((millis, times, check_name))
-    
-    fig = plt.figure()
-    for series in series:
-        plt.plot(series[1], series[0], label = series[2 ])
-    plt.legend()
-    grph = mpld3.fig_to_html(fig)
-    return grph, 200
+def latency_graph(time_range=None):
+    print(time_range)
+    if time_range is None or time_range == "h":
+        grph = _latency_graph_1h()
+        return grph, 200
+    elif time_range == "d":
+        grph = _latency_graph_1h()
+        return grph, 200
+    elif time_range == "w":
+        grph = _latency_graph_1h()
+        return grph, 200
 
 @bp.route('/status_graph', methods=["GET"])
 @login_required
@@ -169,3 +133,51 @@ def new():
         db.session.commit()
        
         return redirect(url_for('checks.index'))
+
+def _latency_graph_1h():
+    sql = f"""
+select 
+    id, elapsed, time 
+from check where  
+    time > now() - interval'60 minutes' 
+and 
+    user_id = {current_user.id}
+order by 
+    id, time
+    """
+    connection = iox_dbapi.connect(
+                    host = Config.INFLUXDB_HOST,
+                    org = Config.INFLUXDB_ORG_ID,
+                    bucket = Config.INFLUXDB_BUCKET,
+                    token = Config.INFLUXDB_READ_TOKEN)
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    
+    series = []
+    result = cursor.fetchone()
+
+    check_id = result[2]
+    check = Check.query.get(result[2])
+    check_name = check.name
+    millis = []
+    times = []
+    while result is not None:
+        if result[2] != check_id:
+            series.append((millis,times, check_name))
+            next_check = Check.query.get(result[2])
+            check_id = result[2]
+            check_name = next_check.name
+            millis = []
+            times = []
+        millis.append(result[3] / 1000)
+        times.append(result[4])
+        result = cursor.fetchone()
+        if result is None:
+            series.append((millis, times, check_name))
+    
+    fig = plt.figure()
+    for series in series:
+        plt.plot(series[1], series[0], label = series[2 ])
+    plt.legend()
+    grph = mpld3.fig_to_html(fig)
+    return grph
