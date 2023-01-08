@@ -14,7 +14,7 @@ def notify(anomaly_detector, check, response):
     
 def _compare_status(log_dict, anomaly_detector, response):
     log_dict["comparitor"] = response.status_code
-    if int(anomaly_detector.value) >= response.status_code:
+    if response.status_code >= int(anomaly_detector.value):
         log_dict["detected"] = True
         _handle_anonaly(anomaly_detector, log_dict)
     else:

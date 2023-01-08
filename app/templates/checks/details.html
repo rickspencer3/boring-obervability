@@ -19,8 +19,9 @@
                 <TR><TH>Name</TH><TH>Type</TH></TR>
             {% for anomaly_detector in check.anomaly_detectors %}
                 <TR><TD>{{anomaly_detector.name}}</TD><TD>{{anomaly_detector.type}}</TD></TR>
-            </TABLE>
+            
             {% endfor %}
+        </TABLE>
 
         <div class="add-to"><A HREF = " {{url_for('checks.add_anomaly_detector', check_id=check.id)}}">Add Anomoly Detector</A></div>
         
