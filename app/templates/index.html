@@ -1,62 +1,60 @@
 {% extends 'base.html' %}
 
-{% block content %}
 
+
+{% block content %}
 <script>
     $("#dashboard-nav").addClass("selected-nav");
+    $.ajax({
+        url: "{{url_for('checks.status_graph', time_range=time_range)}}",
+        type: "get",
+        success: function (response) {
+            $("#status_graph").html(response);
+        }
+    });
+    $.ajax({
+        url: "{{url_for('checks.latency_graph', time_range=time_range)}}",
+        type: "get",
+        success: function (response) {
+            $("#latency_graph").html(response);
+        }
+    });
+    $.ajax({
+        url: "{{url_for('anomaly_detectors.issues_table')}}",
+        type: "get",
+        success: function (response) {
+            $("#anomalies_table").html(response);
+        }
+    });
 </script>
-    <h2>{% block title %}Dashboard{% endblock %}</h2>
-    You currently have {{checks|length}} checks
-    <BR>
-    <h3>Time Range</h3>
-  
-    {% if time_range == "h" %}
-    Last Hour
-    {% else %}
-    <a href="{{url_for('main.index', time_range='h')}}">Last Hour</a>
-    {% endif %}
-    |
-    {% if time_range == "d" %}
-    Last Day
-    {% else %}
-    <a href="{{url_for('main.index', time_range='d')}}">Last Day</a>
-    {% endif %}
-    |
-    {% if time_range == "w" %}
-    Last Week
-    {% else %}
-    <a href="{{url_for('main.index', time_range='w')}}">Last Week</a>
-    {% endif %}
-    <script>
-    </script>
-    <h3>Check Latencies</h3>
-    <div id="latency_graph"></div>
-    <script>
-        $.ajax({
-            url: "{{url_for('checks.latency_graph', time_range=time_range)}}",
-            type: "get",
-            success: function(response){
-                $("#latency_graph").html(response);}
-        });
-    </script>
-     <h3>Check Statuses</h3>
-     <div id="status_graph"></div>
-     <script>
-         $.ajax({
-             url: "{{url_for('checks.status_graph')}}",
-             type: "get",
-             success: function(response){
-                 $("#status_graph").html(response);}
-         });
-     </script>
-    <H3>Anomalies Detected</H3>
-    <div id="anomalies_table"></div>
-    <script>
-        $.ajax({
-            url: "{{url_for('anomaly_detectors.issues_table')}}",
-            type: "get",
-            success: function(response){
-                $("#anomalies_table").html(response);}
-        });
-    </script>
+<h2>{% block title %}Dashboard{% endblock %}</h2>
+You currently have {{checks|length}} checks
+<BR>
+<h3>Time Range</h3>
+
+{% if time_range == "h" %}
+Last Hour
+{% else %}
+<a href="{{url_for('main.index', time_range='h')}}">Last Hour</a>
+{% endif %}
+|
+{% if time_range == "d" %}
+Last Day
+{% else %}
+<a href="{{url_for('main.index', time_range='d')}}">Last Day</a>
+{% endif %}
+|
+{% if time_range == "w" %}
+Last Week
+{% else %}
+<a href="{{url_for('main.index', time_range='w')}}">Last Week</a>
+{% endif %}
+<script>
+</script>
+<h3>Check Latencies</h3>
+<div id="latency_graph"></div>
+<h3>Check Statuses</h3>
+<div id="status_graph"></div>
+<H3>Anomalies Detected</H3>
+<div id="anomalies_table"></div>
 {% endblock %}

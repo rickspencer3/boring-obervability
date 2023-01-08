@@ -67,14 +67,21 @@ def latency_graph(time_range=None):
         grph = _latency_graph_aggregated('1 day', '1 week')
         return grph, 200
 
-@bp.route('/status_graph', methods=["GET"])
+@bp.route('/status_graph/<time_range>', methods=["GET"])
 @login_required
-def status_graph():
+def status_graph(time_range=None):
+    if time_range == None:
+        time_range = "h"
+    interval = {
+        "h": "1 hour",
+        "d": "1 day",
+        "w": "1 week"
+    }[time_range]
     sql = f"""
 select 
     id, status, time 
 from check where  
-    time > now() - interval'60 minutes' 
+    time > now() - interval'{interval}' 
 and 
     user_id = {current_user.id}
 order by 
