@@ -42,11 +42,15 @@ def _handle_anonaly(anomaly_detector, log_dict):
                               body=json.dumps(log_dict),
                               recipients=[channel.value])
             mail.send(message)
+            _write_notification_to_influxdb(anomaly_detector.notification_channel, log_dict)
 
 def _write_anomaly_to_influxdb(anomaly_detector, log_dict):
     lp = f"anomalies,check={log_dict['check_id']},type={log_dict['anomaly_detector_type']},user_id={anomaly_detector.user_id} value={log_dict['anomaly_detector_value']}"
     influxdb_write(lp)
 
+def _write_notification_to_influxdb(notification_channel, log_dict):
+    lp = f"notifications,notification_type={notification_channel.type},check={log_dict['check_id']},anomaly_detector={log_dict['anomaly_detector_id']},user_id={notification_channel.user_id} value={log_dict['anomaly_detector_value']}"
+    influxdb_write(lp)
 
 
 def _create_log_dict(anomaly_detector, check):
