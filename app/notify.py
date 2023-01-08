@@ -1,5 +1,6 @@
 from app.extensions import influxdb_write, mail
 from flask import current_app
+from flask_user import current_user
 from flask_mail import Message
 from config import Config
 import json
@@ -15,7 +16,7 @@ def _compare_status(log_dict, anomaly_detector, response):
     log_dict["comparitor"] = response.status_code
     if int(anomaly_detector.value) >= response.status_code:
         log_dict["detected"] = True
-        _send_notifications(anomaly_detector, log_dict)
+        _handle_anonaly(anomaly_detector, log_dict)
     else:
         log_dict["detected"] = False
     current_app.logger.info(log_dict)
@@ -23,12 +24,14 @@ def _compare_status(log_dict, anomaly_detector, response):
 def _compare_latency(log_dict, anomaly_detector, response):
     log_dict["comparitor"] = response.elapsed.microseconds / 1000
     if response.elapsed.microseconds / 1000 >= int(anomaly_detector.value):
-         _send_notifications(anomaly_detector, log_dict)
+         _handle_anonaly(anomaly_detector, log_dict)
     else:
         log_dict["detected"] = False
     current_app.logger.info(log_dict)
 
-def _send_notifications(anomaly_detector, log_dict):
+def _handle_anonaly(anomaly_detector, log_dict):
+    _write_anomaly_to_influxdb(log_dict)
+    
     if anomaly_detector.notification_channel is not None:
         channel = anomaly_detector.notification_channel
         current_app.logger.info(f"notifying {channel.name} {channel.type}")
@@ -39,6 +42,10 @@ def _send_notifications(anomaly_detector, log_dict):
                               body=json.dumps(log_dict),
                               recipients=[channel.value])
             mail.send(message)
+
+def _write_anomaly_to_influxdb(log_dict):
+    lp = f"anomalies,check={log_dict['check_id']},type={log_dict['anomaly_detector_type']},user_id={current_user.id} value={log_dict['anomaly_detector_value']}"
+    influxdb_write(lp)
 
 def _create_log_dict(anomaly_detector, check):
     log_dict = {"check_name": check.name,
