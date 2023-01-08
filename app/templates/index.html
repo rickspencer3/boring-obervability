@@ -20,7 +20,7 @@
         }
     });
     $.ajax({
-        url: "{{url_for('anomaly_detectors.issues_table')}}",
+        url: "{{url_for('anomaly_detectors.issues_table', time_range=time_range)}}",
         type: "get",
         success: function (response) {
             $("#anomalies_table").html(response);
