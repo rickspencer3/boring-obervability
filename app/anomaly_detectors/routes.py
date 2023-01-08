@@ -49,7 +49,7 @@ def edit(anomaly_detector_id):
         db.session.commit()
         return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector_id))
 
-@bp.route('/issues')
+@bp.route('/issues/<time_range>')
 @login_required
 def issues_table(time_range=None):
     if time_range == None:
