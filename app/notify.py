@@ -30,8 +30,8 @@ def _compare_latency(log_dict, anomaly_detector, response):
     current_app.logger.info(log_dict)
 
 def _handle_anonaly(anomaly_detector, log_dict):
-    _write_anomaly_to_influxdb(log_dict)
-    
+    _write_anomaly_to_influxdb(anomaly_detector, log_dict)
+
     if anomaly_detector.notification_channel is not None:
         channel = anomaly_detector.notification_channel
         current_app.logger.info(f"notifying {channel.name} {channel.type}")
@@ -43,9 +43,11 @@ def _handle_anonaly(anomaly_detector, log_dict):
                               recipients=[channel.value])
             mail.send(message)
 
-def _write_anomaly_to_influxdb(log_dict):
-    lp = f"anomalies,check={log_dict['check_id']},type={log_dict['anomaly_detector_type']},user_id={current_user.id} value={log_dict['anomaly_detector_value']}"
+def _write_anomaly_to_influxdb(anomaly_detector, log_dict):
+    lp = f"anomalies,check={log_dict['check_id']},type={log_dict['anomaly_detector_type']},user_id={anomaly_detector.user_id} value={log_dict['anomaly_detector_value']}"
     influxdb_write(lp)
+
+
 
 def _create_log_dict(anomaly_detector, check):
     log_dict = {"check_name": check.name,
