@@ -52,7 +52,6 @@ def _write_notification_to_influxdb(notification_channel, log_dict):
     lp = f"notifications,notification_type={notification_channel.type},check={log_dict['check_id']},anomaly_detector={log_dict['anomaly_detector_id']},user_id={notification_channel.user_id} value={log_dict['anomaly_detector_value']}"
     influxdb_write(lp)
 
-
 def _create_log_dict(anomaly_detector, check):
     log_dict = {"check_name": check.name,
                 "check_id": check.id,

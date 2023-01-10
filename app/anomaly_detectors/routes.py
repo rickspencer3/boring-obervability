@@ -17,7 +17,6 @@ def index():
 @bp.route('/<anomaly_detector_id>', methods=["GET"])
 @login_required
 def details(anomaly_detector_id):
-    print(request.method)
     if request.method == "GET":
         anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
         return render_template('anomaly_detectors/details.html', anomaly_detector=anomaly_detector)

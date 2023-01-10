@@ -56,15 +56,14 @@ def new_header(check_id):
 @bp.route('/latency_graph/<time_range>', methods=["GET"])
 @login_required
 def latency_graph(time_range=None):
-    print(time_range)
     if time_range is None or time_range == "h":
         grph = _latency_graph_1h()
         return grph, 200
     elif time_range == "d":
-        grph = _latency_graph_aggregated('1 hour', '1 day')
+        grph = _latency_graph_aggregated('10 minutes', '1 day')
         return grph, 200
     elif time_range == "w":
-        grph = _latency_graph_aggregated('1 day', '1 week')
+        grph = _latency_graph_aggregated('1 hour', '1 week')
         return grph, 200
 
 @bp.route('/status_graph/<time_range>', methods=["GET"])
