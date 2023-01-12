@@ -4,7 +4,6 @@ from app.extensions import db, influxdb_write
 from app.notify import notify
 
 def run_checks(check_id):
-    db.app.logger.info(f"running check {check_id}")
     with db.app.app_context():
         check = Check.query.get(check_id)
         headers = {}
@@ -14,7 +13,12 @@ def run_checks(check_id):
                             url=check.url,
                             data=check.content,
                             headers=headers)
-        db.app.logger.info(f"check {check.name} ({check.id}) has {len(check.anomaly_detectors)} Anomaly Detectors")
+
+        log_dict = {"check_id":check_id,
+                    "check_name":check.name,
+                    "anomaly_dectors": len(check.anomaly_detectors)}
+        db.app.logger.info(log_dict)
+
         for anomaly_detector in check.anomaly_detectors:
             notify(anomaly_detector, check, check_response)
 

@@ -34,7 +34,8 @@ def _handle_anonaly(anomaly_detector, log_dict):
 
     if anomaly_detector.notification_channel is not None:
         channel = anomaly_detector.notification_channel
-        current_app.logger.info(f"notifying {channel.name} {channel.type}")
+        log_dict = {"channel_name":channel.name, "channel_type":channel.type}
+        current_app.logger.info(log_dict)
         if channel.type == "email":
             subj = f"Anomaly {anomaly_detector.type} from Anomaly Detector {anomaly_detector.name}"
             message = Message(subj,
