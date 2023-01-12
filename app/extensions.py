@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from requests import post
 from config import Config
+import json
 
 db = SQLAlchemy()
 mail = Mail()
@@ -14,5 +15,8 @@ def influxdb_write(lp):
     current_app.logger.info(f"wrote to influxdb: {lp}")
     if log_response.status_code > 299:
         print(f"logging failed with {log_response.status_code}")
-        current_app.logger.error(log_response.text)
+        error_dict = {"response_code":log_response.status_code,
+                      "response_text":log_response.text,
+                      "line_protocol":lp}
+        current_app.logger.error(json.dumps(error_dict))
 
