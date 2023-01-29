@@ -1,5 +1,7 @@
 from flask import render_template, request, redirect, url_for
 from flask_user import login_required, current_user
+from flightsql import FlightSQLClient
+import pandas as pd
 from app.checks import bp
 from app.models.checks import Check
 from app.models.headers import Header
@@ -86,42 +88,19 @@ and
 order by 
     id, time
     """
-    connection = iox_dbapi.connect(
-                    host = Config.INFLUXDB_HOST,
-                    org = Config.INFLUXDB_ORG_ID,
-                    bucket = Config.INFLUXDB_BUCKET,
-                    token = Config.INFLUXDB_READ_TOKEN)
-    cursor = connection.cursor()
-    cursor.execute(sql)
     
-    series = []
-    result = cursor.fetchone()
+    client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                        token=Config.INFLUXDB_READ_TOKEN,
+                        metadata={'bucket-name': Config.INFLUXDB_BUCKET},
+                        features={'metadata-reflection': 'true'},
+                        disable_server_verification=True)
+    query = client.execute(sql)
+    reader = client.do_get(query.endpoints[0].ticket)
+    Table = reader.read_all()
+    print(Table)
 
-    check_id = result[2]
-    check = Check.query.get(result[2])
-    check_name = check.name
-    statuses = []
-    times = []
-    while result is not None:
-        if result[2] != check_id:
-            series.append((statuses,times, check_name))
-            next_check = Check.query.get(result[2])
-            check_id = result[2]
-            check_name = next_check.name
-            statuses = []
-            times = []
-        statuses.append(result[3])
-        times.append(result[4])
-        result = cursor.fetchone()
-        if result is None:
-            series.append((statuses, times, check_name))
-    
-    fig = plt.figure()
-    for series in series:
-        plt.plot(series[1], series[0], label = series[2 ])
-    plt.legend()
-    grph = mpld3.fig_to_html(fig)
-    return grph, 200
+
+    return "<div>boo</div>", 200
 
 @bp.route('/new', methods=["GET","POST"])
 @login_required
