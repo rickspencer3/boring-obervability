@@ -34,7 +34,8 @@ def _handle_anonaly(anomaly_detector, log_dict):
 
     if anomaly_detector.notification_channel is not None:
         channel = anomaly_detector.notification_channel
-        log_dict = {"channel_name":channel.name, "channel_type":channel.type}
+        log_dict["channel_name"] = channel.name
+        log_dict["channel_type"] = channel.type
         current_app.logger.info(log_dict)
         if channel.type == "email":
             subj = f"Anomaly {anomaly_detector.type} from Anomaly Detector {anomaly_detector.name}"
@@ -42,7 +43,7 @@ def _handle_anonaly(anomaly_detector, log_dict):
                               sender=Config.MAIL_DEFAULT_SENDER,
                               body=json.dumps(log_dict),
                               recipients=[channel.value])
-            mail.send(message)
+            # mail.send(message)
         _write_notification_to_influxdb(anomaly_detector.notification_channel, log_dict)
 
 def _write_anomaly_to_influxdb(anomaly_detector, log_dict):
