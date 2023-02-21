@@ -32,5 +32,6 @@ class Config:
     INFLUXDB_WRITE_TOKEN = "dVonwGMYxmNT3_KIiZ5zBFIHllWlLWz5xLbuE2kvgzmuqWo8_JyyFDXZDqRaJtP9L2gnyY33GenWoKRBNJKWQg=="
     INFLUXDB_READ_TOKEN = "dVonwGMYxmNT3_KIiZ5zBFIHllWlLWz5xLbuE2kvgzmuqWo8_JyyFDXZDqRaJtP9L2gnyY33GenWoKRBNJKWQg=="
     INFLUXDB_HOST = "https://us-east-1-1.aws.cloud2.influxdata.com/"
+    INFLUXDB_FLIGHT_HOST = "us-east-1-1.aws.cloud2.influxdata.com"
     INFLUXDB_ORG_ID = "847e9dbb25976492"
     

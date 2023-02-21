@@ -10,6 +10,12 @@ from config import Config
 import matplotlib.pyplot as plt, mpld3
 import matplotlib
 
+from flightsql import FlightSQLClient
+import pandas as pd
+import plotly.io as pio
+import plotly.express as px
+import plotly.offline as py
+
 matplotlib.pyplot.switch_backend('Agg') 
 
 @bp.route('/')
@@ -81,6 +87,11 @@ def status_graph(time_range=None):
         "d": "10 minutes",
         "w": "1 hour"
     }[time_range]
+    bin_divisor = {
+        "h": "1.0",
+        "d": "10.0",
+        "w": "60.0"
+    }[time_range]
     sql = f"""
 SELECT
   DATE_BIN(INTERVAL '{bin_interval}', time, '1970-01-01T00:00:00Z'::TIMESTAMP) AS binned,
@@ -92,43 +103,28 @@ AND user_id = {current_user.id}
 GROUP BY id, binned
 ORDER BY id, binned
     """
-   
-    connection = iox_dbapi.connect(
-                    host = Config.INFLUXDB_HOST,
-                    org = Config.INFLUXDB_ORG_ID,
-                    bucket = Config.INFLUXDB_BUCKET,
-                    token = Config.INFLUXDB_READ_TOKEN)
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    
-    series = []
-    result = cursor.fetchone()
-  
-    check_id = result[3]
-    check = Check.query.get(check_id)
-    check_name = check.name
-    error_rates = []
-    times = []
-    while result is not None:
-        if result[3] != check_id:
-            series.append((error_rates,times, check_name))
-            next_check = Check.query.get(result[3])
-            check_id = result[3]
-            check_name = next_check.name
-            error_rates = []
-            times = []
-        error_rates.append(result[4])
-        times.append(result[2])
-        result = cursor.fetchone()
-        if result is None:
-            series.append((error_rates, times, check_name))
-    
-    fig = plt.figure()
-    for series in series:
-        plt.plot(series[1], series[0], label = series[2 ])
-    plt.legend()
-    grph = mpld3.fig_to_html(fig)
-    return grph, 200
+
+    client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                        token=Config.INFLUXDB_READ_TOKEN,
+                        metadata={'bucket-name': Config.INFLUXDB_BUCKET})
+
+    query = client.execute(sql)
+    reader = client.do_get(query.endpoints[0].ticket)
+    table = reader.read_all()
+    results = table.to_pandas()
+
+    fig = px.line(results, x='binned', y='error_rate')
+    return pio.to_html(fig, 
+                        config=None, 
+                        auto_play=True, 
+                        include_plotlyjs=True, 
+                        include_mathjax=False, 
+                        post_script=None, 
+                        full_html=False, 
+                        animation_opts=None, 
+                        default_width='600px', default_height='300px', 
+                        validate=True, 
+                        div_id=None), 200
 
 @bp.route('/new', methods=["GET","POST"])
 @login_required
