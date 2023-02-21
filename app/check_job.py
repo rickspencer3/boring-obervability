@@ -16,13 +16,14 @@ def run_checks(check_id):
 
         log_dict = {"check_id":check_id,
                     "check_name":check.name,
-                    "anomaly_dectors": len(check.anomaly_detectors)}
+                    "anomaly_dectors": len(check.anomaly_detectors),
+                    "response_text":check_response.text}
         db.app.logger.info(log_dict)
 
         for anomaly_detector in check.anomaly_detectors:
             notify(anomaly_detector, check, check_response)
 
         name = check.name.replace(" ","\ ")
-        lp = f"""check,url="{check.url}",name={name},method={check.method},user_id={check.user_id},id={check.id} status={check_response.status_code}i,elapsed={check_response.elapsed.microseconds}i"""
+        lp = f"""checks,url="{check.url}",name={name},method={check.method},user_id={check.user_id},id={check.id} status={check_response.status_code}i,elapsed={check_response.elapsed.microseconds}i"""
         
         influxdb_write(lp)

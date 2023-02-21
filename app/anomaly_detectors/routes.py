@@ -81,7 +81,6 @@ def issues_table(time_range=None):
     else:
         return t, 200
 
-
 @bp.route('/new', methods=["GET", "POST"])
 @login_required
 def new():

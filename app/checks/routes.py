@@ -76,16 +76,23 @@ def status_graph(time_range=None):
         "d": "1 day",
         "w": "1 week"
     }[time_range]
+    bin_interval = {
+        "h": "1 minute",
+        "d": "10 minutes",
+        "w": "1 hour"
+    }[time_range]
     sql = f"""
-select 
-    id, status, time 
-from check where  
-    time > now() - interval'{interval}' 
-and 
-    user_id = {current_user.id}
-order by 
-    id, time
+SELECT
+  DATE_BIN(INTERVAL '{bin_interval}', time, '1970-01-01T00:00:00Z'::TIMESTAMP) AS binned,
+    id,
+   SUM(CASE WHEN status >= 299 THEN 1 ELSE 0 END)::double / COUNT(status)::double  AS error_rate
+FROM checks
+WHERE time > now() - interval'{interval}'
+AND user_id = {current_user.id}
+GROUP BY id, binned
+ORDER BY id, binned
     """
+   
     connection = iox_dbapi.connect(
                     host = Config.INFLUXDB_HOST,
                     org = Config.INFLUXDB_ORG_ID,
@@ -96,25 +103,25 @@ order by
     
     series = []
     result = cursor.fetchone()
-
-    check_id = result[2]
-    check = Check.query.get(result[2])
+  
+    check_id = result[3]
+    check = Check.query.get(check_id)
     check_name = check.name
-    statuses = []
+    error_rates = []
     times = []
     while result is not None:
-        if result[2] != check_id:
-            series.append((statuses,times, check_name))
-            next_check = Check.query.get(result[2])
-            check_id = result[2]
+        if result[3] != check_id:
+            series.append((error_rates,times, check_name))
+            next_check = Check.query.get(result[3])
+            check_id = result[3]
             check_name = next_check.name
-            statuses = []
+            error_rates = []
             times = []
-        statuses.append(result[3])
-        times.append(result[4])
+        error_rates.append(result[4])
+        times.append(result[2])
         result = cursor.fetchone()
         if result is None:
-            series.append((statuses, times, check_name))
+            series.append((error_rates, times, check_name))
     
     fig = plt.figure()
     for series in series:
@@ -147,7 +154,7 @@ SELECT
   avg(elapsed),
   id
 
-FROM check
+FROM checks
 WHERE time > now() - INTERVAL '{time_range_start}'
 AND user_id = {current_user.id}
 GROUP BY id, x
@@ -160,7 +167,7 @@ def _latency_graph_1h():
     sql = f"""
 select 
     id, elapsed, time 
-from check where  
+from checks where  
     time > now() - interval'60 minutes' 
 and 
     user_id = {current_user.id}
