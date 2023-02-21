@@ -92,8 +92,7 @@ AND user_id = {current_user.id}
 GROUP BY id, binned
 ORDER BY id, binned
     """
-    print("*****************")
-    print(sql)
+   
     connection = iox_dbapi.connect(
                     host = Config.INFLUXDB_HOST,
                     org = Config.INFLUXDB_ORG_ID,
@@ -104,17 +103,13 @@ ORDER BY id, binned
     
     series = []
     result = cursor.fetchone()
-    print("******************")
-    print(result)
-    print("-------------------")
+  
     check_id = result[3]
     check = Check.query.get(check_id)
-    print(check, check_id)
     check_name = check.name
     error_rates = []
     times = []
     while result is not None:
-        print(result)
         if result[3] != check_id:
             series.append((error_rates,times, check_name))
             next_check = Check.query.get(result[3])
