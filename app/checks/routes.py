@@ -146,18 +146,38 @@ def new():
 def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
 SELECT
-    date_bin(interval '{interval}', time, TIMESTAMP '2001-01-01 00:00:00Z') as x,
-  avg(elapsed),
+    date_bin(interval '{interval}', time, TIMESTAMP '2001-01-01 00:00:00Z') as binned,
+  avg(elapsed) as elapsed,
   id
 
 FROM checks
 WHERE time > now() - INTERVAL '{time_range_start}'
 AND user_id = {current_user.id}
-GROUP BY id, x
-ORDER BY id, x
+GROUP BY id, binned
+ORDER BY id, binned
     """
  
-    return _graph_from_query(sql, time_col=2, elapsed_col=3,check_col=4)
+    client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                token=Config.INFLUXDB_READ_TOKEN,
+                metadata={'bucket-name': Config.INFLUXDB_BUCKET})
+
+    query = client.execute(sql)
+    reader = client.do_get(query.endpoints[0].ticket)
+    table = reader.read_all()
+    results = table.to_pandas()
+
+    fig = px.line(results, x='binned', y='elapsed', color='id')
+    return pio.to_html(fig, 
+                    config=None, 
+                    auto_play=True, 
+                    include_plotlyjs=True, 
+                    include_mathjax=False, 
+                    post_script=None, 
+                    full_html=False, 
+                    animation_opts=None, 
+                    default_width='600px', default_height='300px', 
+                    validate=True, 
+                    div_id=None)
 
 def _latency_graph_1h():
     sql = f"""
@@ -170,42 +190,24 @@ and
 order by 
     id, time
     """
-    return _graph_from_query(sql)
+    client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                    token=Config.INFLUXDB_READ_TOKEN,
+                    metadata={'bucket-name': Config.INFLUXDB_BUCKET})
 
-def _graph_from_query(sql, check_col=2, elapsed_col=3, time_col=4):
-    connection = iox_dbapi.connect(
-                    host = Config.INFLUXDB_HOST,
-                    org = Config.INFLUXDB_ORG_ID,
-                    bucket = Config.INFLUXDB_BUCKET,
-                    token = Config.INFLUXDB_READ_TOKEN)
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    
-    series = []
-    result = cursor.fetchone()
+    query = client.execute(sql)
+    reader = client.do_get(query.endpoints[0].ticket)
+    table = reader.read_all()
+    results = table.to_pandas()
 
-    check_id = result[check_col]
-    check = Check.query.get(result[check_col])
-    check_name = check.name
-    millis = []
-    times = []
-    while result is not None:
-        if result[check_col] != check_id:
-            series.append((millis,times, check_name))
-            next_check = Check.query.get(result[check_col])
-            check_id = result[check_col]
-            check_name = next_check.name
-            millis = []
-            times = []
-        millis.append(result[elapsed_col] / 1000)
-        times.append(result[time_col])
-        result = cursor.fetchone()
-        if result is None:
-            series.append((millis, times, check_name))
-    
-    fig = plt.figure()
-    for series in series:
-        plt.plot(series[1], series[0], label = series[2 ])
-    plt.legend()
-    grph = mpld3.fig_to_html(fig)
-    return grph
+    fig = px.line(results, x='time', y='elapsed', color='id')
+    return pio.to_html(fig, 
+                    config=None, 
+                    auto_play=True, 
+                    include_plotlyjs=True, 
+                    include_mathjax=False, 
+                    post_script=None, 
+                    full_html=False, 
+                    animation_opts=None, 
+                    default_width='600px', default_height='300px', 
+                    validate=True, 
+                    div_id=None)
