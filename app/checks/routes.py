@@ -5,18 +5,13 @@ from app.models.checks import Check
 from app.models.headers import Header
 from app.models.anomaly_detectors import AnomalyDetector
 from app.extensions import db
-from app import iox_dbapi
 from config import Config
-import matplotlib.pyplot as plt, mpld3
-import matplotlib
 
 from flightsql import FlightSQLClient
 import pandas as pd
 import plotly.io as pio
 import plotly.express as px
 import plotly.offline as py
-
-matplotlib.pyplot.switch_backend('Agg') 
 
 @bp.route('/')
 @login_required
