@@ -3,9 +3,11 @@ from flask_user import login_required, current_user
 from app.anomaly_detectors import bp
 from app.extensions import db
 from app.models.anomaly_detectors import AnomalyDetector
-from app.models.checks import Check
-from app import iox_dbapi
 from config import Config
+
+from flightsql import FlightSQLClient
+import plotly.graph_objects as go
+import plotly.io as pio
 
 @bp.route('/')
 @login_required
@@ -59,27 +61,34 @@ def issues_table(time_range=None):
         "w": "1 week"
     }[time_range]
     sql = f"select check, type, value, time from anomalies where user_id = {current_user.id} and time > now() - interval'{interval}' order by time desc"
-    connection = iox_dbapi.connect(
-        host=Config.INFLUXDB_HOST,
-        org=Config.INFLUXDB_ORG_ID,
-        bucket=Config.INFLUXDB_BUCKET,
-        token=Config.INFLUXDB_READ_TOKEN)
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    t = "<TABLE><TR><TH>check name</TH><TH>check id</TH><TH>type</TH><TH>value</TH><TH>time</TH><TR>"
-    d = cursor.fetchone()
-    row_count = 0
-    while d is not None:
-        row_count += 1
-        check = Check.query.get(d[2])
-        t += f"<TR><TD>{check.name}</TD><TD>{d[2]}</TD><TD>{d[3]}</TD><TD>{d[4]}</TD><TD>{d[5]}</TD></TR>"
-        d = cursor.fetchone()
-    t += "</TABLE>"
+    client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                        token=Config.INFLUXDB_READ_TOKEN,
+                        metadata={'bucket-name': Config.INFLUXDB_BUCKET})
 
-    if row_count == 0:
-        return "no anomaliles detected"
-    else:
-        return t, 200
+    query = client.execute(sql)
+    reader = client.do_get(query.endpoints[0].ticket)
+    table = reader.read_all()
+    df = table.to_pandas()
+
+    fig = go.Figure(data=[go.Table(
+                columnwidth=[10,20,20,50],
+                header=dict(values=list(df.columns),
+                align='left'),
+                cells=dict(values=[df.check, df.type, df.value, df.time],
+                align='left'))
+])
+    return pio.to_html(fig,
+                        config=None, 
+                        auto_play=True, 
+                        include_plotlyjs=True, 
+                        include_mathjax=False, 
+                        post_script=None, 
+                        full_html=False, 
+                        animation_opts=None, 
+                        default_width='600px',
+                        default_height='300px', 
+                        validate=True, 
+                        div_id=None )
 
 @bp.route('/new', methods=["GET", "POST"])
 @login_required

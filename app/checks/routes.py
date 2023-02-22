@@ -8,10 +8,8 @@ from app.extensions import db
 from config import Config
 
 from flightsql import FlightSQLClient
-import pandas as pd
 import plotly.io as pio
 import plotly.express as px
-import plotly.offline as py
 
 @bp.route('/')
 @login_required
@@ -203,6 +201,7 @@ order by
                     post_script=None, 
                     full_html=False, 
                     animation_opts=None, 
-                    default_width='600px', default_height='300px', 
+                    default_width='600px', 
+                    default_height='300px', 
                     validate=True, 
                     div_id=None)
