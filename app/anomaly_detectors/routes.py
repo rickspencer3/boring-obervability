@@ -3,7 +3,9 @@ from flask_user import login_required, current_user
 from app.anomaly_detectors import bp
 from app.extensions import db
 from app.models.anomaly_detectors import AnomalyDetector
+from app.models.checks import Check
 from config import Config
+
 
 from flightsql import FlightSQLClient
 import plotly.graph_objects as go
@@ -69,12 +71,19 @@ def issues_table(time_range=None):
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
     df = table.to_pandas()
+    
+    ids = df.check.unique()
+    names = {}
+    for id in ids:
+        names[id] = Check.query.get(id).name
+    df['check name'] = df.check.map(names)
+
 
     fig = go.Figure(data=[go.Table(
                 columnwidth=[10,20,20,50],
                 header=dict(values=list(df.columns),
                 align='left'),
-                cells=dict(values=[df.check, df.type, df.value, df.time],
+                cells=dict(values=[df.check, df.type, df.value, df.time, df['check name']],
                 align='left'))
 ])
     return pio.to_html(fig,

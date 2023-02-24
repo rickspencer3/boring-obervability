@@ -80,11 +80,7 @@ def status_graph(time_range=None):
         "d": "10 minutes",
         "w": "1 hour"
     }[time_range]
-    bin_divisor = {
-        "h": "1.0",
-        "d": "10.0",
-        "w": "60.0"
-    }[time_range]
+
     sql = f"""
 SELECT
   DATE_BIN(INTERVAL '{bin_interval}', time, '1970-01-01T00:00:00Z'::TIMESTAMP) AS binned,
@@ -106,7 +102,9 @@ ORDER BY id, binned
     table = reader.read_all()
     results = table.to_pandas()
 
-    fig = px.line(results, x='binned', y='error_rate')
+    _add_names_col(results)
+    
+    fig = px.line(results, x='binned', y='error_rate', color='name')
     return pio.to_html(fig, 
                         config=None, 
                         auto_play=True, 
@@ -118,6 +116,13 @@ ORDER BY id, binned
                         default_width='600px', default_height='300px', 
                         validate=True, 
                         div_id=None), 200
+
+def _add_names_col(df):
+    ids = df.id.unique()
+    names = {}
+    for id in ids:
+        names[id] = Check.query.get(id).name
+    df['name'] = df['id'].map(names)
 
 @bp.route('/new', methods=["GET","POST"])
 @login_required
@@ -158,8 +163,9 @@ ORDER BY id, binned
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
     results = table.to_pandas()
+    _add_names_col(results)
 
-    fig = px.line(results, x='binned', y='elapsed', color='id')
+    fig = px.line(results, x='binned', y='elapsed', color='name')
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
@@ -191,8 +197,8 @@ order by
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
     results = table.to_pandas()
-
-    fig = px.line(results, x='time', y='elapsed', color='id')
+    _add_names_col(results)
+    fig = px.line(results, x='time', y='elapsed', color='name')
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
