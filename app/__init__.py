@@ -60,12 +60,10 @@ def create_app(config_class=Config):
 
     # schedule the checks
     scheduler = BackgroundScheduler()
+
     with app.app_context():
-        checks = Check.query.all()
-        for check in checks:
-            scheduler.add_job(run_checks, 'interval',  
-                            args=[str(check.id)],  minutes=1)
-            app.logger.info({"action":"registered_job","check_id":check.id})
+            scheduler.add_job(run_checks, 'interval',   minutes=1)
+            app.logger.info({"action":"registered_job"})
     scheduler.start()
 
     @app.route('/test/')
