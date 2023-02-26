@@ -8,12 +8,17 @@
     <h2>{% block title %}Notification Channels{% endblock %}</h2>
     <div>You currently have {{notification_channels|length}} notificaiton channels set up</div>
     <TABLE>
-        <TR><TH>Name</TH><TH>Type</TH><TH>Value</TH></TR>
+        <TR><TH>Name</TH><TH>Type</TH><TH>Value</TH><TH>Enable</TH></TR>
         {% for channel in notification_channels %}
         <TR>
             <TD>{{channel.name}}</TD>
             <TD>{{channel.type}}</TD>
             <TD>{{channel.value}}</TD>
+            {% if channel.enable %}
+            <TD><input type="checkbox" id="{{channel.id}}"  checked /></TD>
+            {% else %}
+            <TD><input type="checkbox" id="{{channel.id}}" /></TD>
+            {% endif %}
         </TR>
         {% endfor %}
     </TABLE>
