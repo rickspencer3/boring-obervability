@@ -11,6 +11,17 @@ def index():
     notification_channels = current_user.notification_channels
     return render_template('notification_channels/index.html', notification_channels=notification_channels)
 
+@bp.route('/toggle_enabled', methods=["POST"])
+@login_required
+def set_enabled():
+    channel_id = request.form.get('channel')
+    enabled = request.form.get('enabled') == 'true'
+    channel = NotificationChannel.query.get(channel_id)
+    
+    channel.enabled = enabled
+    db.session.commit()
+    return "success", 200
+
 @bp.route('/new', methods=["GET","POST"])
 @login_required
 def new():

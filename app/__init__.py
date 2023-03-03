@@ -12,7 +12,9 @@ from app.models.anomaly_detectors import AnomalyDetector
 from app.check_job import run_checks
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from flask_migrate import Migrate
 
+migrate = Migrate()
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -22,7 +24,7 @@ def create_app(config_class=Config):
     db.app = app
     mail.init_app(app)
     app.influxdb_write = influxdb_write
-
+    migrate.init_app(app, db)
     # associate models here
     User.checks = db.relationship(
         "Check", order_by=Check.id, back_populates="user")
@@ -37,8 +39,8 @@ def create_app(config_class=Config):
 
     with app.app_context():
         db.create_all()
-        user_manager = UserManager(app, db, User)
-
+        user_manager = UserManager(app, db, User)      
+        
     # Register blueprints here
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
