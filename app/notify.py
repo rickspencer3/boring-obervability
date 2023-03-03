@@ -32,7 +32,7 @@ def _compare_latency(log_dict, anomaly_detector, response):
 def _handle_anonaly(anomaly_detector, log_dict):
     _write_anomaly_to_influxdb(anomaly_detector, log_dict)
 
-    if anomaly_detector.notification_channel is not None:
+    if anomaly_detector.notification_channel is not None and anomaly_detector.notification_channel.enabled:
         # check if the notification has been sent in the last 10 minutes
 
         channel = anomaly_detector.notification_channel
@@ -45,7 +45,7 @@ def _handle_anonaly(anomaly_detector, log_dict):
                               sender=Config.MAIL_DEFAULT_SENDER,
                               body=json.dumps(log_dict),
                               recipients=[channel.value])
-            # mail.send(message)
+            mail.send(message)
         _write_notification_to_influxdb(anomaly_detector.notification_channel, log_dict)
 
 def _write_anomaly_to_influxdb(anomaly_detector, log_dict):
