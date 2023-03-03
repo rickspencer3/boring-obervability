@@ -141,6 +141,23 @@ def new():
        
         return redirect(url_for('checks.index'))
 
+@bp.route('<check_id>/edit', methods=["GET", "POST"])
+@login_required
+def edit(check_id):
+    check = Check.query.get(check_id)
+    if current_user.id is not check.user.id:
+        return "", 404
+    if request.method == "GET":
+        return render_template('checks/edit.html', check=check)
+    elif request.method == "POST":
+        pass
+        # anomaly_detector.name = request.form['name']
+        # anomaly_detector.value = request.form['value']
+        # anomaly_detector.type = request.form['type']
+        # anomaly_detector.notification_channel_id = request.form['channel']
+        # db.session.commit()
+        # return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector_id))
+
 def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
 SELECT

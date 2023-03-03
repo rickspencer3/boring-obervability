@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+       $("#checks-nav").addClass("selected-nav");
+</script>
+<h2>{% block title %}Edit Check "{{check.name}}"{% endblock %}</h2>
+<form method="post">
+       <div class="input-div">
+                     <label for=" name">Check Name</label>
+              <br>
+              <input type="text" name="name" placeholder="" value="{{ request.form['name'] }}"></input>
+       </div>
+       <div class="input-div">
+                     <label for=" url">URL</label>
+              <br>
+              <input type="text" name="url" placeholder="https://" value="{{ request.form['url'] }}"></input>
+       </div>
+       <div class="input-div">
+                     <label for=" method">Method</label>
+              <br>
+              <input type="text" name="method" placeholder="GET" value="{{ request.form['method'] }}"></input>
+       </div>
+       <div class="input-div">
+                     <label for=" content">Body Content</label>
+              <br>
+              <textarea name="content" value="{{ request.form['content'] }}"></textarea>
+       </div>
+
+       <button type=" submit">Submit</button>
+
+</form>
+{% endblock %}
