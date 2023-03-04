@@ -79,13 +79,17 @@ def issues_table(time_range=None):
     df['check name'] = df.check.map(names)
 
 
-    fig = go.Figure(data=[go.Table(
-                columnwidth=[10,20,20,50],
-                header=dict(values=list(df.columns),
-                align='left'),
-                cells=dict(values=[df.check, df.type, df.value, df.time, df['check name']],
-                align='left'))
-])
+    fig = go.Figure(
+                layout={
+                    "title":"Anomalies Detected"
+                },
+                data=[go.Table(
+                    columnwidth=[10,20,20,50],
+                    header=dict(values=list(df.columns),
+                    align='left'),
+                    cells=dict(values=[df.check, df.type, df.value, df.time, df['check name']],
+                    align='left'),)
+                ])
     return pio.to_html(fig,
                         config=None, 
                         auto_play=True, 

@@ -104,7 +104,7 @@ ORDER BY id, binned
 
     _add_names_col(results)
     
-    fig = px.line(results, x='binned', y='error_rate', color='name')
+    fig = px.line(results, x='binned', y='error_rate', color='name', title="Check Error Rates")
     return pio.to_html(fig, 
                         config=None, 
                         auto_play=True, 
@@ -209,7 +209,7 @@ ORDER BY id, binned
     results = table.to_pandas()
     _add_names_col(results)
 
-    fig = px.line(results, x='binned', y='elapsed', color='name')
+    fig = px.line(results, x='binned', y='elapsed', color='name', title="Check Latencies")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
@@ -242,7 +242,7 @@ order by
     table = reader.read_all()
     results = table.to_pandas()
     _add_names_col(results)
-    fig = px.line(results, x='time', y='elapsed', color='name')
+    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
