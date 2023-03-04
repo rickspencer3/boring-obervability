@@ -141,6 +141,50 @@ def new():
        
         return redirect(url_for('checks.index'))
 
+@bp.route('remove_detector', methods=["POST"])
+@login_required
+def remove_detector():
+    check_id = request.form["check_id"]
+    if current_user.id != check.user.id:
+        return "", 404
+
+    anomaly_detector_id = request.form["anomaly_detector_id"]
+    check = Check.query.get(check_id)
+
+    anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
+    check.anomaly_detectors.remove(anomaly_detector)
+    db.session.commit()
+    return redirect(url_for('checks.index'))
+
+@bp.route('delete_header', methods=["POST"])
+@login_required
+def delete_header():
+    header_id = request.form["header_id"]
+    header = Header.query.get(header_id)
+    if current_user.id != header.check.user.id:
+        return "", 404
+    else:
+        db.session.delete(header)
+        db.session.commit()
+        return "",200
+
+@bp.route('<check_id>/edit', methods=["GET", "POST"])
+@login_required
+def edit(check_id):
+    check = Check.query.get(check_id)
+    if current_user.id is not check.user.id:
+        return "", 404
+    if request.method == "GET":
+        return render_template('checks/edit.html', check=check)
+    elif request.method == "POST":
+        check.name = request.form['name']
+        check.url = request.form['url']
+        check.method = request.form['method']
+        check.content = request.form['content']
+        db.session.commit()
+        
+        return redirect(url_for('checks.details', check_id=check.id))
+
 def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
 SELECT
