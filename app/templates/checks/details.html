@@ -3,6 +3,7 @@
 {% block content %}
 <script>
     $("#checks-nav").addClass("selected-nav");
+
     function remove_anomaly_dector(ad_id, check_id){
         
         $.ajax({
@@ -10,8 +11,15 @@
         type: "post",
         data: {"anomaly_detector_id":ad_id, "check_id":check_id},
         done: $("#ad_row_" + ad_id).remove()
-    });
+    });}
 
+    function delete_header(header_id){
+        $.ajax({
+        url: "{{url_for('checks.delete_header')}}",
+        type: "post",
+        data: {"header_id":header_id},
+        done: $("#h_row_" + header_id).remove()
+    });
     }
   </script>
   <h2>{% block title %}Check Details {% endblock %}</h2>
@@ -44,9 +52,15 @@
         
         <h3>Headers</h3>
         <TABLE>
-            <TR><TH>Key</TH><TH>Value</TH></TR>
+            <TR><TH>Key</TH><TH>Value</TH><TH></TH></TH></TR>
         {% for header in check.headers %}
-        <TR><TD>{{header.key}}</TD><TD>{{header.value}}</TD></TR>
+        <TR id="h_row_{{header.id}}">
+            <TD>{{header.key}}</TD>
+            <TD>{{header.value}}</TD>
+            <TD>
+                <button onclick="delete_header('{{header.id}}')">Delete</button>
+            </TD>
+        </TR>
         {% endfor %}
         </TABLE>
         <div class="add-to"><a href="{{ url_for('checks.new_header', check_id=check.id) }}">Add Header</a></div>

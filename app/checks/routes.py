@@ -140,16 +140,33 @@ def new():
         db.session.commit()
        
         return redirect(url_for('checks.index'))
+
 @bp.route('remove_detector', methods=["POST"])
 @login_required
 def remove_detector():
     check_id = request.form["check_id"]
+    if current_user.id != check.user.id:
+        return "", 404
+
     anomaly_detector_id = request.form["anomaly_detector_id"]
     check = Check.query.get(check_id)
+
     anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
     check.anomaly_detectors.remove(anomaly_detector)
     db.session.commit()
     return redirect(url_for('checks.index'))
+
+@bp.route('delete_header', methods=["POST"])
+@login_required
+def delete_header():
+    header_id = request.form["header_id"]
+    header = Header.query.get(header_id)
+    if current_user.id != header.check.user.id:
+        return "", 404
+    else:
+        db.session.delete(header)
+        db.session.commit()
+        return "",200
 
 @bp.route('<check_id>/edit', methods=["GET", "POST"])
 @login_required
