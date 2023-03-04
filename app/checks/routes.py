@@ -101,10 +101,10 @@ ORDER BY id, binned
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
     results = table.to_pandas()
-
     _add_names_col(results)
+    results.rename(columns={'binned':'time'},inplace=True)
     
-    fig = px.line(results, x='binned', y='error_rate', color='name', title="Check Error Rates")
+    fig = px.line(results, x='time', y='error_rate', color='name', title="Check Error Rates")
     return pio.to_html(fig, 
                         config=None, 
                         auto_play=True, 
@@ -208,8 +208,9 @@ ORDER BY id, binned
     table = reader.read_all()
     results = table.to_pandas()
     _add_names_col(results)
+    results.rename(columns={'binned':'time'}, inplace=True)
 
-    fig = px.line(results, x='binned', y='elapsed', color='name', title="Check Latencies")
+    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
