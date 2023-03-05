@@ -5,7 +5,6 @@
     $("#checks-nav").addClass("selected-nav");
 
     function remove_anomaly_dector(ad_id, check_id){
-        
         $.ajax({
         url: "{{url_for('checks.remove_detector')}}",
         type: "post",
