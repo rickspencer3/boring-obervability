@@ -7,5 +7,7 @@
   </script>
   
     <h2>{% block title %}Headers{% endblock %}</h2>
-
+    {% for header in headers %}
+    <div>{{header.name}}:{{header.key}}:{{header.value}}</div>
+    {% endfor %}
     {% endblock %}

@@ -15,4 +15,5 @@ def new(id):
 @bp.route('/', methods=["GET","POST"])
 @login_required
 def index():
-    return render_template('headers/index.html')
+    headers = current_user.headers
+    return render_template('headers/index.html', headers = headers)

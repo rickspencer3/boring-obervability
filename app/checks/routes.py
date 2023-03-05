@@ -45,9 +45,12 @@ def new_header(check_id):
     if request.method == "GET":
         return render_template('headers/new.html')
     elif request.method == "POST":
-        header = Header(key = request.form['key'], 
-                        value = request.form['value'],
-                        check_id = check_id)
+        header = Header(name = request.form['name'],
+                        key = request.form['key'], 
+                        value = request.form['value'])
+        header.user = current_user
+        check = Check.query.get(check_id)
+        check.headers.append(header)
         db.session.add(header)
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))
