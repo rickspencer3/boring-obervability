@@ -11,3 +11,8 @@ def new(id):
 
     if request.method == "POST":
         return redirect(url_for('checks.index'))
+
+@bp.route('/', methods=["GET","POST"])
+@login_required
+def index():
+    return render_template('headers/index.html')
