@@ -159,15 +159,18 @@ def remove_detector():
     db.session.commit()
     return redirect(url_for('checks.index'))
 
-@bp.route('delete_header', methods=["POST"])
+@bp.route('remove_header', methods=["POST"])
 @login_required
-def delete_header():
+def remove_header():
     header_id = request.form["header_id"]
     header = Header.query.get(header_id)
-    if current_user.id != header.check.user.id:
+    check_id = request.form["check_id"]
+    check = Check.query.get(check_id)
+
+    if current_user.id != header.user_id or current_user.id != check.user.id:
         return "", 404
     else:
-        db.session.delete(header)
+        check.headers.remove(header)
         db.session.commit()
         return "",200
 

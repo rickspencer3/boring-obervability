@@ -12,11 +12,11 @@
         done: $("#ad_row_" + ad_id).remove()
     });}
 
-    function delete_header(header_id){
+    function remove_header(header_id, check_id){
         $.ajax({
-        url: "{{url_for('checks.delete_header')}}",
+        url: "{{url_for('checks.remove_header')}}",
         type: "post",
-        data: {"header_id":header_id},
+        data: {"header_id":header_id, "check_id":check_id},
         done: $("#h_row_" + header_id).remove()
     });
     }
@@ -57,7 +57,7 @@
             <TD>{{header.key}}</TD>
             <TD>{{header.value}}</TD>
             <TD>
-                <button onclick="delete_header('{{header.id}}')">Delete</button>
+                <button onclick="remove_header('{{header.id}}','{{check.id}}')">Remove</button>
             </TD>
         </TR>
         {% endfor %}
