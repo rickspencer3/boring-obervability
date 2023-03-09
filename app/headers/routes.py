@@ -20,6 +20,34 @@ def new(id=None):
         db.session.commit()
         return redirect(url_for('headers.index'))
 
+@bp.route('/<header_id>', methods=["GET"])
+@login_required
+def details(header_id):
+    header = Header.query.get(header_id)
+    if header.user_id != current_user.id:
+        return "", 404
+    return render_template('headers/details.html', header=header)
+
+@bp.route('/<header_id>/edit', methods=["GET","POST"])
+@login_required
+def edit(header_id):
+    header = Header.query.get(header_id)
+    if header.user_id != current_user.id:
+        return "", 404
+    if request.method == "GET":
+        return render_template('headers/edit.html', header=header)
+    elif request.method == "POST":
+        header.name = request.form["name"]
+        header.key = request.form["key"]
+        header.value = request.form["value"]
+        db.session.commit()
+        return redirect(url_for('headers.details', header_id=header.id))
+
+@bp.route('/<header_id>/delete', methods=["POST"])
+@login_required
+def delete(header_id):
+    return redirect(url_for('headers.index'))
+
 @bp.route('/', methods=["GET","POST"])
 @login_required
 def index():

@@ -15,9 +15,10 @@
   </TR>
   {% for header in headers %}
   <TR>
-    <TD>{{header.name}}</TD>
+    <TD><a href="{{ url_for('headers.details', header_id=header.id) }}">{{header.name}}</a></TD>
     <TD>{{header.key}}</TD>
     <TD>{{header.value}}</TD>
+    <TD></TD>
   </TR>
   {% endfor %}
 </table>
