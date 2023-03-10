@@ -51,9 +51,10 @@
         
         <h3>Headers</h3>
         <TABLE>
-            <TR><TH>Key</TH><TH>Value</TH><TH></TH></TH></TR>
+            <TR><TH>Name</TH><TH>Key</TH><TH>Value</TH><TH></TH></TH></TR>
         {% for header in check.headers %}
         <TR id="h_row_{{header.id}}">
+            <TD>{{header.name}}</TD>
             <TD>{{header.key}}</TD>
             <TD>{{header.value}}</TD>
             <TD>
