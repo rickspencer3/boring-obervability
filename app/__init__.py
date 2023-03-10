@@ -28,8 +28,8 @@ def create_app(config_class=Config):
     # associate models here
     User.checks = db.relationship(
         "Check", order_by=Check.id, back_populates="user")
-    Check.headers = db.relationship(
-        "Header", order_by=Header.id, back_populates="check")
+    User.headers = db.relationship(
+        "Header", order_by=Header.id, back_populates="user")
     User.anomaly_detectors = db.relationship(
         "AnomalyDetector", order_by=AnomalyDetector.id, back_populates="user")
     User.notification_channels = db.relationship(

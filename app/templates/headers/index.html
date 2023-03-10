@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+  $("#headers-nav").addClass("selected-nav");
+
+</script>
+
+<h2>{% block title %}Headers{% endblock %}</h2>
+<table>
+  <TR>
+    <TH>Name</TH>
+    <TH>Key</TH>
+    <TH>Value</TH>
+  </TR>
+  {% for header in headers %}
+  <TR>
+    <TD><a href="{{ url_for('headers.details', header_id=header.id) }}">{{header.name}}</a></TD>
+    <TD>{{header.key}}</TD>
+    <TD>{{header.value}}</TD>
+  </TR>
+  {% endfor %}
+</table>
+
+<a href="{{ url_for('headers.new') }}">Add Header</a>
+{% endblock %}

@@ -1,9 +1,11 @@
 from app.extensions import db
-
+from app.models.header_check import header_check
 class Header(db.Model):
     __tablename__ = 'headers'
     id = db.Column(db.Integer, primary_key = True)
-    check_id = db.Column(db.Integer, db.ForeignKey('checks.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    name = db.Column(db.String(100))
     key = db.Column(db.String(100))
     value = db.Column(db.String(100))
-    check = db.relationship("Check", back_populates = "headers")
+    user = db.relationship("User", back_populates = "headers")
+    checks = db.relationship('Check', secondary=header_check, backref='headers', uselist=False)

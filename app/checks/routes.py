@@ -41,14 +41,15 @@ def add_anomaly_detector(check_id):
 
 @bp.route('/<check_id>/headers', methods=["GET","POST"])
 @login_required
-def new_header(check_id):
+def add_header(check_id):
+    check = Check.query.get(check_id)
     if request.method == "GET":
-        return render_template('headers/new.html')
+        headers = current_user.headers
+        return render_template('checks/add_header.html', check=check, headers=headers)
     elif request.method == "POST":
-        header = Header(key = request.form['key'], 
-                        value = request.form['value'],
-                        check_id = check_id)
-        db.session.add(header)
+        header = Header.query.get(request.form["header_id"])
+        check.headers.append(header)
+        db.session.add(check)
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))
 
@@ -156,15 +157,18 @@ def remove_detector():
     db.session.commit()
     return redirect(url_for('checks.index'))
 
-@bp.route('delete_header', methods=["POST"])
+@bp.route('remove_header', methods=["POST"])
 @login_required
-def delete_header():
+def remove_header():
     header_id = request.form["header_id"]
     header = Header.query.get(header_id)
-    if current_user.id != header.check.user.id:
+    check_id = request.form["check_id"]
+    check = Check.query.get(check_id)
+
+    if current_user.id != header.user_id or current_user.id != check.user.id:
         return "", 404
     else:
-        db.session.delete(header)
+        check.headers.remove(header)
         db.session.commit()
         return "",200
 

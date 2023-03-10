@@ -7,7 +7,12 @@
 <h2>{% block title %}Add Header{% endblock %}</h2>
 <form method="post">
     <div class="input-div">
-        <label for="name">Key</label>
+        <label for="name">Name</label>
+        <br>
+        <input type="text" name="name" placeholder="" value="{{ request.form['name'] }}"></input>
+    </div>    
+    <div class="input-div">
+        <label for="key">Key</label>
         <br>
         <input type="text" name="key" placeholder="" value="{{ request.form['key'] }}"></input>
     </div>

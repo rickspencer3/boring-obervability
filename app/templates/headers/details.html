@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    $("#headers-nav").addClass("selected-nav");
+</script>
+
+<H2>{% block title %}{{header.name}}{% endblock %}</H2>
+<TABLE>
+    <TR>
+        <TD>Name</TD>
+        <TD>{{header.name}}</TD>
+    </TR>
+    <TR>
+        <TD>Key</TD>
+        <TD>{{header.key}}</TD>
+    </TR>
+    <TR>
+        <TD>Value</TD>
+        <TD>{{header.value}}</TD>
+    </TR>
+</TABLE>
+<A HREF="{{url_for('headers.edit', header_id=header.id)}}">Edit</A>
+<FORM method="post" action="{{url_for('headers.delete', header_id=header.id)}}">
+    <BUTTON type="submit">Delete</BUTTON>
+</FORM>
+{% endblock %}
