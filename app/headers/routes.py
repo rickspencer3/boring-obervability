@@ -46,6 +46,11 @@ def edit(header_id):
 @bp.route('/<header_id>/delete', methods=["POST"])
 @login_required
 def delete(header_id):
+    header = Header.query.get(header_id)
+    if header.user_id != current_user.id:
+        return "",400
+    db.session.delete(header)
+    db.session.commit()
     return redirect(url_for('headers.index'))
 
 @bp.route('/', methods=["GET","POST"])
