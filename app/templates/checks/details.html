@@ -63,6 +63,7 @@
         </TR>
         {% endfor %}
         </TABLE>
-        <div class="add-to"><a href="{{ url_for('checks.new_header', check_id=check.id) }}">Add Header</a></div>
+
+        <div class="add-to"><a href="{{ url_for('checks.add_header', check_id=check.id) }}">Add Header</a></div>
     </div>
 {% endblock %}
