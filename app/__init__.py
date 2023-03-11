@@ -63,6 +63,8 @@ def create_app(config_class=Config):
     # schedule the checks
     scheduler = BackgroundScheduler()
 
+    # go ahead and run the checks one, then schedule
+    run_checks()
     with app.app_context():
             scheduler.add_job(run_checks, 'interval',   minutes=1)
             app.logger.info({"action":"registered_job"})
