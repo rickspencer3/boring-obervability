@@ -1,5 +1,8 @@
 from flask import render_template, request, redirect, url_for
 from flask_user import login_required, current_user
+from requests import request as http_request
+from html import escape
+
 from app.checks import bp
 from app.models.checks import Check
 from app.models.headers import Header
@@ -59,10 +62,44 @@ def enabled():
     check_id = request.form.get('check_id')
     enabled = request.form.get('enabled') == 'true'
     check = Check.query.get(check_id)
+    if(check.user.id != current_user.id):
+        return "", 404
     
     check.enabled = enabled
     db.session.commit()
     return "success", 200
+
+@bp.route('/test', methods=["POST"])
+@login_required
+def test():
+    check_id = request.form.get('check_id')
+    check = Check.query.get(check_id)
+    if(check.user.id != current_user.id):
+        return "", 404
+    headers = {}
+    for header in check.headers:
+        headers[header.key] = header.value
+    check_response = http_request(method=check.method, 
+                        url=check.url,
+                        data=check.content,
+                        headers=headers)
+
+    log_dict = {"check_id":check.id,
+                "check_name":check.name,
+                "anomaly_dectors": len(check.anomaly_detectors),
+                "response_text":check_response.text,
+                "test":True
+                }
+    db.app.logger.info(log_dict)
+    html = f"""
+<div>Test Result</div>
+<TABLE>
+<TR><TD>response code</TD><TD>{check_response.status_code}</TD></TR>
+<TR><TD>response latency (secoonds)</TD><TD>{check_response.elapsed.total_seconds()}</TD></TR>
+<TR><TD>response text</TD><TD>{escape(check_response.text)}</TD></TR>
+</TABLE>
+    """
+    return html, 200
 
 @bp.route('/latency_graph/<time_range>', methods=["GET"])
 @login_required
