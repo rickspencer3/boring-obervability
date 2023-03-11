@@ -53,6 +53,17 @@ def add_header(check_id):
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))
 
+@bp.route('/enabled', methods=["POST"])
+@login_required
+def enabled():
+    check_id = request.form.get('check_id')
+    enabled = request.form.get('enabled') == 'true'
+    check = Check.query.get(check_id)
+    
+    check.enabled = enabled
+    db.session.commit()
+    return "success", 200
+
 @bp.route('/latency_graph/<time_range>', methods=["GET"])
 @login_required
 def latency_graph(time_range=None):
