@@ -3,16 +3,31 @@
 {% block content %}
 <script>
   $("#checks-nav").addClass("selected-nav");
+
+  function toggleEnabled(cb, check_id){
+        enabled = cb.checked;
+        $.ajax({
+        url: "{{url_for('checks.enabled')}}",
+        type: "post",
+        data: {"check_id":check_id, "enabled":enabled},
+    });
+    }
 </script>
 <h2>{% block title %}Checks{% endblock %}</h2>
 <div>
   <table>
     <TR>
       <TH>Check Name</TH>
+      <TH>Enabled</TH>
     </TR>
     {% for check in checks %}
     <TR>
       <TD><a href="{{ url_for('checks.details', check_id=check.id) }}">{{check.name}}</a>
+      {% if check.enabled %}
+      <TD><input type="checkbox" id="{{check.id}}" onchange="toggleEnabled(this, '{{check.id}}')" checked /></TD>
+      {% else %}
+      <TD><input type="checkbox" id="{{check.id}}" onchange="toggleEnabled(this, '{{check.id}}')" /></TD>
+      {% endif %}
 </div>
 {% endfor %}
 </TD>

@@ -5,7 +5,8 @@ from app.notify import notify
 
 def run_checks():
     with db.app.app_context():
-        checks = Check.query.all()
+        checks = Check.query.filter_by(enabled=True).all()
+
         for check in checks:
             headers = {}
             for header in check.headers:

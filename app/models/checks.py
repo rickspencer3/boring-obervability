@@ -9,3 +9,4 @@ class Check(db.Model):
     content = db.Column(db.String(600))
     method = db.Column(db.String(10))
     user = db.relationship("User", back_populates = "checks")
+    enabled = db.Column(db.Boolean, default=True)
