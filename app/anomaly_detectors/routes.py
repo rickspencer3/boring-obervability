@@ -4,6 +4,7 @@ from app.anomaly_detectors import bp
 from app.extensions import db
 from app.models.anomaly_detectors import AnomalyDetector
 from app.models.checks import Check
+from app.models.notification_channels import NotificationChannel
 from config import Config
 
 
@@ -48,9 +49,8 @@ def edit(anomaly_detector_id):
         anomaly_detector.name = request.form['name']
         anomaly_detector.value = request.form['value']
         anomaly_detector.type = request.form['type']
-        anomaly_detector.notification_channel_id = request.form['channel']
         db.session.commit()
-        return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector_id))
+        return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id))
 
 @bp.route('/issues/<time_range>')
 @login_required
@@ -121,3 +121,32 @@ def new():
         db.session.add(new_anomaly_detector)
         db.session.commit()
         return redirect(url_for('anomaly_detectors.index'))
+
+@bp.route('/<anomaly_detector_id>/notification_channels', methods=["GET","POST"])
+@login_required
+def add_notification_channel(anomaly_detector_id):
+    anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
+    if anomaly_detector.user.id != current_user.id:
+        return "", 404
+
+    if request.method == "GET":
+        channels = current_user.notification_channels
+        return render_template('anomaly_detectors/add_notification_channel.html', anomaly_detector=anomaly_detector, channels=channels)
+    elif request.method == "POST":
+        notification_channel = NotificationChannel.query.get(request.form["channel_id"])
+        if notification_channel.user.id != current_user.id:
+            return "",404
+        anomaly_detector.notification_channels.append(notification_channel)
+        db.session.add(anomaly_detector)
+        db.session.commit()
+        return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id))
+    
+@bp.route('remove_notification_channel', methods=["POST"])
+@login_required
+def remove_notification_channel():
+    anomaly_detector = request.form["anomaly_detector_id"]
+    notification_channel = NotificationChannel.query.get(request.form["anomaly_detector_id"])
+    
+    anomaly_detector.remove(notification_channel)
+    db.session.commit()
+    return "success", 200

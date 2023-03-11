@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    $("#checks-nav").addClass("selected-nav");
+</script>
+
+<h2>{% block title %}Add Notification Channel to {{anomaly_detector.name}}{% endblock %}</h2>
+<FORM method="post">
+    <div class="input-div">
+        <label for="channel_id">Choose Channel</label>
+        <BR>
+        <select name="channel_id" id="channel_id">
+            {% for channel in channels %}
+            <option value="{{channel.id}}">{{channel.name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit">Submit</button>
+    </FROM>
+
+    {% endblock %}

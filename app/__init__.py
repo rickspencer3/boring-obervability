@@ -10,7 +10,7 @@ from app.models.headers import Header
 from app.models.notification_channels import NotificationChannel
 from app.models.anomaly_detectors import AnomalyDetector
 from app.check_job import run_checks
-
+import app.models.anomaly_detector_notification_channel
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_migrate import Migrate
 
@@ -34,8 +34,6 @@ def create_app(config_class=Config):
         "AnomalyDetector", order_by=AnomalyDetector.id, back_populates="user")
     User.notification_channels = db.relationship(
         "NotificationChannel", order_by=NotificationChannel.id, back_populates="user")
-    NotificationChannel.anomaly_detectors = db.relationship(
-        "AnomalyDetector", order_by=AnomalyDetector.id, back_populates="notification_channel")
 
     with app.app_context():
         db.create_all()
