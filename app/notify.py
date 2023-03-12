@@ -32,9 +32,8 @@ def _compare_latency(log_dict, anomaly_detector, response):
 def _handle_anonaly(anomaly_detector, log_dict):
     _write_anomaly_to_influxdb(anomaly_detector, log_dict)
 
-    for notification_channel in anomaly_detector.notifications_channels:
-        if not anomaly_detector.notification_channel.enabled:
-            channel = anomaly_detector.notification_channel
+    for channel in anomaly_detector.notification_channels:
+        if channel.enabled:
             log_dict["channel_name"] = channel.name
             log_dict["channel_type"] = channel.type
             current_app.logger.info(log_dict)
@@ -45,7 +44,7 @@ def _handle_anonaly(anomaly_detector, log_dict):
                                 body=json.dumps(log_dict),
                                 recipients=[channel.value])
                 mail.send(message)
-            _write_notification_to_influxdb(anomaly_detector.notification_channel, log_dict)
+            _write_notification_to_influxdb(channel, log_dict)
 
 def _write_anomaly_to_influxdb(anomaly_detector, log_dict):
     lp = f"anomalies,check={log_dict['check_id']},type={log_dict['anomaly_detector_type']},user_id={anomaly_detector.user_id},id={anomaly_detector.id} value={log_dict['anomaly_detector_value']}"
