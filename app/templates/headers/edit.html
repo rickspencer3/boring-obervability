@@ -3,6 +3,24 @@
 {% block content %}
 <script>
     $("#checks-nav").addClass("selected-nav");
+
+    function confirm_and_delete(){
+              name = "{{header.name}}";
+              id = "{{header.id}}"
+              msg = "Are you sure you want to delete header " + name + "?";
+              msg += "\nThis action cannot be undone."
+              confirmed = confirm(msg);
+              if(confirmed){
+                     $.ajax({
+                     url: "{{url_for('headers.delete')}}",
+                     type: "post",
+                     data: {"header_id":id},
+                     success: function (data){
+                            window.location.replace("{{url_for('headers.index')}}");
+                     }
+                     });
+              }
+       }
 </script>
 <h2>{% block title %}Edit Header{% endblock %}</h2>
 <form method="post">
@@ -25,7 +43,6 @@
     <button type="submit">Sumbit</button>
 </form>
 <HR>
-<FORM method="post" action="{{url_for('headers.delete', header_id=header.id)}}">
-    <BUTTON type="submit">DELETE HEADER</BUTTON>
-</FORM>
+<BUTTON onclick="confirm_and_delete()">DELETE HEADER</BUTTON>
+
 {% endblock %}

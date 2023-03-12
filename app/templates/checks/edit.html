@@ -3,6 +3,23 @@
 {% block content %}
 <script>
        $("#checks-nav").addClass("selected-nav");
+       function confirm_and_delete(){
+              name = "{{check.name}}";
+              id = "{{check.id}}"
+              msg = "Are you sure you want to delete check " + name + "?";
+              msg += "\nThis action cannot be undone."
+              confirmed = confirm(msg);
+              if(confirmed){
+                     $.ajax({
+                     url: "{{url_for('checks.delete')}}",
+                     type: "post",
+                     data: {"check_id":id},
+                     success: function (data){
+                            window.location.replace("{{url_for('checks.index')}}");
+                     }
+                     });
+              }
+       }
 </script>
 <h2>{% block title %}Edit Check "{{check.name}}"{% endblock %}</h2>
 <form method="post">
@@ -30,7 +47,6 @@
        <button type=" submit">Submit</button>
 </form>
 <HR>
-<FORM method="post" action="{{url_for('checks.delete', check_id=check.id)}}">
-       <BUTTON type="submit">DELETE CHECK</BUTTON>
-</FORM>
+<BUTTON onclick="confirm_and_delete()">DELETE CHECK</BUTTON>
+
 {% endblock %}

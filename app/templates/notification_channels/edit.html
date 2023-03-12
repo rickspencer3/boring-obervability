@@ -3,6 +3,24 @@
 {% block content %}
 <script>
     $("#channels-nav").addClass("selected-nav");
+
+    function confirm_and_delete(){
+              name = "{{notification_channel.name}}";
+              id = "{{notification_channel.id}}"
+              msg = "Are you sure you want to delete notification channel " + name + "?";
+              msg += "\nThis action cannot be undone."
+              confirmed = confirm(msg);
+              if(confirmed){
+                     $.ajax({
+                     url: "{{url_for('notification_channels.delete')}}",
+                     type: "post",
+                     data: {"notification_channel_id":id},
+                     success: function (data){
+                            window.location.replace("{{url_for('notification_channels.index')}}");
+                     }
+                     });
+              }
+       }
 </script>
 <div>
     <h2>{% block title %}Edit Notification Channel{% endblock %}</h2>
@@ -36,7 +54,6 @@
     </form>
 </div>
 <HR>
-    <FORM method="post" action="{{url_for('notification_channels.delete', channel_id=notification_channel.id)}}">
-        <BUTTON type="submit">DELETE NOTIFICATION CHANNEL</BUTTON>
-    </FORM>
+    <BUTTON onclick="confirm_and_delete()">DELETE NOTIFICATION CHANNEL</BUTTON>
+
 {% endblock %}
