@@ -31,6 +31,8 @@ def details(anomaly_detector_id):
 @login_required
 def delete(anomaly_detector_id):
     anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
+    if anomaly_detector.user.id != current_user.id:
+        return "", 404
     if anomaly_detector.user_id == current_user.id:
         db.session.delete(anomaly_detector)
         db.session.commit()
@@ -115,9 +117,11 @@ def new():
             name=request.form['name'],
             type=request.form['type'],
             value=request.form['value'],
-            notification_channel_id=request.form['channel'],
             user_id=current_user.id
         )
+        if request.form["channel"] is not None:
+            channel = NotificationChannel.query.get(request.form["channel"])
+            new_anomaly_detector.notification_channels.append(channel)
         db.session.add(new_anomaly_detector)
         db.session.commit()
         return redirect(url_for('anomaly_detectors.index'))

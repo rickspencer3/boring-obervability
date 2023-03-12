@@ -8,4 +8,4 @@ class Header(db.Model):
     key = db.Column(db.String(100))
     value = db.Column(db.String(100))
     user = db.relationship("User", back_populates = "headers")
-    checks = db.relationship('Check', secondary=header_check, backref='headers', uselist=False)
+    checks = db.relationship('Check', secondary=header_check, backref='headers')

@@ -25,6 +25,7 @@ def create_app(config_class=Config):
     mail.init_app(app)
     app.influxdb_write = influxdb_write
     migrate.init_app(app, db)
+    
     # associate models here
     User.checks = db.relationship(
         "Check", order_by=Check.id, back_populates="user")

@@ -9,5 +9,5 @@ class NotificationChannel(db.Model):
     type = db.Column(db.String(20))
     enabled = db.Column(db.Boolean, default=True)
     user = db.relationship("User", back_populates = "notification_channels")
-    anomaly_detectors = db.relationship('AnomalyDetector', secondary=anomaly_detector_notification_channel, backref='notification_channels', uselist=False)
+    anomaly_detectors = db.relationship('AnomalyDetector', secondary=anomaly_detector_notification_channel, backref='notification_channels')
     
