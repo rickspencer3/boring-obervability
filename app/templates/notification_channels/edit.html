@@ -35,4 +35,8 @@
         <button type="submit">Submit</button>
     </form>
 </div>
+<HR>
+    <FORM method="post" action="{{url_for('notification_channels.delete', channel_id=notification_channel.id)}}">
+        <BUTTON type="submit">DELETE NOTIFICATION CHANNEL</BUTTON>
+    </FORM>
 {% endblock %}

@@ -43,7 +43,4 @@
 <BR>
 <A HREF="{{url_for('anomaly_detectors.add_notification_channel', anomaly_detector_id=anomaly_detector.id)}}">Add Notification Channel</A>
 
-<FORM method="post" action="{{url_for('anomaly_detectors.delete', anomaly_detector_id=anomaly_detector.id)}}">
-    <BUTTON type="submit">Delete Anomaly Detector</BUTTON>
-</FORM>
 {% endblock %}
