@@ -27,16 +27,16 @@ def details(anomaly_detector_id):
         return render_template('anomaly_detectors/details.html', anomaly_detector=anomaly_detector)
 
 
-@bp.route('/<anomaly_detector_id>/delete', methods=["POST"])
+@bp.route('delete', methods=["POST"])
 @login_required
-def delete(anomaly_detector_id):
-    anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
+def delete():
+    anomaly_detector = AnomalyDetector.query.get(request.form["anomaly_detector_id"])
     if anomaly_detector.user.id != current_user.id:
         return "", 404
     if anomaly_detector.user_id == current_user.id:
         db.session.delete(anomaly_detector)
         db.session.commit()
-    return redirect(url_for('anomaly_detectors.index'))
+    return "success", 200
 
 
 @bp.route('<anomaly_detector_id>/edit', methods=["GET", "POST"])

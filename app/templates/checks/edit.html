@@ -10,7 +10,6 @@
               msg += "\nThis action cannot be undone."
               confirmed = confirm(msg);
               if(confirmed){
-                     console.log("deleting");
                      $.ajax({
                      url: "{{url_for('checks.delete')}}",
                      type: "post",

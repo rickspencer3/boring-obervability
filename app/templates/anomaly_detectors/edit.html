@@ -3,6 +3,23 @@
 {% block content %}
 <script>
     $("#detectors-nav").addClass("selected-nav");
+
+    function confirm_and_delete(){
+              name = "{{anomaly_detector.name}}";
+              id = "{{anomaly_detector.id}}"
+              msg = "Are you sure you want to delete Anomaly Detector " + name + "?";
+              msg += "\nThis action cannot be undone."
+              confirmed = confirm(msg);
+              if(confirmed){
+                     $.ajax({
+                     url: "{{url_for('anomaly_detectors.delete')}}",
+                     type: "post",
+                     data: {"anomaly_detector_id":id},
+                     success: function (data){
+                            window.location.replace("{{url_for('anomaly_detectors.index')}}");
+                     }
+                     });}
+              }
 </script>
 
 <h2>{% block title %}Edit Anomamly Detector{% endblock %}</h2>
@@ -34,7 +51,5 @@
     <button type="submit">Submit</button>
 </FORM>
 <HR>
-    <FORM method="post" action="{{url_for('anomaly_detectors.delete', anomaly_detector_id=anomaly_detector.id)}}">
-        <BUTTON type="submit">DELETE ANOMALY DETECTOR</BUTTON>
-    </FORM>
+    <BUTTON onclick="confirm_and_delete()">DELETE ANOMALY DETECTOR</BUTTON>
 {% endblock %}
