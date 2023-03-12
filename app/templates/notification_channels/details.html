@@ -14,9 +14,6 @@
         <TD>email or phone number</TD><TD>{{notification_channel.value}}</TD>
     </TR>
 </TABLE>
-<FORM method="post" action="{{url_for('notification_channels.delete', channel_id=notification_channel.id)}}">
-    <BUTTON type="submit">Delete Notification Channel</BUTTON>
-</FORM>
 
 <div><A HREF="{{url_for('notification_channels.edit', channel_id=notification_channel.id)}}">edit</A></div>
 <H3>Used by the Following Anomaly Detectors</H3>

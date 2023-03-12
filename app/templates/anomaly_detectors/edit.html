@@ -33,4 +33,8 @@
 
     <button type="submit">Submit</button>
 </FORM>
+<HR>
+    <FORM method="post" action="{{url_for('anomaly_detectors.delete', anomaly_detector_id=anomaly_detector.id)}}">
+        <BUTTON type="submit">DELETE ANOMALY DETECTOR</BUTTON>
+    </FORM>
 {% endblock %}
