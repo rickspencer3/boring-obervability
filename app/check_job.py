@@ -16,8 +16,15 @@ def run_checks():
                                     url=check.url,
                                     data=check.content,
                                     headers=headers)
-            except:
-                pass
+            except Exception as e:
+                error_log_dict = {
+                    "check_id":check.id,
+                    "check_name":check.name,
+                    "exception": str(e)
+                }
+                db.app.logger.error(error_log_dict)
+                break
+            
             log_dict = {"check_id":check.id,
                         "check_name":check.name,
                         "anomaly_dectors": len(check.anomaly_detectors),
