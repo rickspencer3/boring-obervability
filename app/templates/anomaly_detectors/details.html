@@ -4,8 +4,15 @@
 <script>
     $("#detectors-nav").addClass("selected-nav");
     function remove_notification_channel(channel_id, anomaly_detector_id) {
-        alert(channel_id)
+        $.ajax({
+            url: "{{url_for('anomaly_detectors.remove_notification_channel')}}",
+            type: "post",
+            data: { "anomaly_detector_id": anomaly_detector_id, 
+                    "notification_channel_id": channel_id },
+            done: $("#ch_row_" + channel_id).remove()
+        });
     }
+    
 </script>
 
 <H2>{% block title %}{{anomaly_detector.name}}{% endblock %}</H2>
@@ -25,7 +32,7 @@
 <H2>Notification Channels</H2>
 <TABLE>
     {% for channel in anomaly_detector.notification_channels %}
-    <TR>
+    <TR id="ch_row_{{channel.id}}">
         <TD>{{ channel.name }}</TD>
         <TD>
             <button onclick="remove_notification_channel('{{channel.id}}','{{anomaly_detector.id}}')">Remove</button>

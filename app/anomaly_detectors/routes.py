@@ -140,13 +140,16 @@ def add_notification_channel(anomaly_detector_id):
         db.session.add(anomaly_detector)
         db.session.commit()
         return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id))
-    
+
 @bp.route('remove_notification_channel', methods=["POST"])
 @login_required
 def remove_notification_channel():
-    anomaly_detector = request.form["anomaly_detector_id"]
-    notification_channel = NotificationChannel.query.get(request.form["anomaly_detector_id"])
-    
-    anomaly_detector.remove(notification_channel)
+    anomaly_detector = AnomalyDetector.query.get(request.form["anomaly_detector_id"])
+    notification_channel = NotificationChannel.query.get(request.form["notification_channel_id"])
+
+    if anomaly_detector.user_id != current_user.id:
+        return "", 404
+
+    anomaly_detector.notification_channels.remove(notification_channel)
     db.session.commit()
-    return "success", 200
+    return "",200
