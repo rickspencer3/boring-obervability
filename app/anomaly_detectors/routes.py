@@ -115,9 +115,11 @@ def new():
             name=request.form['name'],
             type=request.form['type'],
             value=request.form['value'],
-            notification_channel_id=request.form['channel'],
             user_id=current_user.id
         )
+        if request.form["channel"] is not None:
+            channel = NotificationChannel.query.get(request.form["channel"])
+            new_anomaly_detector.notification_channels.append(channel)
         db.session.add(new_anomaly_detector)
         db.session.commit()
         return redirect(url_for('anomaly_detectors.index'))

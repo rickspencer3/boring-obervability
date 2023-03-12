@@ -20,7 +20,7 @@
         <TR><TH>Name</TH><TH>Type</TH><TH>Value</TH><TH>Enable</TH></TR>
         {% for channel in notification_channels %}
         <TR>
-            <TD>{{channel.name}}</TD>
+            <TD><A HREF="{{url_for('notification_channels.details', channel_id=channel.id)}}">{{channel.name}}</A></TD>
             <TD>{{channel.type}}</TD>
             <TD>{{channel.value}}</TD>
             {% if channel.enabled %}

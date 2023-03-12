@@ -38,4 +38,11 @@ def new():
         db.session.commit()
         return redirect(url_for('notification_channels.index'))
 
+@bp.route('<channel_id>/details', methods=["GET"])
+@login_required
+def details(channel_id):
+    notification_channel = NotificationChannel.query.get(channel_id)
+    if notification_channel.user.id != current_user.id:
+        return "", 404
+    return render_template('notification_channels/details.html', notification_channel=notification_channel)
     
