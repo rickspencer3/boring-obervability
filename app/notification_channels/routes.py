@@ -61,3 +61,13 @@ def edit(channel_id):
         notification_channel.value = request.form["value"]
         db.session.commit()
         return redirect(url_for('notification_channels.details', channel_id = channel_id))
+
+@bp.route('<channel_id>/delete', methods=["POST"])
+@login_required
+def delete(channel_id):
+    notification_channel = NotificationChannel.query.get(channel_id)
+    if notification_channel.user.id != current_user.id:
+        return "", 404
+    db.session.delete(notification_channel)
+    db.session.commit()
+    return redirect(url_for('notification_channels.index'))
