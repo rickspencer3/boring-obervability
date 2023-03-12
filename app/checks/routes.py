@@ -309,12 +309,14 @@ order by
                     validate=True, 
                     div_id=None)
 
-@bp.route('<check_id>/delete', methods=["POST"])
+@bp.route('/delete', methods=["POST"])
 @login_required
-def delete(check_id):
+def delete():
+    check_id = request.form["check_id"]
     check = Check.query.get(check_id)
     if current_user.id is not check.user.id:
         return "", 404
     db.session.delete(check)
     db.session.commit()
-    return redirect(url_for('checks.index'))
+
+    return "success", 200

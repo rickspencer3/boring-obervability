@@ -11,11 +11,13 @@ def run_checks():
             headers = {}
             for header in check.headers:
                 headers[header.key] = header.value
-            check_response = request(method=check.method, 
-                                url=check.url,
-                                data=check.content,
-                                headers=headers)
-
+            try:
+                check_response = request(method=check.method, 
+                                    url=check.url,
+                                    data=check.content,
+                                    headers=headers)
+            except:
+                pass
             log_dict = {"check_id":check.id,
                         "check_name":check.name,
                         "anomaly_dectors": len(check.anomaly_detectors),
