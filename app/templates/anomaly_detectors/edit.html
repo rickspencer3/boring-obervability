@@ -30,19 +30,7 @@
         <br>
         <input type="text" name="value" value="{{ anomaly_detector.value }}"></input>
     </div>
-    <div class="input-div">
-        <label for="channel">Notification Channel</label>
-        <br>
-        <select id="channel" name="channel">
-            {% for channel in anomaly_detector.user.notification_channels %}
-            {% if channel.id == anomaly_detector.notification_channel.id %}
-            <option value="{{channel.id}}" selected>{{channel.name}}</option>
-            {% else %}
-            <option value="{{channel.id}}">{{channel.name}}</option>
-            {% endif %}
-            {% endfor %}
-        </select>
-    </div>
+
     <button type="submit">Submit</button>
 </FORM>
 {% endblock %}

@@ -194,11 +194,11 @@ def new():
 @login_required
 def remove_detector():
     check_id = request.form["check_id"]
+    check = Check.query.get(check_id)
     if current_user.id != check.user.id:
         return "", 404
 
     anomaly_detector_id = request.form["anomaly_detector_id"]
-    check = Check.query.get(check_id)
 
     anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
     check.anomaly_detectors.remove(anomaly_detector)
