@@ -46,3 +46,18 @@ def details(channel_id):
         return "", 404
     return render_template('notification_channels/details.html', notification_channel=notification_channel)
     
+@bp.route('<channel_id>/edit', methods=["GET", "POST"])
+@login_required
+def edit(channel_id):
+    notification_channel = NotificationChannel.query.get(channel_id)
+    if notification_channel.user.id != current_user.id:
+        return "", 404
+
+    if request.method == "GET":
+        return render_template('notification_channels/edit.html', notification_channel=notification_channel)
+    elif request.method == "POST":
+        notification_channel.name = request.form["name"]
+        notification_channel.type = request.form["type"]
+        notification_channel.value = request.form["value"]
+        db.session.commit()
+        return redirect(url_for('notification_channels.details', channel_id = channel_id))

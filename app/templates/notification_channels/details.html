@@ -4,12 +4,20 @@
 <script>
     $("#channels-nav").addClass("selected-nav");
 </script>
-    <h2>{% block title %}{{notification_channel.name}}{% endblock %}</h2>
+    <h2>{% block title %}Notification Channel Details{% endblock %}</h2>
 <TABLE>
     <TR>
-        <TD>{{notification_channel.value}}</TD>
+        <TD>Name</TD><TD>{{notification_channel.name}}</TD>
+    </TR>
+    <TR><TD>Notification Type</TD><TD>{{notification_channel.type}}</TD></TR>
+    <TR>
+        <TD>email or phone number</TD><TD>{{notification_channel.value}}</TD>
     </TR>
 </TABLE>
-{{ notification_channel.anomaly_detectors }}
+<div><A HREF="{{url_for('notification_channels.edit', channel_id=notification_channel.id)}}">edit</A></div>
+<H3>Used by the Following Anomaly Detectors</H3>
+{% for detector in notification_channel.anomaly_detectors %}
+<div>{{detector.name}}</div>
+{% endfor %}
 
 {% endblock %}
