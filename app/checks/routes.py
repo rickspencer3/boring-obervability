@@ -114,6 +114,20 @@ def latency_graph(time_range=None):
         grph = _latency_graph_aggregated('1 hour', '1 week')
         return grph, 200
 
+def _check_ids_for_user():
+    checks = current_user.checks
+    list_str = "("
+    i = 0
+    while i < len(checks):
+        check = checks[i]
+        list_str += f"'{check.id}'"
+        if i < len(checks) - 1:
+            list_str += ","
+        i += 1
+    list_str += ")"
+
+    return list_str
+
 @bp.route('/status_graph/<time_range>', methods=["GET"])
 @login_required
 def status_graph(time_range=None):
@@ -137,7 +151,7 @@ SELECT
    SUM(CASE WHEN status >= 299 THEN 1 ELSE 0 END)::double / COUNT(status)::double  AS error_rate
 FROM checks
 WHERE time > now() - interval'{interval}'
-AND user_id = {current_user.id}
+AND id in {_check_ids_for_user()}
 GROUP BY id, binned
 ORDER BY id, binned
     """
@@ -246,7 +260,7 @@ SELECT
 
 FROM checks
 WHERE time > now() - INTERVAL '{time_range_start}'
-AND user_id = {current_user.id}
+AND id in {_check_ids_for_user()}
 GROUP BY id, binned
 ORDER BY id, binned
     """
@@ -282,7 +296,7 @@ select
 from checks where  
     time > now() - interval'60 minutes' 
 and 
-    user_id = {current_user.id}
+    id in {_check_ids_for_user()}
 order by 
     id, time
     """
