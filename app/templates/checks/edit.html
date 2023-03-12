@@ -28,6 +28,9 @@
        </div>
 
        <button type=" submit">Submit</button>
-
 </form>
+<HR>
+<FORM method="post" action="{{url_for('checks.delete', check_id=check.id)}}">
+       <BUTTON type="submit">DELETE CHECK</BUTTON>
+</FORM>
 {% endblock %}
