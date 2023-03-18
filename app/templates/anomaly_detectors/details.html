@@ -1,4 +1,4 @@
-{% from "macros.html" import nav_link %}
+{% from "macros.html" import nav_link, checks_table %} 
 {% extends 'base.html' %}
 
 {% block content %}
@@ -43,5 +43,6 @@
 </TABLE>
 <BR>
 <A HREF="{{url_for('anomaly_detectors.add_notification_channel', anomaly_detector_id=anomaly_detector.id)}}">Add Notification Channel</A>
-
+<HR>
+{{checks_table(anomaly_detector.checks)}}
 {% endblock %}

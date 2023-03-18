@@ -1,3 +1,4 @@
+{% from "macros.html" import checks_table %}
 {% extends 'base.html' %}
 
 {% block content %}
@@ -21,5 +22,5 @@
     </TR>
 </TABLE>
 <A HREF="{{url_for('headers.edit', header_id=header.id)}}">Edit</A>
-
+<HR>{{ checks_table( header.checks )}}
 {% endblock %}
