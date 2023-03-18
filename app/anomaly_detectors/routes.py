@@ -62,7 +62,8 @@ def issues_table(time_range=None):
     interval = {
         "h": "1 hour",
         "d": "1 day",
-        "w": "1 week"
+        "w": "1 week",
+        "m": "1 month"
     }[time_range]
     sql = f"select check, type, value, time from anomalies where user_id = {current_user.id} and time > now() - interval'{interval}' order by time desc"
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
