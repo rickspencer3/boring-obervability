@@ -1,4 +1,4 @@
-{% from "macros.html" import nav_link%}
+{% from "macros.html" import object_link%}
 {% extends 'base.html' %}
 
 {% block content %}
@@ -81,7 +81,7 @@
     </TR>
     {% for header in check.headers %}
     <TR id="h_row_{{header.id}}">
-        <TD>{{nav_link(url_for('headers.details', header_id=header.id),header.name)}}</TD>
+        <TD>{{object_link(url_for('headers.details', header_id=header.id),header.name)}}</TD>
         <TD>{{header.key}}</TD>
         <TD>{{header.value}}</TD>
         <TD>
@@ -101,7 +101,7 @@
     </TR>
     {% for anomaly_detector in check.anomaly_detectors %}
     <TR id="ad_row_{{anomaly_detector.id}}">
-        <TD>{{nav_link(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id),anomaly_detector.name)}}</TD>
+        <TD>{{object_link(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id),anomaly_detector.name)}}</TD>
         <TD>{{anomaly_detector.type}}</TD>
         <TD>
             <button onclick="remove_anomaly_dector('{{anomaly_detector.id}}','{{check.id}}')">Remove</button>

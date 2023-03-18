@@ -1,4 +1,4 @@
-{% from "macros.html" import nav_link %} 
+{% from "macros.html" import object_link %} 
 {% extends 'base.html' %}
 
 {% block content %}
@@ -23,7 +23,7 @@
 <TABLE>
     {% for detector in notification_channel.anomaly_detectors %}
         <TR><TD>
-            {{nav_link(url_for('anomaly_detectors.details',anomaly_detector_id=detector.id),detector.name)}}
+            {{object_link(url_for('anomaly_detectors.details',anomaly_detector_id=detector.id),detector.name)}}
         </TD></TR>
     {% endfor %}
 </TABLE>

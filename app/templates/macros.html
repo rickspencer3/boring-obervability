@@ -1,4 +1,4 @@
-{% macro nav_link(url, text) %}
+{% macro object_link(url, text) %}
     <a href="{{ url }}">{{text}}</a>
 {% endmacro %}
 
@@ -8,7 +8,7 @@
         <TABLE>
             {% for check in checks %}
             <TR><TD>
-            {{ nav_link(url_for('checks.details', check_id=check.id), check.name)}}
+            {{ object_link(url_for('checks.details', check_id=check.id), check.name)}}
             </TD></TR>
             {% endfor %}
         </TABLE>
