@@ -7,27 +7,25 @@
 <h2>{% block title %}New Check{% endblock %}</h2>
 <form method="post">
        <div class="input-div">
-                     <label for=" name">Check Name</label>
-              <br>
-              <input type="text" name="name" placeholder="" value="{{ request.form['name'] }}"></input>
+              {{ form.name.label() }}
+              {{ form.name() }}
        </div>
        <div class="input-div">
-                     <label for=" url">URL</label>
-              <br>
-              <input type="text" name="url" placeholder="https://" value="{{ request.form['url'] }}"></input>
-       </div>
+              {{ form.url.label() }}
+              {{ form.url() }}
+       </div> 
        <div class="input-div">
-                     <label for=" method">Method</label>
-              <br>
-              <input type="text" name="method" placeholder="GET" value="{{ request.form['method'] }}"></input>
-       </div>
+              {{ form.method.label() }}
+              {{ form.method() }}
+       </div>  
        <div class="input-div">
-                     <label for=" content">Body Content</label>
-              <br>
-              <textarea name="content" value="{{ request.form['content'] }}"></textarea>
+              {{ form.content.label() }}
+              {{ form.content() }}
        </div>
-
-       <button type=" submit">Submit</button>
+       <div>
+              {{form.send()}}
+       </div>
+       {{ form.csrf_token }}
 
 </form>
 {% endblock %}

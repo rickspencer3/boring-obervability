@@ -13,8 +13,11 @@ from app.check_job import run_checks
 import app.models.anomaly_detector_notification_channel
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 
 migrate = Migrate()
+csrf = CSRFProtect()
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -25,6 +28,7 @@ def create_app(config_class=Config):
     mail.init_app(app)
     app.influxdb_write = influxdb_write
     migrate.init_app(app, db)
+    csrf.init_app(app)
     
     # associate models here
     User.checks = db.relationship(
