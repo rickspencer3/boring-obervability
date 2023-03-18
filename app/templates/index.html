@@ -49,6 +49,12 @@ Last Week
 {% else %}
 <a href="{{url_for('main.index', time_range='w')}}">Last Week</a>
 {% endif %}
+|
+{% if time_range == "m" %}
+Last Month
+{% else %}
+<a href="{{url_for('main.index', time_range='m')}}">Last Month</a>
+{% endif %}
 <script>
 </script>
 <div id="latency_graph"></div>

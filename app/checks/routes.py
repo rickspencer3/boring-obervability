@@ -113,7 +113,9 @@ def latency_graph(time_range=None):
     elif time_range == "w":
         grph = _latency_graph_aggregated('1 hour', '1 week')
         return grph, 200
-
+    elif time_range == "m":
+        grph = _latency_graph_aggregated('4 hour', '1 month')
+        return grph, 200
 def _check_ids_for_user():
     checks = current_user.checks
     list_str = "("
@@ -136,12 +138,14 @@ def status_graph(time_range=None):
     interval = {
         "h": "1 hour",
         "d": "1 day",
-        "w": "1 week"
+        "w": "1 week",
+        "m": "1 month"
     }[time_range]
     bin_interval = {
         "h": "1 minute",
         "d": "10 minutes",
-        "w": "1 hour"
+        "w": "1 hour",
+        "m": "4 hours"
     }[time_range]
 
     sql = f"""
