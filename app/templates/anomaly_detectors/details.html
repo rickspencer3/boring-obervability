@@ -1,4 +1,4 @@
-{% from "macros.html" import nav_link, checks_table %} 
+{% from "macros.html" import object_link, checks_table %} 
 {% extends 'base.html' %}
 
 {% block content %}
@@ -34,7 +34,7 @@
 <TABLE>
     {% for channel in anomaly_detector.notification_channels %}
     <TR id="ch_row_{{channel.id}}">
-        <TD>{{ nav_link(url_for('notification_channels.details', channel_id=channel.id),channel.name) }}</TD>
+        <TD>{{ object_link(url_for('notification_channels.details', channel_id=channel.id),channel.name) }}</TD>
         <TD>
             <button onclick="remove_notification_channel('{{channel.id}}','{{anomaly_detector.id}}')">Remove</button>
         </TD>
