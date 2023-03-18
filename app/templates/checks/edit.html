@@ -13,7 +13,7 @@
                      $.ajax({
                      url: "{{url_for('checks.delete')}}",
                      type: "post",
-                     data: {"check_id":id},
+                     data: {"check_id":id, "csrf_token":"{{csrf_token()}}"},
                      success: function (data){
                             window.location.replace("{{url_for('checks.index')}}");
                      }
