@@ -1,3 +1,16 @@
 {% macro nav_link(url, text) %}
     <a href="{{ url }}">{{text}}</a>
 {% endmacro %}
+
+{% macro checks_table(checks) %}
+    {% if checks|length > 0 %}
+        <h3>Used in the following checks</h3>
+        <TABLE>
+            {% for check in checks %}
+            <TR><TD>
+            {{ nav_link(url_for('checks.details', check_id=check.id), check.name)}}
+            </TD></TR>
+            {% endfor %}
+        </TABLE>
+    {% endif %}
+{% endmacro %}

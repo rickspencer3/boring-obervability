@@ -1,3 +1,4 @@
+{% from "macros.html" import nav_link %} 
 {% extends 'base.html' %}
 
 {% block content %}
@@ -16,9 +17,15 @@
 </TABLE>
 
 <div><A HREF="{{url_for('notification_channels.edit', channel_id=notification_channel.id)}}">edit</A></div>
+<HR>
+{% if notification_channel.anomaly_detectors | length > 0 %}
 <H3>Used by the Following Anomaly Detectors</H3>
-{% for detector in notification_channel.anomaly_detectors %}
-<div>{{detector.name}}</div>
-{% endfor %}
-
+<TABLE>
+    {% for detector in notification_channel.anomaly_detectors %}
+        <TR><TD>
+            {{nav_link(url_for('anomaly_detectors.details',anomaly_detector_id=detector.id),detector.name)}}
+        </TD></TR>
+    {% endfor %}
+</TABLE>
+{% endif %}
 {% endblock %}
