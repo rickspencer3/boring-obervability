@@ -9,7 +9,7 @@
         $.ajax({
         url: "{{url_for('checks.enabled')}}",
         type: "post",
-        data: {"check_id":check_id, "enabled":enabled},
+        data: {"check_id":check_id, "enabled":enabled, "csrf_token":"{{csrf_token()}}"},
     });
     }
 </script>
