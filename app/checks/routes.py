@@ -250,7 +250,6 @@ def edit(check_id):
     form = CheckForm()
     check = Check.query.get(check_id)
     form.process(obj=check)
-    print(check)
     if current_user.id is not check.user.id:
         return "", 404
     
@@ -269,7 +268,7 @@ def edit(check_id):
             return redirect(url_for('checks.details', check_id=check.id))
         else:
             return form.errors, 400
-            
+
 def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
 SELECT

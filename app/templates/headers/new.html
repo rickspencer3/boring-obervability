@@ -1,27 +1,18 @@
+{% from "macros.html" import form_row %}
 {% extends 'base.html' %}
 
 {% block content %}
 <script>
     $("#checks-nav").addClass("selected-nav");
 </script>
-<h2>{% block title %}Add Header{% endblock %}</h2>
+<h2>{% block title %}New Header{% endblock %}</h2>
 <form method="post">
-    <div class="input-div">
-        <label for="name">Name</label>
-        <br>
-        <input type="text" name="name" placeholder="" value="{{ request.form['name'] }}"></input>
-    </div>    
-    <div class="input-div">
-        <label for="key">Key</label>
-        <br>
-        <input type="text" name="key" placeholder="" value="{{ request.form['key'] }}"></input>
-    </div>
-    <div class="input-div">
-    <label for="url">Value</label>
-    <br>
-    <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
-    </div>
-    <input type="hidden" name="check_id" value="{{check_id}}"></input>
-    <button type="submit">Add</button>
+    <TABLE>
+        {{ form_row(form.name) }}
+        {{ form_row(form.key) }}
+        {{ form_row(form.value) }}
+    </TABLE>
+    {{form.send()}}
+    {{ form.csrf_token }}
 </form>
 {% endblock %}
