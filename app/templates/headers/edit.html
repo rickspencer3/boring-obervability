@@ -1,3 +1,4 @@
+{% from "macros.html" import form_row %}
 {% extends 'base.html' %}
 
 {% block content %}
@@ -14,7 +15,8 @@
                      $.ajax({
                      url: "{{url_for('headers.delete')}}",
                      type: "post",
-                     data: {"header_id":id},
+                     data: {"header_id":id,
+                     "csrf_token":"{{csrf_token()}}"},
                      success: function (data){
                             window.location.replace("{{url_for('headers.index')}}");
                      }
@@ -24,23 +26,13 @@
 </script>
 <h2>{% block title %}Edit Header{% endblock %}</h2>
 <form method="post">
-    <div class="input-div">
-        <label for="name">Name</label>
-        <br>
-        <input type="text" name="name" placeholder="" value="{{ header.name}}"></input>
-    </div>    
-    <div class="input-div">
-        <label for="key">Key</label>
-        <br>
-        <input type="text" name="key" placeholder="" value="{{ header.key }}"></input>
-    </div>
-    <div class="input-div">
-    <label for="url">Value</label>
-    <br>
-    <input type="text" name="value" placeholder="" value="{{ header.value }}"></input>
-    </div>
-    <input type="hidden" name="header_id" value="{{header_id}}"></input>
-    <button type="submit">Sumbit</button>
+    <TABLE>
+        {{ form_row(form.name) }}
+        {{ form_row(form.key) }}
+        {{ form_row(form.value) }}
+    </TABLE>
+    {{form.send()}}
+    {{ form.csrf_token }}
 </form>
 <HR>
 <BUTTON onclick="confirm_and_delete()">DELETE HEADER</BUTTON>

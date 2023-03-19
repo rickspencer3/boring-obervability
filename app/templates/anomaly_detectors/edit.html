@@ -1,55 +1,39 @@
+{% from "macros.html" import form_row %}
 {% extends 'base.html' %}
 
 {% block content %}
 <script>
     $("#detectors-nav").addClass("selected-nav");
 
-    function confirm_and_delete(){
-              name = "{{anomaly_detector.name}}";
-              id = "{{anomaly_detector.id}}"
-              msg = "Are you sure you want to delete Anomaly Detector " + name + "?";
-              msg += "\nThis action cannot be undone."
-              confirmed = confirm(msg);
-              if(confirmed){
-                     $.ajax({
-                     url: "{{url_for('anomaly_detectors.delete')}}",
-                     type: "post",
-                     data: {"anomaly_detector_id":id},
-                     success: function (data){
-                            window.location.replace("{{url_for('anomaly_detectors.index')}}");
-                     }
-                     });}
-              }
+    function confirm_and_delete() {
+        name = "{{anomaly_detector.name}}";
+        id = "{{anomaly_detector.id}}"
+        msg = "Are you sure you want to delete Anomaly Detector " + name + "?";
+        msg += "\nThis action cannot be undone."
+        confirmed = confirm(msg);
+        if (confirmed) {
+            $.ajax({
+                url: "{{url_for('anomaly_detectors.delete')}}",
+                type: "post",
+                data: { "anomaly_detector_id": id, "csrf_token": "{{csrf_token()}}" },
+                success: function (data) {
+                    window.location.replace("{{url_for('anomaly_detectors.index')}}");
+                }
+            });
+        }
+    }
 </script>
 
 <h2>{% block title %}Edit Anomamly Detector{% endblock %}</h2>
 <FORM method="post">
-    <div class="input-div">
-        <label for="name">Name</label>
-        <br>
-        <input type="text" name="name" value="{{anomaly_detector.name}}"></input>
-    </div>
-    <div class="input-div">
-        <label for="type">anomaly_detector Type</label>
-        <br>
-        <select id="type" name="type">
-            {% for type in ["error", "latency"] %}
-            {% if type == anomaly_detector.type %}
-            <option value="{{type}}" selected>{{type}}</option>
-            {% else %}
-            <option value="{{type}}">{{type}}</option>
-            {% endif %}
-            {% endfor %}
-        </select>
-    </div>
-    <div class="input-div">
-        <label for="value">Value</label>
-        <br>
-        <input type="text" name="value" value="{{ anomaly_detector.value }}"></input>
-    </div>
-
-    <button type="submit">Submit</button>
+    <TABLE>
+        {{form_row(form.name)}}
+        {{form_row(form.type)}}
+        {{form_row(form.value)}}
+    </TABLE>
+    {{form.send()}}
+    {{ form.csrf_token }}
 </FORM>
 <HR>
-    <BUTTON onclick="confirm_and_delete()">DELETE ANOMALY DETECTOR</BUTTON>
+<BUTTON onclick="confirm_and_delete()">DELETE ANOMALY DETECTOR</BUTTON>
 {% endblock %}

@@ -201,6 +201,7 @@ def new():
         return render_template('checks/new.html', form=form)
 
     if request.method == "POST":
+        form.process(formdata=request.form)
         if form.validate_on_submit():
             new_check = Check(name = request.form['name'], 
             url = request.form['url'],
@@ -250,7 +251,6 @@ def edit(check_id):
     form = CheckForm()
     check = Check.query.get(check_id)
     form.process(obj=check)
-    print(check)
     if current_user.id is not check.user.id:
         return "", 404
     
@@ -258,13 +258,17 @@ def edit(check_id):
         return render_template('checks/edit.html', form=form, check=check)
 
     elif request.method == "POST":
-        check.name = request.form['name']
-        check.url = request.form['url']
-        check.method = request.form['method']
-        check.content = request.form['content']
-        db.session.commit()
-        
-        return redirect(url_for('checks.details', check_id=check.id))
+        form.process(formdata=request.form)
+        if form.validate_on_submit():
+            check.name = request.form['name']
+            check.url = request.form['url']
+            check.method = request.form['method']
+            check.content = request.form['content']
+            db.session.commit()
+            
+            return redirect(url_for('checks.details', check_id=check.id))
+        else:
+            return form.errors, 400
 
 def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
