@@ -16,3 +16,14 @@
     <div>not used in any Checks</div>
     {% endif %}
 {% endmacro %}
+
+{% macro form_row(field) %}
+<TR>
+    <TD>
+        {{field.label()}}
+    </TD>
+    <TD>
+        {{ field() }}
+    </TD>
+</TR>
+{% endmacro %}

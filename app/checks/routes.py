@@ -14,6 +14,8 @@ from flightsql import FlightSQLClient
 import plotly.io as pio
 import plotly.express as px
 
+from app.checks.forms import CheckForm
+
 @bp.route('/')
 @login_required
 def index():
@@ -194,19 +196,23 @@ def _add_names_col(df):
 @bp.route('/new', methods=["GET","POST"])
 @login_required
 def new():
+    form = CheckForm()
     if request.method == "GET":
-        return render_template('checks/new.html')
+        return render_template('checks/new.html', form=form)
 
     if request.method == "POST":
-        new_check = Check(name = request.form['name'], 
-        url = request.form['url'],
-        content = request.form['content'],
-        method = request.form['method'],
-        user_id = current_user.id)
-        db.session.add(new_check)
-        db.session.commit()
-       
-        return redirect(url_for('checks.index'))
+        if form.validate_on_submit():
+            new_check = Check(name = request.form['name'], 
+            url = request.form['url'],
+            content = request.form['content'],
+            method = request.form['method'],
+            user_id = current_user.id)
+            db.session.add(new_check)
+            db.session.commit()
+        
+            return redirect(url_for('checks.index'))
+        else:
+            return form.errors, 400
 
 @bp.route('remove_detector', methods=["POST"])
 @login_required
@@ -241,11 +247,16 @@ def remove_header():
 @bp.route('<check_id>/edit', methods=["GET", "POST"])
 @login_required
 def edit(check_id):
+    form = CheckForm()
     check = Check.query.get(check_id)
+    form.process(obj=check)
+    print(check)
     if current_user.id is not check.user.id:
         return "", 404
+    
     if request.method == "GET":
-        return render_template('checks/edit.html', check=check)
+        return render_template('checks/edit.html', form=form, check=check)
+
     elif request.method == "POST":
         check.name = request.form['name']
         check.url = request.form['url']

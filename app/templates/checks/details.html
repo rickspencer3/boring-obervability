@@ -9,7 +9,7 @@
         $.ajax({
             url: "{{url_for('checks.remove_detector')}}",
             type: "post",
-            data: { "anomaly_detector_id": ad_id, "check_id": check_id },
+            data: { "anomaly_detector_id": ad_id, "check_id": check_id, "csrf_token":"{{csrf_token()}}" },
             done: $("#ad_row_" + ad_id).remove()
         });
     }
@@ -18,7 +18,7 @@
         $.ajax({
             url: "{{url_for('checks.remove_header')}}",
             type: "post",
-            data: { "header_id": header_id, "check_id": check_id },
+            data: { "header_id": header_id, "check_id": check_id, "csrf_token":"{{csrf_token()}}" },
             done: $("#h_row_" + header_id).remove()
         });
     }
@@ -26,7 +26,7 @@
         $.ajax({
             url: "{{url_for('checks.test')}}",
             type: "post",
-            data: {"check_id": check_id },
+            data: {"check_id": check_id, "csrf_token":"{{csrf_token()}}" },
             success: function(data){
                 $("#result_msg").html(data);
                 $("#test_result").show();
