@@ -1,3 +1,4 @@
+{% from "macros.html" import form_row %}
 {% extends 'base.html' %}
 
 {% block content %}
@@ -6,26 +7,13 @@
 </script>
 <h2>{% block title %}New Check{% endblock %}</h2>
 <form method="post">
-       <div class="input-div">
-              {{ form.name.label() }}
-              {{ form.name() }}
-       </div>
-       <div class="input-div">
-              {{ form.url.label() }}
-              {{ form.url() }}
-       </div> 
-       <div class="input-div">
-              {{ form.method.label() }}
-              {{ form.method() }}
-       </div>  
-       <div class="input-div">
-              {{ form.content.label() }}
-              {{ form.content() }}
-       </div>
-       <div>
-              {{form.send()}}
-       </div>
+       <TABLE>
+              {{ form_row(form.name) }}
+              {{ form_row(form.url) }}
+              {{ form_row(form.method) }}
+              {{ form_row(form.content) }}
+       </TABLE>
+       {{form.send()}}
        {{ form.csrf_token }}
-
 </form>
 {% endblock %}

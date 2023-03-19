@@ -247,11 +247,16 @@ def remove_header():
 @bp.route('<check_id>/edit', methods=["GET", "POST"])
 @login_required
 def edit(check_id):
+    form = CheckForm()
     check = Check.query.get(check_id)
+    form.process(obj=check)
+    print(check)
     if current_user.id is not check.user.id:
         return "", 404
+    
     if request.method == "GET":
-        return render_template('checks/edit.html', check=check)
+        return render_template('checks/edit.html', form=form, check=check)
+
     elif request.method == "POST":
         check.name = request.form['name']
         check.url = request.form['url']

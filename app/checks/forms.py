@@ -8,7 +8,7 @@ class CheckForm(FlaskForm):
     url = StringField('URL', validators=[DataRequired(), URL()])
     method = SelectField('Method', choices=["GET","POST"])
     content = TextAreaField('Body Content', validators=[Optional()])
-    send = SubmitField("New Check")
+    send = SubmitField("Submit")
 
 
     
