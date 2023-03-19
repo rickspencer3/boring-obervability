@@ -16,7 +16,9 @@
             {% endfor %}
         </select>
     </div>
+
     <button type="submit">Submit</button>
-    </FROM>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</FORM>
 
     {% endblock %}

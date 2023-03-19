@@ -9,7 +9,8 @@
             url: "{{url_for('anomaly_detectors.remove_notification_channel')}}",
             type: "post",
             data: { "anomaly_detector_id": anomaly_detector_id, 
-                    "notification_channel_id": channel_id },
+                    "notification_channel_id": channel_id,
+                    "csrf_token":"{{csrf_token()}}" },
             done: $("#ch_row_" + channel_id).remove()
         });
     }

@@ -6,7 +6,7 @@ from app.models.anomaly_detectors import AnomalyDetector
 from app.models.checks import Check
 from app.models.notification_channels import NotificationChannel
 from config import Config
-
+from app.anomaly_detectors.forms import AnomalyDetectorForm
 
 from flightsql import FlightSQLClient
 import plotly.graph_objects as go
@@ -43,10 +43,14 @@ def delete():
 @login_required
 def edit(anomaly_detector_id):
     anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
+    form = AnomalyDetectorForm()
+    form.process(obj=anomaly_detector)
     if current_user.id is not anomaly_detector.user.id:
         return "", 404
     if request.method == "GET":
-        return render_template('anomaly_detectors/edit.html', anomaly_detector=anomaly_detector)
+        return render_template('anomaly_detectors/edit.html',
+        form=form,
+         anomaly_detector=anomaly_detector)
     elif request.method == "POST":
         anomaly_detector.name = request.form['name']
         anomaly_detector.value = request.form['value']
@@ -109,10 +113,10 @@ def issues_table(time_range=None):
 @bp.route('/new', methods=["GET", "POST"])
 @login_required
 def new():
+    form = AnomalyDetectorForm()
     if request.method == "GET":
-        notification_channels = current_user.notification_channels
         return render_template('anomaly_detectors/new.html',
-                               notification_channels=notification_channels)
+                               form=form)
     if request.method == "POST":
         new_anomaly_detector = AnomalyDetector(
             name=request.form['name'],
@@ -120,9 +124,6 @@ def new():
             value=request.form['value'],
             user_id=current_user.id
         )
-        if request.form["channel"] is not None:
-            channel = NotificationChannel.query.get(request.form["channel"])
-            new_anomaly_detector.notification_channels.append(channel)
         db.session.add(new_anomaly_detector)
         db.session.commit()
         return redirect(url_for('anomaly_detectors.index'))
