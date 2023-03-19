@@ -258,14 +258,18 @@ def edit(check_id):
         return render_template('checks/edit.html', form=form, check=check)
 
     elif request.method == "POST":
-        check.name = request.form['name']
-        check.url = request.form['url']
-        check.method = request.form['method']
-        check.content = request.form['content']
-        db.session.commit()
-        
-        return redirect(url_for('checks.details', check_id=check.id))
-
+        form.process(formdata=request.form)
+        if form.validate_on_submit():
+            check.name = request.form['name']
+            check.url = request.form['url']
+            check.method = request.form['method']
+            check.content = request.form['content']
+            db.session.commit()
+            
+            return redirect(url_for('checks.details', check_id=check.id))
+        else:
+            return form.errors, 400
+            
 def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
 SELECT

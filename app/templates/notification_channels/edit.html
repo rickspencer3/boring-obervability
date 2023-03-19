@@ -1,3 +1,4 @@
+{% from "macros.html" import form_row %}
 {% extends 'base.html' %}
 
 {% block content %}
@@ -14,7 +15,7 @@
                      $.ajax({
                      url: "{{url_for('notification_channels.delete')}}",
                      type: "post",
-                     data: {"notification_channel_id":id},
+                     data: {"notification_channel_id":id, "csrf_token":"{{csrf_token()}}"},
                      success: function (data){
                             window.location.replace("{{url_for('notification_channels.index')}}");
                      }
@@ -25,32 +26,15 @@
 <div>
     <h2>{% block title %}Edit Notification Channel{% endblock %}</h2>
     <form method="post">
-        <div class="input-div">
-            <label for="name">Name</label>
-            <br>
-            <input type="text" name="name" placeholder="" value="{{notification_channel.name}}"></input>
-        </div>
-        <div class="input-div">
-            <label for="type">Notification Channel Type</label>
-            <br>
-            {% if notification_channel.type == "sms" %}
-            <select name="type" id="type">
-                <option value="sms"selected>SMS</option>
-                <option value="email">EMail</option>
-            </select>
-            {% else %}
-            <select name="type" id="type">
-                <option value="sms">SMS</option>
-                <option value="email" selected>EMail</option>
-            </select>
-            {% endif %}
-        </div>
-        <div class="input-div">
-            <label for="name">Email Address / Phone Number</label>
-            <br>
-            <input type="text" name="value" placeholder="" value="{{notification_channel.value}}"></input>
-        </div>
-        <button type="submit">Submit</button>
+        <form method="post">
+            <TABLE>
+                {{form_row(form.name)}}
+                {{form_row(form.type)}}
+                {{form_row(form.value)}}
+            </TABLE>
+            {{form.send()}}
+            {{ form.csrf_token }}
+        </form>
     </form>
 </div>
 <HR>

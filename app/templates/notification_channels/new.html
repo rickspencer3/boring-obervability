@@ -1,3 +1,4 @@
+{% from "macros.html" import form_row %}
 {% extends 'base.html' %}
 
 {% block content %}
@@ -7,25 +8,13 @@
 <div>
     <h2>{% block title %}New Notification Channel{% endblock %}</h2>
     <form method="post">
-        <div class="input-div">
-            <label for="name">Name</label>
-            <br>
-            <input type="text" name="name" placeholder="" value="{{ request.form['name'] }}"></input>
-        </div>
-        <div class="input-div">
-            <label for="type">Notification Channel Type</label>
-            <br>
-            <select name="type" id="type">
-                <option value="sms">SMS</option>
-                <option value="email">EMail</option>
-            </select>
-        </div>
-        <div class="input-div">
-            <label for="name">Email Address / Phone Number</label>
-            <br>
-            <input type="text" name="value" placeholder="" value="{{ request.form['value'] }}"></input>
-        </div>
-        <button type="submit">Submit</button>
+        <TABLE>
+            {{form_row(form.name)}}
+            {{form_row(form.type)}}
+            {{form_row(form.value)}}
+        </TABLE>
+        {{form.send()}}
+        {{ form.csrf_token }}
     </form>
 </div>
 {% endblock %}

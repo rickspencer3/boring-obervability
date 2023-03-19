@@ -52,12 +52,16 @@ def edit(anomaly_detector_id):
         form=form,
          anomaly_detector=anomaly_detector)
     elif request.method == "POST":
-        anomaly_detector.name = request.form['name']
-        anomaly_detector.value = request.form['value']
-        anomaly_detector.type = request.form['type']
-        db.session.commit()
-        return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id))
-
+        form.process(formdata=request.form)
+        if form.validate_on_submit():
+            anomaly_detector.name = request.form['name']
+            anomaly_detector.value = request.form['value']
+            anomaly_detector.type = request.form['type']
+            db.session.commit()
+            return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id))
+        else:
+            return form.errors, 400
+            
 @bp.route('/issues/<time_range>')
 @login_required
 def issues_table(time_range=None):
