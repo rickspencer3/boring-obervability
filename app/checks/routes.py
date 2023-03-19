@@ -201,6 +201,7 @@ def new():
         return render_template('checks/new.html', form=form)
 
     if request.method == "POST":
+        form.process(formdata=request.form)
         if form.validate_on_submit():
             new_check = Check(name = request.form['name'], 
             url = request.form['url'],

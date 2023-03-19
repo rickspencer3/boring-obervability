@@ -30,6 +30,7 @@ def new():
     if request.method == "GET":
         return render_template('notification_channels/new.html', form=form)
     if request.method == "POST":
+        form.process(formdata=request.form)
         if form.validate_on_submit():
             new_channel = NotificationChannel(
                 name=request.form['name'],

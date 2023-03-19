@@ -51,6 +51,7 @@ def edit(anomaly_detector_id):
         return render_template('anomaly_detectors/edit.html',
         form=form,
          anomaly_detector=anomaly_detector)
+         
     elif request.method == "POST":
         form.process(formdata=request.form)
         if form.validate_on_submit():
@@ -122,15 +123,19 @@ def new():
         return render_template('anomaly_detectors/new.html',
                                form=form)
     if request.method == "POST":
-        new_anomaly_detector = AnomalyDetector(
-            name=request.form['name'],
-            type=request.form['type'],
-            value=request.form['value'],
-            user_id=current_user.id
-        )
-        db.session.add(new_anomaly_detector)
-        db.session.commit()
-        return redirect(url_for('anomaly_detectors.index'))
+        form.process(formdata=request.form)
+        if form.validate_on_submit():
+            new_anomaly_detector = AnomalyDetector(
+                name=request.form['name'],
+                type=request.form['type'],
+                value=request.form['value'],
+                user_id=current_user.id
+            )
+            db.session.add(new_anomaly_detector)
+            db.session.commit()
+            return redirect(url_for('anomaly_detectors.index'))
+        else:
+            return form.errors, 400
 
 @bp.route('/<anomaly_detector_id>/notification_channels', methods=["GET","POST"])
 @login_required
