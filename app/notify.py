@@ -13,7 +13,7 @@ def notify(anomaly_detector, check, response):
         _compare_latency(log_dict, anomaly_detector, response)
     
 def _compare_status(log_dict, anomaly_detector, response):
-    log_dict["comparitor"] = response.status_code
+    log_dict["observed"] = response.status_code
     if response.status_code >= int(anomaly_detector.value):
         log_dict["detected"] = True
         _handle_anonaly(anomaly_detector, log_dict)
@@ -22,7 +22,7 @@ def _compare_status(log_dict, anomaly_detector, response):
     current_app.logger.info(log_dict)
 
 def _compare_latency(log_dict, anomaly_detector, response):
-    log_dict["comparitor"] = response.elapsed.microseconds / 1000
+    log_dict["observed"] = response.elapsed.microseconds / 1000
     if response.elapsed.microseconds / 1000 >= int(anomaly_detector.value):
          _handle_anonaly(anomaly_detector, log_dict)
     else:
@@ -47,11 +47,11 @@ def _handle_anonaly(anomaly_detector, log_dict):
             _write_notification_to_influxdb(channel, log_dict)
 
 def _write_anomaly_to_influxdb(anomaly_detector, log_dict):
-    lp = f"anomalies,check={log_dict['check_id']},type={log_dict['anomaly_detector_type']},user_id={anomaly_detector.user_id},id={anomaly_detector.id} value={log_dict['anomaly_detector_value']}"
+    lp = f"anomalies,check={log_dict['check_id']},type={log_dict['anomaly_detector_type']},user_id={anomaly_detector.user_id},id={anomaly_detector.id} value={log_dict['anomaly_detector_value']},observed={log_dict['observed']}"
     influxdb_write(lp)
 
 def _write_notification_to_influxdb(notification_channel, log_dict):
-    lp = f"notifications,notification_type={notification_channel.type},check={log_dict['check_id']},anomaly_detector={log_dict['anomaly_detector_id']},user_id={notification_channel.user_id} value={log_dict['anomaly_detector_value']}"
+    lp = f"notifications,notification_type={notification_channel.type},check={log_dict['check_id']},anomaly_detector={log_dict['anomaly_detector_id']},user_id={notification_channel.user_id} value={log_dict['anomaly_detector_value']},observed={log_dict['observed']}"
     influxdb_write(lp)
 
 def _create_log_dict(anomaly_detector, check):

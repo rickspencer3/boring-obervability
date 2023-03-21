@@ -74,7 +74,7 @@ def issues_table(time_range=None):
         "w": "1 week",
         "m": "1 month"
     }[time_range]
-    sql = f"select check, type, value, time from anomalies where user_id = {current_user.id} and time > now() - interval'{interval}' order by time desc"
+    sql = f"select check, type, value, observed, time from anomalies where user_id = {current_user.id} and time > now() - interval'{interval}' order by time desc"
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
                         token=Config.INFLUXDB_READ_TOKEN,
                         metadata={'bucket-name': Config.INFLUXDB_BUCKET})
@@ -99,7 +99,7 @@ def issues_table(time_range=None):
                     columnwidth=[10,20,20,50],
                     header=dict(values=list(df.columns),
                     align='left'),
-                    cells=dict(values=[df.check, df.type, df.value, df.time, df['check name']],
+                    cells=dict(values=[df.check, df.type, df.value, df.observed, df.time, df['check name']],
                     align='left'),)
                 ])
     return pio.to_html(fig,
