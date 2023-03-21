@@ -22,7 +22,7 @@ def _compare_status(log_dict, anomaly_detector, response):
     current_app.logger.info(log_dict)
 
 def _compare_latency(log_dict, anomaly_detector, response):
-    log_dict["comparitor"] = response.elapsed.microseconds / 1000
+    log_dict["observed"] = response.elapsed.microseconds / 1000
     if response.elapsed.microseconds / 1000 >= int(anomaly_detector.value):
          _handle_anonaly(anomaly_detector, log_dict)
     else:
