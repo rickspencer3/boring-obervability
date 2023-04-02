@@ -8,3 +8,6 @@
  3. create a directory in app/templates/<new-resource>, and add index.html to that directory
  4. add a forms.py file to <new-resource>/forms.py and add validators.
  5. create new and edit routes, and new.html and edit.html templates. 
+
+# How to do a Migration
+https://flask-migrate.readthedocs.io/en/latest/

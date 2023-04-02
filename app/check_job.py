@@ -1,7 +1,6 @@
 from app.models.checks import Check
 from requests import request
 from app.extensions import db, influxdb_write
-from app.notify import notify
 
 def run_checks():
     with db.app.app_context():
@@ -32,7 +31,7 @@ def run_checks():
             db.app.logger.info(log_dict)
 
             for anomaly_detector in check.anomaly_detectors:
-                notify(anomaly_detector, check, check_response)
+                anomaly_detector.detect()
 
             name = check.name.replace(" ","\ ")
             lp = f"""checks,url="{check.url}",name={name},method={check.method},user_id={check.user_id},id={check.id} status={check_response.status_code}i,elapsed={check_response.elapsed.microseconds}i"""

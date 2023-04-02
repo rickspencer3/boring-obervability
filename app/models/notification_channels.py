@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models.anomaly_detector_notification_channel import anomaly_detector_notification_channel
+from app.models.anomaly_detector_notification_channel import anomaly_detector_notification_channel_table
 class NotificationChannel(db.Model):
     __tablename__ = 'notification_channels'
     id = db.Column(db.Integer, primary_key = True)
@@ -9,5 +9,5 @@ class NotificationChannel(db.Model):
     type = db.Column(db.String(20))
     enabled = db.Column(db.Boolean, default=True)
     user = db.relationship("User", back_populates = "notification_channels")
-    anomaly_detectors = db.relationship('AnomalyDetector', secondary=anomaly_detector_notification_channel, backref='notification_channels')
+    anomaly_detectors = db.relationship('AnomalyDetector', secondary=anomaly_detector_notification_channel_table, back_populates='notification_channels')
     

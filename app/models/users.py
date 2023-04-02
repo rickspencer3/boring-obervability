@@ -16,3 +16,5 @@ class User(db.Model, UserMixin):
     # User information
     first_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, server_default='')
     last_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, server_default='')
+
+    anomaly_detectors = db.relationship("AnomalyDetector", back_populates="user", cascade="all, delete-orphan")
