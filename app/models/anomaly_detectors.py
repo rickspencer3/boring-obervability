@@ -11,7 +11,7 @@ class AnomalyDetector(db.Model):
     name = db.Column(db.String(100))
     type = db.Column(db.String(10), nullable=False)
     checks = db.relationship('Check', secondary=anomaly_detector_check_table)
-    notification_channels = db.relationship('NotificationChannel', secondary=anomaly_detector_notification_channel_table, uselist=False)
+    notification_channels = db.relationship('NotificationChannel', secondary=anomaly_detector_notification_channel_table)
     user = db.relationship("User", back_populates="anomaly_detectors")
 
     __mapper_args__ = {
@@ -69,6 +69,8 @@ class ErrorDetector(AnomalyDetector):
         if detected:
             lp = f"anomalies,check={check.id},type={self.type},user_id={self.user_id},id={self.id} status_bound={self.status_lower_bound},observed={response.status_code}"
             influxdb_write(lp)
+            for channel in self.notification_channels:
+                channel.notify(log_dict)
 
         db.app.logger.info(log_dict)        
 
