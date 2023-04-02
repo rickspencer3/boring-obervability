@@ -32,7 +32,7 @@
         {% endfor %}
     </TABLE>
     <hr>
-    <a href="{{url_for('notification_channels.new')}}">new notification channel</a>
+    <a href="{{url_for('notification_channels.new', channel_type='email')}}">new email notification channel</a>
 
 
     {% endblock %}

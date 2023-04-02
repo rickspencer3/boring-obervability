@@ -6,13 +6,13 @@
     $("#channels-nav").addClass("selected-nav");
 </script>
 <div>
-    <h2>{% block title %}New Notification Channel{% endblock %}</h2>
+    <h2>{% block title %}New Email Notification Channel{% endblock %}</h2>
     <form method="post">
         <TABLE>
             {{form_row(form.name)}}
-            {{form_row(form.type)}}
-            {{form_row(form.value)}}
+            {{form_row(form.email)}}
         </TABLE>
+        <input type="hidden" name="type" value="email">
         {{form.send()}}
         {{ form.csrf_token }}
     </form>
