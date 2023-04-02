@@ -12,5 +12,6 @@
     {% endfor %}
 </TABLE>
 <HR>
-<a href="{{ url_for('anomaly_detectors.new') }}">New Anomaly Detector</a>
+<div><a href="{{url_for('anomaly_detectors.new', detector_type='error') }}">New Error Detector</a></div>
+<div><a href="{{ url_for('anomaly_detectors.new', detector_type='latency') }}">New Latency Detector</a></div>
 {% endblock %}

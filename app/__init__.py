@@ -35,8 +35,6 @@ def create_app(config_class=Config):
         "Check", order_by=Check.id, back_populates="user")
     User.headers = db.relationship(
         "Header", order_by=Header.id, back_populates="user")
-    User.anomaly_detectors = db.relationship(
-        "AnomalyDetector", order_by=AnomalyDetector.id, back_populates="user")
     User.notification_channels = db.relationship(
         "NotificationChannel", order_by=NotificationChannel.id, back_populates="user")
 

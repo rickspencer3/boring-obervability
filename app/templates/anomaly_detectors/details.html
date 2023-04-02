@@ -20,13 +20,20 @@
 <H2>{% block title %}{{anomaly_detector.name}}{% endblock %}</H2>
 <TABLE>
     <TR>
-        <TD>type</TD>
+        <TD>Type</TD>
         <TD>{{anomaly_detector.type}}</TD>
     </TR>
+    {% if anomaly_detector.type == 'error' %}
     <TR>
-        <TD>value</TD>
-        <TD>{{anomaly_detector.value}}</TD>
+        <TD>Status Lower Bound</TD>
+        <TD>{{anomaly_detector.status_lower_bound}}</TD>
     </TR>
+    {% elif anomaly_detector.type == 'latency' %}
+    <TR>
+        <TD>Latency Lower Bound</TD>
+        <TD>{{anomaly_detector.latency_lower_bound}}</TD>
+    </TR>
+    {% endif %}
 </TABLE>
 
 <BR>

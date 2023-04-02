@@ -3,8 +3,8 @@ from flask_user import login_required, current_user
 from app.notification_channels import bp
 from app.extensions import db
 
-from app.models.notification_channels import NotificationChannel
-from app.notification_channels.forms import NotificationChannelForm
+from app.models.notification_channels import NotificationChannel, EmailChannel
+from app.notification_channels.forms import EmailChannelForm
 
 @bp.route("/")
 @login_required
@@ -23,26 +23,35 @@ def set_enabled():
     db.session.commit()
     return "success", 200
 
-@bp.route('/new', methods=["GET","POST"])
+@bp.route('/new/<channel_type>', methods=["GET", "POST"])
 @login_required
-def new():
-    form = NotificationChannelForm()
+def new(channel_type):
+    if channel_type == 'email':
+        form = EmailChannelForm()
+    else:
+        return "Invalid channel type", 400
+
     if request.method == "GET":
-        return render_template('notification_channels/new.html', form=form)
+        return render_template(f'notification_channels/new_{channel_type}.html', form=form)
+
     if request.method == "POST":
         form.process(formdata=request.form)
         if form.validate_on_submit():
-            new_channel = NotificationChannel(
-                name=request.form['name'],
-                type=request.form['type'],
-                value=request.form['value'],
-                user_id = current_user.id
-            )
+            if channel_type == 'email':
+                new_channel = EmailChannel(
+                    name=request.form['name'],
+                    email=request.form['email'],
+                    user_id=current_user.id
+                )
+            else:
+                return "Invalid channel type", 400
+
             db.session.add(new_channel)
             db.session.commit()
             return redirect(url_for('notification_channels.index'))
         else:
             return form.errors, 400
+
 
 @bp.route('<channel_id>/details', methods=["GET"])
 @login_required
@@ -56,25 +65,35 @@ def details(channel_id):
 @login_required
 def edit(channel_id):
     notification_channel = NotificationChannel.query.get(channel_id)
-    form = NotificationChannelForm()
+    
+    if notification_channel.type == "email":
+        form = EmailChannelForm()
+    else:
+        return "", 404 # not other notification channels yet
+        
     form.process(obj=notification_channel)
+    
     if notification_channel.user.id != current_user.id:
         return "", 404
 
     if request.method == "GET":
-        return render_template('notification_channels/edit.html',
+        return render_template(f'notification_channels/edit_{notification_channel.type}.html',
                                 form=form, 
                                 notification_channel=notification_channel)
     elif request.method == "POST":
         form.process(formdata=request.form)
         if form.validate_on_submit():
             notification_channel.name = request.form["name"]
-            notification_channel.type = request.form["type"]
-            notification_channel.value = request.form["value"]
+            if notification_channel.type == "email":
+                notification_channel.email = request.form["email"]
+            else:
+                notification_channel.type = request.form["type"]
+                notification_channel.value = request.form["value"]
             db.session.commit()
             return redirect(url_for('notification_channels.details', channel_id = channel_id))
         else:
             return form.errors, 400
+
 
 @bp.route('delete', methods=["POST"])
 @login_required

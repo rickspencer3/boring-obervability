@@ -1,0 +1,38 @@
+{% from "macros.html" import form_row %}
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    $("#detectors-nav").addClass("selected-nav");
+
+    function confirm_and_delete() {
+        name = "{{anomaly_detector.name}}";
+        id = "{{anomaly_detector.id}}"
+        msg = "Are you sure you want to delete Anomaly Detector " + name + "?";
+        msg += "\nThis action cannot be undone."
+        confirmed = confirm(msg);
+        if (confirmed) {
+            $.ajax({
+                url: "{{url_for('anomaly_detectors.delete')}}",
+                type: "post",
+                data: { "anomaly_detector_id": id, "csrf_token": "{{csrf_token()}}" },
+                success: function (data) {
+                    window.location.replace("{{url_for('anomaly_detectors.index')}}");
+                }
+            });
+        }
+    }
+</script>
+
+<h2>{% block title %}Edit Latency Detector{% endblock %}</h2>
+<FORM method="post">
+    <TABLE>
+        {{form_row(form.name)}}
+        {{form_row(form.latency_lower_bound)}}
+    </TABLE>
+    {{form.send()}}
+    {{ form.csrf_token }}
+</FORM>
+<HR>
+<BUTTON onclick="confirm_and_delete()">DELETE LATENCY DETECTOR</BUTTON>
+{% endblock %}

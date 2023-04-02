@@ -11,9 +11,15 @@
         <TD>Name</TD><TD>{{notification_channel.name}}</TD>
     </TR>
     <TR><TD>Notification Type</TD><TD>{{notification_channel.type}}</TD></TR>
-    <TR>
-        <TD>email or phone number</TD><TD>{{notification_channel.value}}</TD>
-    </TR>
+    {% if notification_channel.type == 'email' %}
+        <TR>
+            <TD>Email</TD><TD>{{notification_channel.email}}</TD>
+        </TR>
+    {% else %}
+        <TR>
+            <TD>email or phone number</TD><TD>{{notification_channel.value}}</TD>
+        </TR>
+    {% endif %}
 </TABLE>
 
 <div><A HREF="{{url_for('notification_channels.edit', channel_id=notification_channel.id)}}">edit</A></div>

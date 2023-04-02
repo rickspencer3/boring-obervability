@@ -2,7 +2,8 @@ from flask import render_template, request, redirect, url_for
 from flask_user import login_required, current_user
 from app.anomaly_detectors import bp
 from app.extensions import db
-from app.models.anomaly_detectors import AnomalyDetector
+from app.models.anomaly_detectors import LatencyDetector, ErrorDetector, AnomalyDetector
+from app.anomaly_detectors.forms import LatencyDetectorForm, ErrorDetectorForm
 from app.models.checks import Check
 from app.models.notification_channels import NotificationChannel
 from config import Config
@@ -39,29 +40,43 @@ def delete():
     return "success", 200
 
 
-@bp.route('<anomaly_detector_id>/edit', methods=["GET", "POST"])
+@bp.route('/<anomaly_detector_id>/edit', methods=["GET", "POST"])
 @login_required
 def edit(anomaly_detector_id):
     anomaly_detector = AnomalyDetector.query.get(anomaly_detector_id)
-    form = AnomalyDetectorForm()
-    form.process(obj=anomaly_detector)
+    
     if current_user.id is not anomaly_detector.user.id:
         return "", 404
+    
+    if anomaly_detector.type == "error":
+        form = ErrorDetectorForm()
+    elif anomaly_detector.type == "latency":
+        form = LatencyDetectorForm()
+    else:
+        return "Unknown detector type", 400
+
+    form.process(obj=anomaly_detector)
+    
     if request.method == "GET":
-        return render_template('anomaly_detectors/edit.html',
-        form=form,
-         anomaly_detector=anomaly_detector)
-         
+        return render_template(f'anomaly_detectors/edit_{anomaly_detector.type}.html',
+                               form=form,
+                               anomaly_detector=anomaly_detector)
+                               
     elif request.method == "POST":
         form.process(formdata=request.form)
         if form.validate_on_submit():
             anomaly_detector.name = request.form['name']
-            anomaly_detector.value = request.form['value']
-            anomaly_detector.type = request.form['type']
+            
+            if anomaly_detector.type == "error":
+                anomaly_detector.status_lower_bound = request.form['status_lower_bound']
+            elif anomaly_detector.type == "latency":
+                anomaly_detector.latency_lower_bound = request.form['latency_lower_bound']
+                
             db.session.commit()
             return redirect(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id))
         else:
             return form.errors, 400
+
             
 @bp.route('/issues/<time_range>')
 @login_required
@@ -114,22 +129,39 @@ def issues_table(time_range=None):
                         validate=True, 
                         div_id=None )
 
+
 @bp.route('/new', methods=["GET", "POST"])
+@bp.route('/new/<detector_type>', methods=["GET", "POST"])
 @login_required
-def new():
-    form = AnomalyDetectorForm()
+def new(detector_type=None):
+    if detector_type == "latency":
+        form = LatencyDetectorForm()
+    elif detector_type == "error":
+        form = ErrorDetectorForm()
+    else:
+        return "Invalid detector type", 400
+
     if request.method == "GET":
-        return render_template('anomaly_detectors/new.html',
+        return render_template(f'anomaly_detectors/new_{detector_type}.html',
                                form=form)
     if request.method == "POST":
         form.process(formdata=request.form)
         if form.validate_on_submit():
-            new_anomaly_detector = AnomalyDetector(
-                name=request.form['name'],
-                type=request.form['type'],
-                value=request.form['value'],
-                user_id=current_user.id
-            )
+            if detector_type == "latency":
+                new_anomaly_detector = LatencyDetector(
+                    name=request.form['name'],
+                    type=detector_type,
+                    latency_lower_bound=request.form['latency_lower_bound'],
+                    user_id=current_user.id
+                )
+            elif detector_type == "error":
+                new_anomaly_detector = ErrorDetector(
+                    name=request.form['name'],
+                    type=detector_type,
+                    status_lower_bound=request.form['status_lower_bound'],
+                    user_id=current_user.id
+                )
+
             db.session.add(new_anomaly_detector)
             db.session.commit()
             return redirect(url_for('anomaly_detectors.index'))
