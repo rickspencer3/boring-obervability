@@ -24,16 +24,15 @@
     }
 </script>
 
-<h2>{% block title %}Edit Anomamly Detector{% endblock %}</h2>
+<h2>{% block title %}Edit Error Detector{% endblock %}</h2>
 <FORM method="post">
     <TABLE>
         {{form_row(form.name)}}
-        {{form_row(form.type)}}
-        {{form_row(form.value)}}
+        {{form_row(form.status_lower_bound)}}
     </TABLE>
     {{form.send()}}
     {{ form.csrf_token }}
 </FORM>
 <HR>
-<BUTTON onclick="confirm_and_delete()">DELETE ANOMALY DETECTOR</BUTTON>
+<BUTTON onclick="confirm_and_delete()">DELETE ERROR DETECTOR</BUTTON>
 {% endblock %}
