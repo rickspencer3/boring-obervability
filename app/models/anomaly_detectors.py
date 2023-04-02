@@ -46,7 +46,9 @@ class LatencyDetector(AnomalyDetector):
         if detected:
             lp = f"anomalies,check={check.id},type={self.type},user_id={self.user_id},id={self.id} latency_bound={self.latency_lower_bound},observed={latency}"
             influxdb_write(lp)
-
+            for channel in self.notification_channels:
+                channel.notify(log_dict)
+                
         db.app.logger.info(log_dict)
 
     def _create_log_dict(self, check, response):
