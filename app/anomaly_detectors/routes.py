@@ -90,7 +90,6 @@ def issues_table(time_range=None):
         names[id] = Check.query.get(id).name
     df['check name'] = df.check.map(names)
 
-
     fig = go.Figure(
                 layout={
                     "title":"Anomalies Detected"
