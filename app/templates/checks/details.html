@@ -9,7 +9,7 @@
         $.ajax({
             url: "{{url_for('checks.remove_detector')}}",
             type: "post",
-            data: { "anomaly_detector_id": ad_id, "check_id": check_id, "csrf_token":"{{csrf_token()}}" },
+            data: { "anomaly_detector_id": ad_id, "check_id": check_id, "csrf_token": "{{csrf_token()}}" },
             done: $("#ad_row_" + ad_id).remove()
         });
     }
@@ -18,7 +18,7 @@
         $.ajax({
             url: "{{url_for('checks.remove_header')}}",
             type: "post",
-            data: { "header_id": header_id, "check_id": check_id, "csrf_token":"{{csrf_token()}}" },
+            data: { "header_id": header_id, "check_id": check_id, "csrf_token": "{{csrf_token()}}" },
             done: $("#h_row_" + header_id).remove()
         });
     }
@@ -26,8 +26,8 @@
         $.ajax({
             url: "{{url_for('checks.test')}}",
             type: "post",
-            data: {"check_id": check_id, "csrf_token":"{{csrf_token()}}" },
-            success: function(data){
+            data: { "check_id": check_id, "csrf_token": "{{csrf_token()}}" },
+            success: function (data) {
                 $("#result_msg").html(data);
                 $("#test_result").show();
             }
@@ -97,12 +97,21 @@
     <TR>
         <TH>Name</TH>
         <TH>Type</TH>
+        <TH>Active Notification Channels</TH>
         <TH></TH>
     </TR>
     {% for anomaly_detector in check.anomaly_detectors %}
+        {% set ns = namespace(enabled_channels_count=0) %}
+        {% for channel in anomaly_detector.notification_channels %}
+            {% if channel.enabled %}
+                {% set ns.enabled_channels_count = ns.enabled_channels_count + 1 %}
+            {% endif %}
+        {% endfor %}
     <TR id="ad_row_{{anomaly_detector.id}}">
-        <TD>{{object_link(url_for('anomaly_detectors.details', anomaly_detector_id=anomaly_detector.id),anomaly_detector.name)}}</TD>
-        <TD>{{anomaly_detector.type}}</TD>
+        <TD>{{ object_link(url_for('anomaly_detectors.details',
+            anomaly_detector_id=anomaly_detector.id),anomaly_detector.name) }}</TD>
+        <TD>{{ anomaly_detector.type }}</TD>
+        <TD>{{ ns.enabled_channels_count }}</TD>
         <TD>
             <button onclick="remove_anomaly_dector('{{anomaly_detector.id}}','{{check.id}}')">Remove</button>
         </TD>
