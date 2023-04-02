@@ -174,7 +174,7 @@ ORDER BY id, binned
     _add_names_col(results)
     results.rename(columns={'binned':'time'},inplace=True)
     
-    fig = px.line(results, x='time', y='error_rate', color='name', title="Check Error Rates")
+    fig = px.line(results, x='time', y='error_rate', color='name', title=f"Check Error Rates ({bin_interval})")
     return pio.to_html(fig, 
                         config=None, 
                         auto_play=True, 
@@ -275,7 +275,7 @@ def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
 SELECT
     date_bin(interval '{interval}', time, TIMESTAMP '2001-01-01 00:00:00Z') as binned,
-  avg(elapsed) as elapsed,
+  avg(elapsed) /1000 as elapsed,
   id
 
 FROM checks
@@ -296,7 +296,7 @@ ORDER BY id, binned
     _add_names_col(results)
     results.rename(columns={'binned':'time'}, inplace=True)
 
-    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies")
+    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
@@ -312,7 +312,7 @@ ORDER BY id, binned
 def _latency_graph_1h():
     sql = f"""
 select 
-    id, elapsed, time 
+    id, elapsed / 1000 as elapsed, time 
 from checks where  
     time > now() - interval'60 minutes' 
 and 
@@ -329,7 +329,7 @@ order by
     table = reader.read_all()
     results = table.to_pandas()
     _add_names_col(results)
-    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies")
+    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
