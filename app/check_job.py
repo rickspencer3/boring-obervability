@@ -1,6 +1,7 @@
 from app.models.checks import Check
 from requests import request
 from app.extensions import db, influxdb_write
+from flask import current_app
 
 def run_checks():
     with db.app.app_context():
@@ -21,14 +22,14 @@ def run_checks():
                     "check_name":check.name,
                     "exception": str(e)
                 }
-                db.app.logger.error(error_log_dict)
+                current_app.logger.error(error_log_dict)
                 break
             
             log_dict = {"check_id":check.id,
                         "check_name":check.name,
                         "anomaly_dectors": len(check.anomaly_detectors),
                         "response_text":check_response.text}
-            db.app.logger.info(log_dict)
+            current_app.logger.info(log_dict)
 
             for anomaly_detector in check.anomaly_detectors:
                 anomaly_detector.detect(check=check, response=check_response)

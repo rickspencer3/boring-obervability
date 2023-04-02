@@ -3,6 +3,7 @@ from app.extensions import db
 from app.models.anomaly_detector_check import anomaly_detector_check_table
 from app.models.anomaly_detector_notification_channel import anomaly_detector_notification_channel_table
 from app.extensions import influxdb_write
+from flask import current_app
 
 class AnomalyDetector(db.Model):
     __tablename__ = 'anomaly_detectors'
@@ -49,7 +50,7 @@ class LatencyDetector(AnomalyDetector):
             for channel in self.notification_channels:
                 channel.notify(log_dict)
                 
-        db.app.logger.info(log_dict)
+        current_app.logger.info(log_dict)
 
     def _create_log_dict(self, check, response):
         d = super()._create_log_dict(check, response)
@@ -74,7 +75,7 @@ class ErrorDetector(AnomalyDetector):
             for channel in self.notification_channels:
                 channel.notify(log_dict)
 
-        db.app.logger.info(log_dict)        
+        current_app.logger.info(log_dict)        
 
     def _create_log_dict(self, check, response):
         d = super()._create_log_dict(check, response)

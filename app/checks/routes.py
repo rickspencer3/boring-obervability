@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for
 from flask_user import login_required, current_user
 from requests import request as http_request
 from html import escape
+from flask import current_app
 
 from app.checks import bp
 from app.models.checks import Check
@@ -92,7 +93,7 @@ def test():
                 "response_text":check_response.text,
                 "test":True
                 }
-    db.app.logger.info(log_dict)
+    current_app.logger.info(log_dict)
     html = f"""
 <div>Test Result</div>
 <TABLE>
