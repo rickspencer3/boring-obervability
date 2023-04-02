@@ -30,14 +30,6 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     csrf.init_app(app)
     
-    # associate models here
-    User.checks = db.relationship(
-        "Check", order_by=Check.id, back_populates="user")
-    User.headers = db.relationship(
-        "Header", order_by=Header.id, back_populates="user")
-    User.notification_channels = db.relationship(
-        "NotificationChannel", order_by=NotificationChannel.id, back_populates="user")
-
     with app.app_context():
         db.create_all()
         user_manager = UserManager(app, db, User)      
