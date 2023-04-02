@@ -31,7 +31,7 @@ def run_checks():
             db.app.logger.info(log_dict)
 
             for anomaly_detector in check.anomaly_detectors:
-                anomaly_detector.detect()
+                anomaly_detector.detect(check=check, response=check_response)
 
             name = check.name.replace(" ","\ ")
             lp = f"""checks,url="{check.url}",name={name},method={check.method},user_id={check.user_id},id={check.id} status={check_response.status_code}i,elapsed={check_response.elapsed.microseconds}i"""

@@ -1,6 +1,5 @@
 from sqlalchemy.ext.declarative import declared_attr
 from app.extensions import db
-
 from app.models.anomaly_detector_check import anomaly_detector_check_table
 from app.models.anomaly_detector_notification_channel import anomaly_detector_notification_channel_table
 
@@ -20,16 +19,31 @@ class AnomalyDetector(db.Model):
         'polymorphic_on': type
     }
 
-    def detect(self):
+    def detect(self, check=None, response=None):
         pass
+
+    def _create_log_dict(self, check):
+        log_dict = {"check_name": check.name,
+                    "check_id": check.id,
+                    "anomaly_detector_name": self.name,
+                    "anomaly_detector_id": self.id,
+                    "anomaly_detector_type": self.type
+                    }
+
+        return log_dict
 
 
 class LatencyDetector(AnomalyDetector):
     latency_lower_bound = db.Column(db.Integer)
 
-    def detect(self):
-        print(" ***** detecting latency")
+    def detect(self, check=None, response=None):
+        log_dict = self._create_log_dict(check)
+        db.app.logger.info(log_dict)
 
+    def _create_log_dict(self, check):
+        d = super()._create_log_dict(check)
+        d["status_lower_bound"] = self.latency_lower_bound
+        return d
     __mapper_args__ = {
         'polymorphic_identity': 'latency',
     }
@@ -37,9 +51,16 @@ class LatencyDetector(AnomalyDetector):
 class ErrorDetector(AnomalyDetector):
     status_lower_bound = db.Column(db.Integer)
 
-    def detect(self):
-        print(" ***** detecting error")
+    def detect(self, check=None, response=None):
+        log_dict = self._create_log_dict(check)
+        db.app.logger.info(log_dict)        
+
+    def _create_log_dict(self, check):
+        d = super()._create_log_dict(check)
+        d["status_lower_bound"] = self.status_lower_bound
+        return d
 
     __mapper_args__ = {
         'polymorphic_identity': 'error',
     }
+
