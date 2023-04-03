@@ -165,7 +165,7 @@ ORDER BY id, binned
 
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
                         token=Config.INFLUXDB_READ_TOKEN,
-                        metadata={'bucket-name': Config.INFLUXDB_BUCKET})
+                        metadata={'iox-namespace-name': f"{Config.INFLUXDB_ORG_ID}_{Config.INFLUXDB_BUCKET}"})
 
     query = client.execute(sql)
     reader = client.do_get(query.endpoints[0].ticket)
@@ -288,7 +288,7 @@ ORDER BY id, binned
  
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
                 token=Config.INFLUXDB_READ_TOKEN,
-                metadata={'bucket-name': Config.INFLUXDB_BUCKET})
+                metadata={'iox-namespace-name': f"{Config.INFLUXDB_ORG_ID}_{Config.INFLUXDB_BUCKET}"})
 
     query = client.execute(sql)
     reader = client.do_get(query.endpoints[0].ticket)
@@ -323,7 +323,7 @@ order by
     """
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
                     token=Config.INFLUXDB_READ_TOKEN,
-                    metadata={'bucket-name': Config.INFLUXDB_BUCKET})
+                    metadata={'iox-namespace-name': f"{Config.INFLUXDB_ORG_ID}_{Config.INFLUXDB_BUCKET}"})
 
     query = client.execute(sql)
     reader = client.do_get(query.endpoints[0].ticket)
