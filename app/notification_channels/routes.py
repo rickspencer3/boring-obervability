@@ -87,8 +87,8 @@ def edit(channel_id):
             if notification_channel.type == "email":
                 notification_channel.email = request.form["email"]
             else:
-                notification_channel.type = request.form["type"]
-                notification_channel.value = request.form["value"]
+                pass # there are only email notifications atm
+            notification_channel.enabled = form.enabled.data 
             db.session.commit()
             return redirect(url_for('notification_channels.details', channel_id = channel_id))
         else:

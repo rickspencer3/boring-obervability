@@ -27,8 +27,9 @@
     <h2>{% block title %}Edit Email Channel{% endblock %}</h2>
     <form method="post">
         <TABLE>
-            {{form_row(form.name)}}
-            {{form_row(form.email)}}
+            {{ form_row(form.name) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.enabled) }}
         </TABLE>
         {{form.send()}}
         {{ form.csrf_token }}

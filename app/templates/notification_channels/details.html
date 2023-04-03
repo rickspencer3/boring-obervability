@@ -20,6 +20,9 @@
             <TD>email or phone number</TD><TD>{{notification_channel.value}}</TD>
         </TR>
     {% endif %}
+    <TR>
+        <TD>enabled</TD><TD>{{ notification_channel.enabled }}</TD>
+    </TR>
 </TABLE>
 
 <div><A HREF="{{url_for('notification_channels.edit', channel_id=notification_channel.id)}}">edit</A></div>
