@@ -265,6 +265,7 @@ def edit(check_id):
             check.url = request.form['url']
             check.method = request.form['method']
             check.content = request.form['content']
+            check.enabled = 'enabled' in request.form
             db.session.commit()
             
             return redirect(url_for('checks.details', check_id=check.id))
