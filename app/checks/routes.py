@@ -183,7 +183,7 @@ ORDER BY id, binned
                         post_script=None, 
                         full_html=False, 
                         animation_opts=None, 
-                        default_width='600px', default_height='300px', 
+                        default_width='600px', default_height='500px', 
                         validate=True, 
                         div_id=None), 200
 
@@ -306,7 +306,7 @@ ORDER BY id, binned
                     post_script=None, 
                     full_html=False, 
                     animation_opts=None, 
-                    default_width='600px', default_height='300px', 
+                    default_width='600px', default_height='500px', 
                     validate=True, 
                     div_id=None)
 
@@ -340,7 +340,7 @@ order by
                     full_html=False, 
                     animation_opts=None, 
                     default_width='600px', 
-                    default_height='300px', 
+                    default_height='500px', 
                     validate=True, 
                     div_id=None)
 
