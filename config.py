@@ -28,10 +28,10 @@ class Config:
     USER_REQUIRE_RETYPE_PASSWORD = False    # Simplify register form
 
     # InfluxDB settings
-    INFLUXDB_BUCKET = "boring"
+    INFLUXDB_BUCKET = "boring-observability"
     INFLUXDB_WRITE_TOKEN = "dVonwGMYxmNT3_KIiZ5zBFIHllWlLWz5xLbuE2kvgzmuqWo8_JyyFDXZDqRaJtP9L2gnyY33GenWoKRBNJKWQg=="
     INFLUXDB_READ_TOKEN = "dVonwGMYxmNT3_KIiZ5zBFIHllWlLWz5xLbuE2kvgzmuqWo8_JyyFDXZDqRaJtP9L2gnyY33GenWoKRBNJKWQg=="
-    INFLUXDB_HOST = "https://cst-demo-2.us-east-2.aws.influxdata.io/"
-    INFLUXDB_FLIGHT_HOST = "cst-demo-2.us-east-2.aws.influxdata.io"
-    INFLUXDB_ORG_ID = "placeholder"
+    INFLUXDB_HOST = "https://us-east-1-1.aws.cloud2.influxdata.com/"
+    INFLUXDB_FLIGHT_HOST = "us-east-1-1.aws.cloud2.influxdata.com"
+    INFLUXDB_ORG_ID = "847e9dbb25976492"
     
