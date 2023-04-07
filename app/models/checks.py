@@ -11,3 +11,5 @@ class Check(db.Model):
     method = db.Column(db.String(10))
     user = db.relationship("User", back_populates = "checks")
     enabled = db.Column(db.Boolean, default=True)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'name', name='uq_user_id_name'),)
