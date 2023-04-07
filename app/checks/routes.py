@@ -159,7 +159,7 @@ SELECT
    SUM(CASE WHEN status >= 299 THEN 1 ELSE 0 END)::double / COUNT(status)::double  AS error_rate
 FROM checks
 WHERE time > now() - interval'{interval}'
-AND user_id = {current_user.id}
+AND user_id = '{current_user.id}'
 GROUP BY name, binned
 ORDER BY name, binned
     """
@@ -275,7 +275,7 @@ SELECT
 
 FROM checks
 WHERE time > now() - INTERVAL '{time_range_start}'
-AND user_id = {current_user.id}
+AND user_id = '{current_user.id}'
 GROUP BY name, binned
 ORDER BY name, binned
     """
@@ -309,7 +309,7 @@ select
     name, elapsed / 1000 as elapsed, time 
 from checks where  
     time > now() - interval'60 minutes' 
-AND user_id = {current_user.id}
+AND user_id = '{current_user.id}'
 order by 
     name, time
     """
