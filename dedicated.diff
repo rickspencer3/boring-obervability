@@ -1,0 +1,77 @@
+diff --git a/app/anomaly_detectors/routes.py b/app/anomaly_detectors/routes.py
+index 1bd23d1..9d12931 100644
+--- a/app/anomaly_detectors/routes.py
++++ b/app/anomaly_detectors/routes.py
+@@ -92,7 +92,7 @@ def issues_table(time_range=None):
+     sql = f"select check, type, value, observed, time from anomalies where user_id = {current_user.id} and time > now() - interval'{interval}' order by time desc"
+     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                         token=Config.INFLUXDB_READ_TOKEN,
+-                        metadata={'bucket-name': Config.INFLUXDB_BUCKET})
++                        metadata={'iox-namespace-name': f"{Config.INFLUXDB_ORG_ID}_{Config.INFLUXDB_BUCKET}"})
+ 
+     query = client.execute(sql)
+     reader = client.do_get(query.endpoints[0].ticket)
+diff --git a/app/checks/routes.py b/app/checks/routes.py
+index edcfe26..db1dbae 100644
+--- a/app/checks/routes.py
++++ b/app/checks/routes.py
+@@ -165,7 +165,7 @@ ORDER BY id, binned
+ 
+     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                         token=Config.INFLUXDB_READ_TOKEN,
+-                        metadata={'bucket-name': Config.INFLUXDB_BUCKET})
++                        metadata={'iox-namespace-name': f"{Config.INFLUXDB_ORG_ID}_{Config.INFLUXDB_BUCKET}"})
+ 
+     query = client.execute(sql)
+     reader = client.do_get(query.endpoints[0].ticket)
+@@ -288,7 +288,7 @@ ORDER BY id, binned
+  
+     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                 token=Config.INFLUXDB_READ_TOKEN,
+-                metadata={'bucket-name': Config.INFLUXDB_BUCKET})
++                metadata={'iox-namespace-name': f"{Config.INFLUXDB_ORG_ID}_{Config.INFLUXDB_BUCKET}"})
+ 
+     query = client.execute(sql)
+     reader = client.do_get(query.endpoints[0].ticket)
+@@ -323,7 +323,7 @@ order by
+     """
+     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
+                     token=Config.INFLUXDB_READ_TOKEN,
+-                    metadata={'bucket-name': Config.INFLUXDB_BUCKET})
++                    metadata={'iox-namespace-name': f"{Config.INFLUXDB_ORG_ID}_{Config.INFLUXDB_BUCKET}"})
+ 
+     query = client.execute(sql)
+     reader = client.do_get(query.endpoints[0].ticket)
+diff --git a/app/extensions.py b/app/extensions.py
+index 76f41cd..64936bb 100644
+--- a/app/extensions.py
++++ b/app/extensions.py
+@@ -8,7 +8,7 @@ db = SQLAlchemy()
+ mail = Mail()
+ 
+ def influxdb_write(lp):
+-    log_url = f"{Config.INFLUXDB_HOST}api/v2/write?bucket={Config.INFLUXDB_BUCKET}&orgID={Config.INFLUXDB_ORG_ID}"
++    log_url = f"{Config.INFLUXDB_HOST}api/v2/write?bucket={Config.INFLUXDB_BUCKET}&org={Config.INFLUXDB_ORG_ID}"
+     log_headers = {"Authorization":f"Token {Config.INFLUXDB_WRITE_TOKEN}"}
+     log_response = post(log_url, headers=log_headers, data=lp)
+     log_dict = {"line_protocol":lp}
+diff --git a/config.py b/config.py
+index 8a17198..41a7946 100644
+--- a/config.py
++++ b/config.py
+@@ -28,10 +28,10 @@ class Config:
+     USER_REQUIRE_RETYPE_PASSWORD = False    # Simplify register form
+ 
+     # InfluxDB settings
+-    INFLUXDB_BUCKET = "boring-observability"
++    INFLUXDB_BUCKET = "boring"
+     INFLUXDB_WRITE_TOKEN = "dVonwGMYxmNT3_KIiZ5zBFIHllWlLWz5xLbuE2kvgzmuqWo8_JyyFDXZDqRaJtP9L2gnyY33GenWoKRBNJKWQg=="
+     INFLUXDB_READ_TOKEN = "dVonwGMYxmNT3_KIiZ5zBFIHllWlLWz5xLbuE2kvgzmuqWo8_JyyFDXZDqRaJtP9L2gnyY33GenWoKRBNJKWQg=="
+-    INFLUXDB_HOST = "https://us-east-1-1.aws.cloud2.influxdata.com/"
+-    INFLUXDB_FLIGHT_HOST = "us-east-1-1.aws.cloud2.influxdata.com"
+-    INFLUXDB_ORG_ID = "847e9dbb25976492"
++    INFLUXDB_HOST = "https://cst-demo-2.us-east-2.aws.influxdata.io/"
++    INFLUXDB_FLIGHT_HOST = "cst-demo-2.us-east-2.aws.influxdata.io"
++    INFLUXDB_ORG_ID = "placeholder"
+     
+\ No newline at end of file

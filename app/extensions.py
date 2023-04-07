@@ -8,7 +8,7 @@ db = SQLAlchemy()
 mail = Mail()
 
 def influxdb_write(lp):
-    log_url = f"{Config.INFLUXDB_HOST}api/v2/write?bucket={Config.INFLUXDB_BUCKET}&orgID={Config.INFLUXDB_ORG_ID}"
+    log_url = f"{Config.INFLUXDB_HOST}api/v2/write?bucket={Config.INFLUXDB_BUCKET}&org={Config.INFLUXDB_ORG_ID}"
     log_headers = {"Authorization":f"Token {Config.INFLUXDB_WRITE_TOKEN}"}
     log_response = post(log_url, headers=log_headers, data=lp)
     log_dict = {"line_protocol":lp}

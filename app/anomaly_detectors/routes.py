@@ -8,7 +8,7 @@ from app.models.checks import Check
 from app.models.notification_channels import NotificationChannel
 from config import Config
 from app.anomaly_detectors.forms import AnomalyDetectorForm
-
+from pyarrow.lib import ArrowInvalid
 from flightsql import FlightSQLClient
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -89,14 +89,20 @@ def issues_table(time_range=None):
         "w": "1 week",
         "m": "1 month"
     }[time_range]
+ 
     sql = f"select check, type, value, observed, time from anomalies where user_id = {current_user.id} and time > now() - interval'{interval}' order by time desc"
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
                         token=Config.INFLUXDB_READ_TOKEN,
-                        metadata={'bucket-name': Config.INFLUXDB_BUCKET})
+                        metadata={'iox-namespace-name': f"{Config.INFLUXDB_ORG_ID}_{Config.INFLUXDB_BUCKET}"})
 
-    query = client.execute(sql)
-    reader = client.do_get(query.endpoints[0].ticket)
+    try:
+        query = client.execute(sql)
+        reader = client.do_get(query.endpoints[0].ticket)
+    except ArrowInvalid:
+        return "No Anomalies Detected"
     table = reader.read_all()
+    if table.num_rows == 0:
+        return "No Anomalies Detected"
     df = table.to_pandas()
     
     ids = df.check.unique()
