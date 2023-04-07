@@ -119,6 +119,7 @@ def latency_graph(time_range=None):
     elif time_range == "m":
         grph = _latency_graph_aggregated('4 hour', '1 month')
         return grph, 200
+        
 def _check_ids_for_user():
     checks = current_user.checks
     list_str = "("
@@ -154,13 +155,13 @@ def status_graph(time_range=None):
     sql = f"""
 SELECT
   DATE_BIN(INTERVAL '{bin_interval}', time, '1970-01-01T00:00:00Z'::TIMESTAMP) AS binned,
-    id,
+    name,
    SUM(CASE WHEN status >= 299 THEN 1 ELSE 0 END)::double / COUNT(status)::double  AS error_rate
 FROM checks
 WHERE time > now() - interval'{interval}'
-AND id in {_check_ids_for_user()}
-GROUP BY id, binned
-ORDER BY id, binned
+AND user_id = {current_user.id}
+GROUP BY name, binned
+ORDER BY name, binned
     """
 
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
@@ -171,7 +172,6 @@ ORDER BY id, binned
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
     results = table.to_pandas()
-    _add_names_col(results)
     results.rename(columns={'binned':'time'},inplace=True)
     
     fig = px.line(results, x='time', y='error_rate', color='name', title=f"Check Error Rates ({bin_interval})")
@@ -187,12 +187,6 @@ ORDER BY id, binned
                         validate=True, 
                         div_id=None), 200
 
-def _add_names_col(df):
-    ids = df.id.unique()
-    names = {}
-    for id in ids:
-        names[id] = Check.query.get(id).name
-    df['name'] = df['id'].map(names)
 
 @bp.route('/new', methods=["GET","POST"])
 @login_required
@@ -277,13 +271,13 @@ def _latency_graph_aggregated(interval, time_range_start):
 SELECT
     date_bin(interval '{interval}', time, TIMESTAMP '2001-01-01 00:00:00Z') as binned,
   avg(elapsed) /1000 as elapsed,
-  id
+  name
 
 FROM checks
 WHERE time > now() - INTERVAL '{time_range_start}'
-AND id in {_check_ids_for_user()}
-GROUP BY id, binned
-ORDER BY id, binned
+AND user_id = {current_user.id}
+GROUP BY name, binned
+ORDER BY name, binned
     """
  
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
@@ -294,7 +288,6 @@ ORDER BY id, binned
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
     results = table.to_pandas()
-    _add_names_col(results)
     results.rename(columns={'binned':'time'}, inplace=True)
 
     fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies Check Latencies (Milliseconds)")
@@ -313,13 +306,12 @@ ORDER BY id, binned
 def _latency_graph_1h():
     sql = f"""
 select 
-    id, elapsed / 1000 as elapsed, time 
+    name, elapsed / 1000 as elapsed, time 
 from checks where  
     time > now() - interval'60 minutes' 
-and 
-    id in {_check_ids_for_user()}
+AND user_id = {current_user.id}
 order by 
-    id, time
+    name, time
     """
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
                     token=Config.INFLUXDB_READ_TOKEN,
@@ -328,8 +320,8 @@ order by
     query = client.execute(sql)
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
+    
     results = table.to_pandas()
-    _add_names_col(results)
     fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
