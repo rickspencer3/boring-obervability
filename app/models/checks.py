@@ -6,7 +6,7 @@ class Check(db.Model):
     __tablename__ = 'checks'
     id = db.Column(db.String(8), primary_key=True, default=generate_id_string)
     anomaly_detectors = db.relationship('AnomalyDetector', secondary=anomaly_detector_check_table, back_populates='checks')
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id')) 
     name = db.Column(db.String(100))
     url = db.Column(db.String(100))
     content = db.Column(db.String(600))
