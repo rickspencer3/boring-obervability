@@ -1,17 +1,13 @@
-import secrets
-import string
 from app.extensions import db
 from flask_user import UserMixin
 from app.models.checks import Check
 from app.models.notification_channels import NotificationChannel
 from app.models.headers import Header
-
-def generate_random_string(length=8):
-    return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(length))
+from app.extensions import generate_id_string
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
-    id = db.Column(db.String(8), primary_key=True, default=generate_random_string)
+    id = db.Column(db.String(8), primary_key=True, default=generate_id_string)
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
 
     # User authentication information. The collation='NOCASE' is required
