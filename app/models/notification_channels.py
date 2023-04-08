@@ -1,4 +1,4 @@
-from app.extensions import db
+from app.extensions import db, generate_id_string
 from app.models.anomaly_detector_notification_channel import anomaly_detector_notification_channel_table
 from app.extensions import mail
 from flask_mail import Message
@@ -6,7 +6,7 @@ from config import Config
 import json
 class NotificationChannel(db.Model):
     __tablename__ = 'notification_channels'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(8), primary_key=True, default=generate_id_string)
     user_id = db.Column(db.String(36), db.ForeignKey('users.id')) 
     name = db.Column(db.String(100))
     type = db.Column(db.String(20), nullable=False)
