@@ -3,7 +3,7 @@ from app.models.header_check import header_check
 class Header(db.Model):
     __tablename__ = 'headers'
     id = db.Column(db.Integer, primary_key = True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id')) 
     name = db.Column(db.String(100))
     key = db.Column(db.String(100))
     value = db.Column(db.String(100))

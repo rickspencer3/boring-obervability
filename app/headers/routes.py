@@ -30,6 +30,9 @@ def new():
 def details(header_id):
     header = Header.query.get(header_id)
     if header.user_id != current_user.id:
+        print("**********")
+        print(header.user_id, type(header.user_id))
+        print(current_user.id, type(current_user.id))
         return "", 404
     return render_template('headers/details.html', header=header)
 
