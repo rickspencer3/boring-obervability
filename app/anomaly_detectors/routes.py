@@ -34,9 +34,8 @@ def delete():
     anomaly_detector = AnomalyDetector.query.get(request.form["anomaly_detector_id"])
     if anomaly_detector.user.id != current_user.id:
         return "", 404
-    if anomaly_detector.user_id == current_user.id:
-        db.session.delete(anomaly_detector)
-        db.session.commit()
+    db.session.delete(anomaly_detector)
+    db.session.commit()
     return "success", 200
 
 
