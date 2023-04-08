@@ -1,6 +1,5 @@
-from app.extensions import db
+from app.extensions import db, generate_id_string
 from app.models.anomaly_detector_check import anomaly_detector_check_table
-from app.extensions import generate_id_string
 
 class Check(db.Model):
     __tablename__ = 'checks'
