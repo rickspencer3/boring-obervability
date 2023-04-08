@@ -1,3 +1,6 @@
+import secrets
+import string
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from requests import post
@@ -19,4 +22,8 @@ def influxdb_write(lp):
                       "response_text":log_response.text,
                       "line_protocol":lp}
         current_app.logger.error(error_dict)
+
+def generate_id_string(length=8):
+    return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(length))
+
 
