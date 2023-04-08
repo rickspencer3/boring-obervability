@@ -128,8 +128,11 @@
     <nav>
         <div>
 
-            <div><img src="{{url_for('static', filename='user.png')}}" </IMG><span style="vertical-align: middle;"><span
-                        class="tab-title">{{current_user.username}}</span>
+            <div>
+                <a href="{{ url_for('users.index') }}">
+                    <img src="{{url_for('static', filename='user.png')}}" </IMG>
+                    <span class="tab-title">{{current_user.username}}</span>
+                </a>
             </div>
         </div>
         <div id="dashboard-nav"><a href="{{ url_for('main.index') }}"><img
