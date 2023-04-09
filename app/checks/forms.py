@@ -12,8 +12,11 @@ class CheckForm(FlaskForm):
     enabled = BooleanField('Enabled', default=True)
     send = SubmitField("Submit")
 
-    def validate_name(self, name):
-        user_id = current_user.id
-        check = Check.query.filter_by(user_id=user_id, name=name.data).first()
-        if check is not None:
-            raise ValidationError('You have already created a check with this name. Please choose a different name.')
+    def validate_name(self, field):
+        # If the form has a check_id attribute, it means we're editing an existing check
+        if hasattr(self, 'check_id'):
+            original_check = Check.query.get(self.check_id)
+            if original_check.name != field.data:
+                existing_check = Check.query.filter_by(user_id=original_check.user_id, name=field.data).first()
+                if existing_check:
+                    raise ValidationError("You have already created a check with this name. Please choose a different name.")

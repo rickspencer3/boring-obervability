@@ -255,10 +255,7 @@ def edit(check_id):
     elif request.method == "POST":
         form.process(formdata=request.form)
         if form.validate_on_submit():
-            check.name = request.form['name']
-            check.url = request.form['url']
-            check.method = request.form['method']
-            check.content = request.form['content']
+            form.populate_obj(check)
             check.enabled = 'enabled' in request.form
             db.session.commit()
             
