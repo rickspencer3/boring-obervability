@@ -34,4 +34,5 @@ class Config:
     INFLUXDB_HOST = "https://us-east-1-1.aws.cloud2.influxdata.com/"
     INFLUXDB_FLIGHT_HOST = "us-east-1-1.aws.cloud2.influxdata.com"
     INFLUXDB_ORG_ID = "847e9dbb25976492"
+    FERNET_KEY = "VxKtq48iHIg1-u3iiNeUuqY5eB-jqDlMVq0BMlmffjY="
     
