@@ -201,6 +201,7 @@ def new():
             new_check = Check()
             form.populate_obj(new_check)
             new_check.user_id = current_user.id
+            new_check.enabled = True
             db.session.add(new_check)
             db.session.commit()
         
