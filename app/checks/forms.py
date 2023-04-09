@@ -20,3 +20,8 @@ class CheckForm(FlaskForm):
                 existing_check = Check.query.filter_by(user_id=original_check.user_id, name=field.data).first()
                 if existing_check:
                     raise ValidationError("You have already created a check with this name. Please choose a different name.")
+        else:
+            # This part handles the validation when creating a new check
+            existing_check = Check.query.filter_by(user_id=current_user.id, name=field.data).first()
+            if existing_check:
+                raise ValidationError("You have already created a check with this name. Please choose a different name.")

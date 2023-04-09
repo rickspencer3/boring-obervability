@@ -198,11 +198,9 @@ def new():
     if request.method == "POST":
         form.process(formdata=request.form)
         if form.validate_on_submit():
-            new_check = Check(name = request.form['name'], 
-            url = request.form['url'],
-            content = request.form['content'],
-            method = request.form['method'],
-            user_id = current_user.id)
+            new_check = Check()
+            form.populate_obj(new_check)
+            new_check.user_id = current_user.id
             db.session.add(new_check)
             db.session.commit()
         
