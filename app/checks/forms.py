@@ -13,9 +13,9 @@ class CheckForm(FlaskForm):
     send = SubmitField("Submit")
 
     def validate_name(self, field):
-        # If the form has a check_id attribute, it means we're editing an existing check
-        if hasattr(self, 'check_id'):
-            original_check = Check.query.get(self.check_id)
+        # If the form has a id attribute, it means we're editing an existing check
+        if hasattr(self, 'id'):
+            original_check = Check.query.get(self.id)
             if original_check.name != field.data:
                 existing_check = Check.query.filter_by(user_id=original_check.user_id, name=field.data).first()
                 if existing_check:

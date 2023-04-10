@@ -244,7 +244,9 @@ def remove_header():
 def edit(check_id):
     form = CheckForm()
     check = Check.query.get(check_id)
+    form.id = check_id
     form.process(obj=check)
+   
     if current_user.id is not check.user.id:
         return "", 404
     
