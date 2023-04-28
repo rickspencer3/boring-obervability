@@ -11,7 +11,7 @@ class Check(db.Model):
     name = db.Column(db.String(100))
     user = db.relationship("User", back_populates = "checks")
     enabled = db.Column(db.Boolean, default=True)
-    type = db.Column(db.String(10), nullable=False)
+    type = db.Column(db.String(20), nullable=False)
 
     __table_args__ = (db.UniqueConstraint('user_id', 'name', name='uq_user_id_name'),)
 
@@ -37,7 +37,7 @@ class HTTPCheck(Check):
 
 class InfluxDBCheck(Check):
     database = db.Column(db.String(100))
-    _token = db.Column("value", db.LargeBinary)
+    _token = db.Column("token", db.LargeBinary)
 
     @property
     def token(self):
