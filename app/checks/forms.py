@@ -6,9 +6,6 @@ from flask_user import current_user
 
 class CheckForm(FlaskForm):
     name = StringField('Check Name', validators=[DataRequired()])
-    url = StringField('URL', validators=[DataRequired(), URL()])
-    method = SelectField('Method', choices=["GET", "POST"])
-    content = TextAreaField('Body Content', validators=[Optional()])
     enabled = BooleanField('Enabled', default=True)
     send = SubmitField("Submit")
 
@@ -25,3 +22,18 @@ class CheckForm(FlaskForm):
             existing_check = Check.query.filter_by(user_id=current_user.id, name=field.data).first()
             if existing_check:
                 raise ValidationError("You have already created a check with this name. Please choose a different name.")
+            
+class HTTPForm(CheckForm):
+    url = StringField('URL', validators=[DataRequired(), URL()])
+    method = SelectField('Method', choices=["GET", "POST"])
+    content = TextAreaField('Body Content', validators=[Optional()])
+
+class InfluxDBForm(CheckForm):
+    database = StringField('Database', validators=[DataRequired()]) 
+    tokrn = StringField('Token', validators=[DataRequired()])
+
+class InfluxDBReadForm(InfluxDBForm):
+    sql = StringField('SQL', validators=[DataRequired()])
+
+class InfluxDBWriteForm(InfluxDBForm):
+    line_protocol = StringField('Line Protocol', validators=[DataRequired()])
