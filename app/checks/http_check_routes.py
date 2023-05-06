@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for
 from flask_user import login_required, current_user
 
 from app.checks import bp
-from app.models.checks import Check
+from app.models.checks import HTTPCheck
 from app.extensions import db
 
 
@@ -19,8 +19,9 @@ def new_http():
     if request.method == "POST":
         form.process(formdata=request.form)
         if form.validate_on_submit():
-            new_check = Check()
+            new_check = HTTPCheck()
             form.populate_obj(new_check)
+            
             new_check.user_id = current_user.id
             new_check.enabled = True
             new_check.type = "http"
@@ -31,3 +32,20 @@ def new_http():
         else:
             return form.errors, 400
 
+@bp.route('<check_id>/edit', methods=["POST"])
+@login_required
+def edit_http(check_id):
+    form = HTTPForm()
+    check = HTTPCheck.query.get(check_id)
+    form.id = check_id
+    form.process(obj=check)
+    form.process(formdata=request.form)
+    if form.validate_on_submit():
+        form.populate_obj(check)
+        check.enabled = 'enabled' in request.form
+        db.session.commit()
+        
+        return redirect(url_for('checks.details', check_id=check.id))
+    else:
+        return form.errors, 400
+    

@@ -15,15 +15,13 @@ from flightsql import FlightSQLClient
 import plotly.io as pio
 import plotly.express as px
 
-from app.checks.forms import CheckForm
+from app.checks.forms import HTTPForm
 
 @bp.route('/')
 @login_required
 def index():
     all_checks = current_user.checks
     return render_template('checks/index.html', checks = all_checks)
-
-
 
 @bp.route('<check_id>/add_anomaly_detector', methods = ["GET","POST"])
 @login_required
@@ -223,30 +221,19 @@ def remove_header():
         db.session.commit()
         return "",200
 
-@bp.route('<check_id>/edit', methods=["GET", "POST"])
+@bp.route('<check_id>/edit', methods=["GET"])
 @login_required
 def edit(check_id):
-    form = CheckForm()
     check = Check.query.get(check_id)
-    form.id = check_id
-    form.process(obj=check)
    
     if current_user.id is not check.user.id:
         return "", 404
-    
-    if request.method == "GET":
-        return render_template('checks/edit.html', form=form, check=check)
 
-    elif request.method == "POST":
-        form.process(formdata=request.form)
-        if form.validate_on_submit():
-            form.populate_obj(check)
-            check.enabled = 'enabled' in request.form
-            db.session.commit()
-            
-            return redirect(url_for('checks.details', check_id=check.id))
-        else:
-            return form.errors, 400
+    return render_template(f'checks/edit_{check.type}.html',
+                form=_check_form(check), check=check)
+
+def _check_form(check):
+    return {"http":HTTPForm(obj=check)}[check.type]
 
 def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
