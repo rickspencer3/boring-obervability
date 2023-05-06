@@ -18,11 +18,13 @@
   <table>
     <TR>
       <TH>Check Name</TH>
+      <TH>Type</TH>
       <TH>Enabled</TH>
     </TR>
     {% for check in checks %}
     <TR>
-      <TD><a href="{{ url_for('checks.details', check_id=check.id) }}">{{check.name}}</a>
+      <TD><a href="{{ url_for('checks.details', check_id=check.id) }}">{{check.name}}</a></TD>
+      <TD> {{ check.type }} </TD>
       {% if check.enabled %}
       <TD><input type="checkbox" id="{{check.id}}" onchange="toggleEnabled(this, '{{check.id}}')" checked /></TD>
       {% else %}
