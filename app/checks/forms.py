@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, TextAreaField, SubmitField, BooleanField
+from wtforms import HiddenField, StringField, SelectField, TextAreaField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, URL, Optional, ValidationError
 from app.models.checks import Check
 from flask_user import current_user
@@ -27,10 +27,11 @@ class HTTPForm(CheckForm):
     url = StringField('URL', validators=[DataRequired(), URL()])
     method = SelectField('Method', choices=["GET", "POST"])
     content = TextAreaField('Body Content', validators=[Optional()])
+    type = HiddenField(default="http")
 
 class InfluxDBForm(CheckForm):
     database = StringField('Database', validators=[DataRequired()]) 
-    tokrn = StringField('Token', validators=[DataRequired()])
+    token = StringField('Token', validators=[DataRequired()])
 
 class InfluxDBReadForm(InfluxDBForm):
     sql = StringField('SQL', validators=[DataRequired()])

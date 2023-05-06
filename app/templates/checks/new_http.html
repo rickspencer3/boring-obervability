@@ -5,7 +5,7 @@
 <script>
        $("#checks-nav").addClass("selected-nav");
 </script>
-<h2>{% block title %}New Check{% endblock %}</h2>
+<h2>{% block title %}New HTTP Check{% endblock %}</h2>
 <form method="post">
        <TABLE>
               {{ form_row(form.name) }}
@@ -13,6 +13,7 @@
               {{ form_row(form.method) }}
               {{ form_row(form.content) }}
        </TABLE>
+       {{form.type}}
        {{form.send()}}
        {{ form.csrf_token }}
 </form>

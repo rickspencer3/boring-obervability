@@ -23,11 +23,7 @@ def index():
     all_checks = current_user.checks
     return render_template('checks/index.html', checks = all_checks)
 
-@bp.route('/<check_id>')
-@login_required
-def details(check_id):
-    check = Check.query.get(check_id)
-    return render_template('checks/details.html', check=check)
+
 
 @bp.route('<check_id>/add_anomaly_detector', methods = ["GET","POST"])
 @login_required
@@ -58,6 +54,13 @@ def add_header(check_id):
         db.session.add(check)
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))
+
+@bp.route('/<check_id>')
+@login_required
+def details(check_id):
+    check = Check.query.get(check_id)
+    type = check.type
+    return render_template(f'checks/details_{type}.html', check=check)
 
 @bp.route('/enabled', methods=["POST"])
 @login_required
@@ -188,26 +191,7 @@ ORDER BY name, binned
                         div_id=None), 200
 
 
-@bp.route('/new', methods=["GET","POST"])
-@login_required
-def new():
-    form = CheckForm()
-    if request.method == "GET":
-        return render_template('checks/new.html', form=form)
 
-    if request.method == "POST":
-        form.process(formdata=request.form)
-        if form.validate_on_submit():
-            new_check = Check()
-            form.populate_obj(new_check)
-            new_check.user_id = current_user.id
-            new_check.enabled = True
-            db.session.add(new_check)
-            db.session.commit()
-        
-            return redirect(url_for('checks.index'))
-        else:
-            return form.errors, 400
 
 @bp.route('remove_detector', methods=["POST"])
 @login_required
