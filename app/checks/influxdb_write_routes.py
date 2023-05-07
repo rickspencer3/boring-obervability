@@ -6,15 +6,15 @@ from app.models.checks import HTTPCheck
 from app.extensions import db
 
 
-from app.checks.forms import HTTPForm
+from app.checks.forms import InfluxDBWriteForm
 
 
-@bp.route('/new_http', methods=["GET","POST"])
+@bp.route('/new_influxdb_write', methods=["GET"])
 @login_required
-def new_http():
-    form = HTTPForm()
+def new_influxdb_write():
+    form = InfluxDBWriteForm()
     if request.method == "GET":
-        return render_template('checks/new_http.html', form=form)
+        return render_template('checks/new_influxdb_write.html', form=form)
 
     if request.method == "POST":
         form.process(formdata=request.form)
@@ -34,8 +34,8 @@ def new_http():
 
 @bp.route('<check_id>/edit', methods=["POST"])
 @login_required
-def edit_http(check_id):
-    form = HTTPForm()
+def edit_influxdb_write(check_id):
+    form = InfluxDBWriteForm()
     check = HTTPCheck.query.get(check_id)
     form.id = check_id
     form.process(obj=check)

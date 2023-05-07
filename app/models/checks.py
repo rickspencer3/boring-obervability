@@ -2,6 +2,7 @@ from app.extensions import db, generate_id_string
 from app.models.anomaly_detector_check import anomaly_detector_check_table
 from cryptography.fernet import Fernet
 from flask import current_app
+from sqlalchemy.orm import validates
 
 class Check(db.Model):
     __tablename__ = 'checks'
@@ -65,6 +66,13 @@ class InfluxDBReadCheck(InfluxDBCheck):
 
 class InfluxDBWriteCheck(InfluxDBCheck):
     line_protocol = db.Column(db.String(300))
+    api_version = db.Column(db.Integer)
+
+    @validates('api_version')
+    def validate_api_version(self, key, api_version):
+        if api_version not in (1, 2):
+            raise ValueError("api_version must be either 1 or 2")
+        return api_version
 
     def run(self):
         print(f"run InfluxDBWriteCheck {self.id}, {self.name}")

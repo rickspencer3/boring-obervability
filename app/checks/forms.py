@@ -38,3 +38,4 @@ class InfluxDBReadForm(InfluxDBForm):
 
 class InfluxDBWriteForm(InfluxDBForm):
     line_protocol = StringField('Line Protocol', validators=[DataRequired()])
+    api_version = SelectField('API Version', choices=[(1, 'Version 1'), (2, 'Version 2')], coerce=int)
