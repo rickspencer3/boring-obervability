@@ -13,6 +13,7 @@ class Check(db.Model):
     user = db.relationship("User", back_populates = "checks")
     enabled = db.Column(db.Boolean, default=True)
     type = db.Column(db.String(20), nullable=False)
+    url = db.Column(db.String(100))
 
     __table_args__ = (db.UniqueConstraint('user_id', 'name', name='uq_user_id_name'),)
 
@@ -25,7 +26,6 @@ class Check(db.Model):
         raise NotImplementedError("Subclasses should implement this method")
 
 class HTTPCheck(Check):
-    url = db.Column(db.String(100))
     content = db.Column(db.String(600))
     method = db.Column(db.String(10))
 

@@ -6,6 +6,7 @@ from flask_user import current_user
 
 class CheckForm(FlaskForm):
     name = StringField('Check Name', validators=[DataRequired()])
+    url = StringField('URL', validators=[DataRequired(), URL()])
     enabled = BooleanField('Enabled', default=True)
     send = SubmitField("Submit")
 
@@ -24,7 +25,6 @@ class CheckForm(FlaskForm):
                 raise ValidationError("You have already created a check with this name. Please choose a different name.")
             
 class HTTPForm(CheckForm):
-    url = StringField('URL', validators=[DataRequired(), URL()])
     method = SelectField('Method', choices=["GET", "POST"])
     content = TextAreaField('Body Content', validators=[Optional()])
     type = HiddenField(default="http")
