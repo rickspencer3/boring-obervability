@@ -23,6 +23,10 @@ class Check(db.Model):
 
     def run(self):
         raise NotImplementedError("Subclasses should implement this method")
+    
+    @property
+    def form_class():
+        return None
 
 class HTTPCheck(Check):
     content = db.Column(db.String(600))
@@ -35,6 +39,11 @@ class HTTPCheck(Check):
 
     def run(self):
         print(f"run HTTPCheck {self.id}, {self.name}")
+    
+    @property
+    def form_class(self):
+        import app.checks.forms as forms
+        return forms.HTTPForm
 
 class InfluxDBCheck(Check):
     database = db.Column(db.String(100))
@@ -77,6 +86,11 @@ class InfluxDBWriteCheck(InfluxDBCheck):
 
     def run(self):
         print(f"run InfluxDBWriteCheck {self.id}, {self.name}")
+
+    @property
+    def form_class(self):
+        import app.checks.forms as forms
+        return forms.InfluxDBWriteForm
 
     __mapper_args__ = {
     'polymorphic_identity': 'influxdb_write',

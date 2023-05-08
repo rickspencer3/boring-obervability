@@ -15,7 +15,6 @@ from flightsql import FlightSQLClient
 import plotly.io as pio
 import plotly.express as px
 
-from app.checks.forms import HTTPForm, InfluxDBWriteForm
 
 @bp.route('/')
 @login_required
@@ -225,15 +224,12 @@ def remove_header():
 @login_required
 def edit(check_id):
     check = Check.query.get(check_id)
-    form_classes = {
-        "http": HTTPForm,
-        "influxdb_write": InfluxDBWriteForm
-    }
+
     if current_user.id is not check.user.id:
         return "", 404
 
     return render_template(f'checks/edit_{check.type}.html',
-                form=form_classes[check.type](obj=check),
+                form=check.form_class(obj=check),
                 check=check)
 
 def _latency_graph_aggregated(interval, time_range_start):
