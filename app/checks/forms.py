@@ -42,4 +42,5 @@ class InfluxDBWriteForm(InfluxDBForm):
     api_version = SelectField('API Version', choices=[(1, 'Version 1'), (2, 'Version 2')], coerce=int)
 
 FormTypes = {"influxdb_write":InfluxDBWriteForm,
-             "http":HTTPForm}
+             "http":HTTPForm,
+             "influxdb_read":InfluxDBReadForm}

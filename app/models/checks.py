@@ -70,6 +70,11 @@ class InfluxDBReadCheck(InfluxDBCheck):
     def run(self):
         print(f"run InfluxDBReadCheck {self.id}, {self.name}")
 
+    @property
+    def form_class(self):
+        import app.checks.forms as forms
+        return forms.InfluxDBReadForm
+    
     __mapper_args__ = {
     'polymorphic_identity': 'influxdb_read',
     }
@@ -97,4 +102,5 @@ class InfluxDBWriteCheck(InfluxDBCheck):
     }
 
 CheckClass = {"http":HTTPCheck,
-                  "influxdb_write":InfluxDBWriteCheck}
+                "influxdb_write":InfluxDBWriteCheck,
+                "influxdb_read":InfluxDBReadCheck}

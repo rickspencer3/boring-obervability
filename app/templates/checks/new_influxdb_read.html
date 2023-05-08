@@ -1,0 +1,21 @@
+{% from "macros.html" import form_row %}
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+       $("#checks-nav").addClass("selected-nav");
+</script>
+<h2>{% block title %}New InfluxDB Write Check{% endblock %}</h2>
+<form method="post">
+       <TABLE>
+              {{ form_row(form.name) }}
+              {{ form_row(form.host) }}
+              {{ form_row(form.database) }}
+              {{ form_row(form.token) }}
+              {{ form_row(form.sql) }}
+       </TABLE>
+       {{form.type}}
+       {{form.send()}}
+       {{ form.csrf_token }}
+</form>
+{% endblock %}

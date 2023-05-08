@@ -38,4 +38,6 @@
 <hr>
 <a href="{{ url_for('checks.new', type='http') }}">New HTTP Check</a>
 <a href="{{ url_for('checks.new', type='influxdb_write') }}">New InfluxDB Write Check</a>
+<a href="{{ url_for('checks.new', type='influxdb_read') }}">New InfluxDB Read Check</a>
+
 {% endblock %}
