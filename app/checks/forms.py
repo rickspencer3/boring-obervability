@@ -6,7 +6,6 @@ from flask_user import current_user
 
 class CheckForm(FlaskForm):
     name = StringField('Check Name', validators=[DataRequired()])
-    url = StringField('URL', validators=[DataRequired(), URL()])
     enabled = BooleanField('Enabled', default=True)
     send = SubmitField("Submit")
 
@@ -27,10 +26,12 @@ class CheckForm(FlaskForm):
 class HTTPForm(CheckForm):
     method = SelectField('Method', choices=["GET", "POST"])
     content = TextAreaField('Body Content', validators=[Optional()])
+    url = StringField('URL', validators=[DataRequired(), URL()])
     type = HiddenField(default="http")
 
 class InfluxDBForm(CheckForm):
     database = StringField('Database', validators=[DataRequired()]) 
+    host = StringField('Host', validators=[DataRequired()])
     token = StringField('Token', validators=[DataRequired()])
 
 class InfluxDBReadForm(InfluxDBForm):
