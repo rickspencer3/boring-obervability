@@ -31,21 +31,4 @@ def new_http():
             return redirect(url_for('checks.index'))
         else:
             return form.errors, 400
-
-@bp.route('<check_id>/edit_http_check', methods=["POST"])
-@login_required
-def edit_http(check_id):
-    form = HTTPForm()
-    check = HTTPCheck.query.get(check_id)
-    form.id = check_id
-    form.process(obj=check)
-    form.process(formdata=request.form)
-    if form.validate_on_submit():
-        form.populate_obj(check)
-        check.enabled = 'enabled' in request.form
-        db.session.commit()
-        
-        return redirect(url_for('checks.details', check_id=check.id))
-    else:
-        return form.errors, 400
     

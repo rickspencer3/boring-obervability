@@ -220,17 +220,32 @@ def remove_header():
         db.session.commit()
         return "",200
 
-@bp.route('<check_id>/edit', methods=["GET"])
+@bp.route('<check_id>/edit', methods=["GET","POST"])
 @login_required
 def edit(check_id):
     check = Check.query.get(check_id)
 
     if current_user.id is not check.user.id:
         return "", 404
+    if request.method == "GET":
+        return render_template(f'checks/edit_{check.type}.html',
+                    form=check.form_class(obj=check),
+                    check=check)
+    else:
+        form = check.form_class()
+        check = Check.query.get(check_id)
+        form.id = check_id
+        form.process(obj=check)
+        form.process(formdata=request.form)
+        if form.validate_on_submit():
+            form.populate_obj(check)
+            check.enabled = 'enabled' in request.form
+            db.session.commit()
+            
+            return redirect(url_for('checks.details', check_id=check.id))
+        else:
+            return form.errors, 400
 
-    return render_template(f'checks/edit_{check.type}.html',
-                form=check.form_class(obj=check),
-                check=check)
 
 def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""

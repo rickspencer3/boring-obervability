@@ -23,7 +23,7 @@
 </script>
 <h2>{% block title %}Edit InfluxDB Write Check "{{check.name}}"{% endblock %}</h2>
 
-<form method="post" action="{{ url_for('checks.edit_influxdb_write', check_id=check.id) }}">
+<form method="post">
        <TABLE>
               {{ form_row(form.name) }}
               {{ form_row(form.host) }}

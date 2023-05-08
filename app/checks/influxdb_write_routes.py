@@ -31,20 +31,3 @@ def new_influxdb_write():
         else:
             return form.errors, 400
 
-@bp.route('<check_id>/edit_influxdb_write', methods=["POST"])
-@login_required
-def edit_influxdb_write(check_id):
-    form = InfluxDBWriteForm()
-    check = InfluxDBWriteCheck.query.get(check_id)
-    form.id = check_id
-    form.process(obj=check)
-    form.process(formdata=request.form)
-    if form.validate_on_submit():
-        form.populate_obj(check)
-        check.enabled = 'enabled' in request.form
-        db.session.commit()
-        
-        return redirect(url_for('checks.details', check_id=check.id))
-    else:
-        return form.errors, 400
-    
