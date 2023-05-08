@@ -3,9 +3,9 @@ from flask_user import login_required, current_user
 from requests import request as http_request
 from html import escape
 from flask import current_app
-
+from app.checks.forms import FormTypes
 from app.checks import bp
-from app.models.checks import Check
+from app.models.checks import Check, CheckClass
 from app.models.headers import Header
 from app.models.anomaly_detectors import AnomalyDetector
 from app.extensions import db
@@ -14,7 +14,6 @@ from config import Config
 from flightsql import FlightSQLClient
 import plotly.io as pio
 import plotly.express as px
-
 
 @bp.route('/')
 @login_required
@@ -243,6 +242,30 @@ def edit(check_id):
             db.session.commit()
             
             return redirect(url_for('checks.details', check_id=check.id))
+        else:
+            return form.errors, 400
+
+
+@bp.route('<type>/new', methods=["GET", "POST"])
+@login_required
+def new(type):
+    form = FormTypes[type]()
+    if request.method == "GET":
+        return render_template(f'checks/new_{type}.html', form=form)
+
+    if request.method == "POST":
+        form.process(formdata=request.form)
+        if form.validate_on_submit():
+            new_check = CheckClass[type]()
+            form.populate_obj(new_check)
+            
+            new_check.user_id = current_user.id
+            new_check.enabled = True
+            new_check.type = type
+            db.session.add(new_check)
+            db.session.commit()
+        
+            return redirect(url_for('checks.index'))
         else:
             return form.errors, 400
 

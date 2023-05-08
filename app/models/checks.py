@@ -95,3 +95,6 @@ class InfluxDBWriteCheck(InfluxDBCheck):
     __mapper_args__ = {
     'polymorphic_identity': 'influxdb_write',
     }
+
+CheckClass = {"http":HTTPCheck,
+                  "influxdb_write":InfluxDBWriteCheck}
