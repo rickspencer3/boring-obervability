@@ -7,7 +7,7 @@ return render_template(f'checks/edit_{check.type}.html',
                 check=check)
 ```
 ### 2. use `flask db migrate` and `flask db upgrade` to migrate the database
-### 3. update CheckClass in `app\models\checks.py`
+### 3. update CheckClass in `app\models\__init__.py`
 ### 4. create forms for the check in `app/checks/forms.py`
 ### 5. update FormClass in `app/checks/forms.py`
 ### 6. create new view

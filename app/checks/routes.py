@@ -5,7 +5,8 @@ from html import escape
 from flask import current_app
 from app.checks.forms import FormTypes
 from app.checks import bp
-from app.models.checks import Check, CheckClass
+from app.models import CheckClass
+from app.models.checks import Check
 from app.models.headers import Header
 from app.models.anomaly_detectors import AnomalyDetector
 from app.extensions import db
