@@ -1,0 +1,41 @@
+{% from "macros.html" import form_row %}
+{% extends 'base.html' %}
+{% block content %}
+<script>
+       $("#checks-nav").addClass("selected-nav");
+       function confirm_and_delete(){
+              name = "{{check.name}}";
+              id = "{{check.id}}"
+              msg = "Are you sure you want to delete check " + name + "?";
+              msg += "\nThis action cannot be undone."
+              confirmed = confirm(msg);
+              if(confirmed){
+                     $.ajax({
+                     url: "{{url_for('checks.delete')}}",
+                     type: "post",
+                     data: {"check_id":id, "csrf_token":"{{csrf_token()}}"},
+                     success: function (data){
+                            window.location.replace("{{url_for('checks.index')}}");
+                     }
+                     });
+              }
+       }
+</script>
+<h2>{% block title %}Edit InfluxDB Write Check "{{check.name}}"{% endblock %}</h2>
+
+<form method="post" action="{{ url_for('checks.edit_http', check_id=check.id) }}">
+       <TABLE>
+              {{ form_row(form.name) }}
+              {{ form_row(form.host) }}
+              {{ form_row(form.database) }}
+              {{ form_row(form.api_version) }}
+              {{ form_row(form.token) }}
+              {{ form_row(form.line_protocol) }}
+       </TABLE>
+       {{form.send()}}
+       {{ form.csrf_token }}
+</form>
+<HR>
+<BUTTON onclick="confirm_and_delete()">DELETE CHECK</BUTTON>
+
+{% endblock %}

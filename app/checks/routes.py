@@ -15,7 +15,7 @@ from flightsql import FlightSQLClient
 import plotly.io as pio
 import plotly.express as px
 
-from app.checks.forms import HTTPForm, InfluxDBReadForm
+from app.checks.forms import HTTPForm, InfluxDBWriteForm
 
 @bp.route('/')
 @login_required
@@ -227,7 +227,7 @@ def edit(check_id):
     check = Check.query.get(check_id)
     form_classes = {
         "http": HTTPForm,
-        "influxdb_read": InfluxDBReadForm
+        "influxdb_write": InfluxDBWriteForm
     }
     if current_user.id is not check.user.id:
         return "", 404
