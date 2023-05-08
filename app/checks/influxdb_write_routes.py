@@ -8,7 +8,6 @@ from app.extensions import db
 
 from app.checks.forms import InfluxDBWriteForm
 
-
 @bp.route('/new_influxdb_write', methods=["GET", "POST"])
 @login_required
 def new_influxdb_write():
@@ -32,11 +31,11 @@ def new_influxdb_write():
         else:
             return form.errors, 400
 
-@bp.route('<check_id>/edit', methods=["POST"])
+@bp.route('<check_id>/edit_influxdb_write', methods=["POST"])
 @login_required
 def edit_influxdb_write(check_id):
     form = InfluxDBWriteForm()
-    check = HTTPCheck.query.get(check_id)
+    check = InfluxDBWriteCheck.query.get(check_id)
     form.id = check_id
     form.process(obj=check)
     form.process(formdata=request.form)

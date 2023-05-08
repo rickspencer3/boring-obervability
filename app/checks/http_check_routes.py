@@ -32,7 +32,7 @@ def new_http():
         else:
             return form.errors, 400
 
-@bp.route('<check_id>/edit', methods=["POST"])
+@bp.route('<check_id>/edit_http_check', methods=["POST"])
 @login_required
 def edit_http(check_id):
     form = HTTPForm()
