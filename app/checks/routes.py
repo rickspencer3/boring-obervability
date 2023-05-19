@@ -156,7 +156,7 @@ def status_graph(time_range=None):
 SELECT
   DATE_BIN(INTERVAL '{bin_interval}', time, '1970-01-01T00:00:00Z'::TIMESTAMP) AS binned,
     name,
-   SUM(CASE WHEN status >= 299 THEN 1 ELSE 0 END)::double / COUNT(status)::double  AS error_rate
+   SUM(error)::double / COUNT(status)::double  AS error_rate
 FROM checks
 WHERE time > now() - interval'{interval}'
 AND user_id = '{current_user.id}'
