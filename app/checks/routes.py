@@ -141,13 +141,14 @@ def status_graph(time_range=None):
     sql = f"""
 SELECT
   DATE_BIN(INTERVAL '{bin_interval}', time, '1970-01-01T00:00:00Z'::TIMESTAMP) AS binned,
-    name,
-   SUM(error)::double / COUNT(status)::double  AS error_rate
+    check_name,
+   SUM(error)::double / COUNT(error)::double  AS error_rate
 FROM checks
 WHERE time > now() - interval'{interval}'
 AND user_id = '{current_user.id}'
-GROUP BY name, binned
-ORDER BY name, binned
+AND check_name IS NOT NULL
+GROUP BY check_name, binned
+ORDER BY check_name, binned
     """
 
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
@@ -158,9 +159,9 @@ ORDER BY name, binned
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
     results = table.to_pandas()
-    results.rename(columns={'binned':'time'},inplace=True)
-    
-    fig = px.line(results, x='time', y='error_rate', color='name', title=f"Check Error Rates ({bin_interval})")
+    results.rename(columns={'binned':'time',"check_name":"Check Name"},inplace=True)
+
+    fig = px.line(results, x='time', y='error_rate', color='Check Name', title=f"Check Error Rates ({bin_interval})")
     return pio.to_html(fig, 
                         config=None, 
                         auto_play=True, 
@@ -280,9 +281,9 @@ ORDER BY check_name, binned
     reader = client.do_get(query.endpoints[0].ticket)
     table = reader.read_all()
     results = table.to_pandas()
-    results.rename(columns={'binned':'time'}, inplace=True)
+    results.rename(columns={'binned':'time', 'check_name':"Check Name"}, inplace=True)
 
-    fig = px.line(results, x='time', y='latency', color='check_name', title="Check Latencies Check Latencies (Milliseconds)")
+    fig = px.line(results, x='time', y='latency', color='Check Name', title="Check Latencies Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
@@ -315,7 +316,9 @@ order by
     table = reader.read_all()
     
     results = table.to_pandas()
-    fig = px.line(results, x='time', y='latency', color='check_name', title="Check Latencies (Milliseconds)")
+    results.rename(columns={'check_name':"Check Name"}, inplace=True)
+
+    fig = px.line(results, x='time', y='latency', color='Check Name', title="Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 

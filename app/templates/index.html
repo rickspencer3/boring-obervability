@@ -5,13 +5,13 @@
 {% block content %}
 <script>
     $("#dashboard-nav").addClass("selected-nav");
-    // $.ajax({
-    //     url: "{{url_for('checks.status_graph', time_range=time_range)}}",
-    //     type: "get",
-    //     success: function (response) {
-    //         $("#status_graph").html(response);
-    //     }
-    // });
+    $.ajax({
+        url: "{{url_for('checks.status_graph', time_range=time_range)}}",
+        type: "get",
+        success: function (response) {
+            $("#status_graph").html(response);
+        }
+    });
     $.ajax({
         url: "{{url_for('checks.latency_graph', time_range=time_range)}}",
         type: "get",
