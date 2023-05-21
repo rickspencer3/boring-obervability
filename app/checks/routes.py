@@ -261,14 +261,15 @@ def _latency_graph_aggregated(interval, time_range_start):
     sql = f"""
 SELECT
     date_bin(interval '{interval}', time, TIMESTAMP '2001-01-01 00:00:00Z') as binned,
-  avg(elapsed) /1000 as elapsed,
-  name
+  avg(latency) latency,
+  check_name
 
 FROM checks
 WHERE time > now() - INTERVAL '{time_range_start}'
 AND user_id = '{current_user.id}'
-GROUP BY name, binned
-ORDER BY name, binned
+AND check_name IS NOT NULL
+GROUP BY check_name, binned
+ORDER BY check_name, binned
     """
  
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
@@ -281,7 +282,7 @@ ORDER BY name, binned
     results = table.to_pandas()
     results.rename(columns={'binned':'time'}, inplace=True)
 
-    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies Check Latencies (Milliseconds)")
+    fig = px.line(results, x='time', y='latency', color='check_name', title="Check Latencies Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
