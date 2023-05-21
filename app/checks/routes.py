@@ -119,20 +119,6 @@ def latency_graph(time_range=None):
     elif time_range == "m":
         grph = _latency_graph_aggregated('4 hour', '1 month')
         return grph, 200
-        
-def _check_ids_for_user():
-    checks = current_user.checks
-    list_str = "("
-    i = 0
-    while i < len(checks):
-        check = checks[i]
-        list_str += f"'{check.id}'"
-        if i < len(checks) - 1:
-            list_str += ","
-        i += 1
-    list_str += ")"
-
-    return list_str
 
 @bp.route('/status_graph/<time_range>', methods=["GET"])
 @login_required
@@ -311,12 +297,13 @@ ORDER BY name, binned
 def _latency_graph_1h():
     sql = f"""
 select 
-    name, elapsed / 1000 as elapsed, time 
+    check_name, latency, time  
 from checks where  
     time > now() - interval'60 minutes' 
 AND user_id = '{current_user.id}'
+AND check_name IS NOT NULL
 order by 
-    name, time
+    check_name, time
     """
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
                     token=Config.INFLUXDB_READ_TOKEN,
@@ -327,7 +314,7 @@ order by
     table = reader.read_all()
     
     results = table.to_pandas()
-    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies (Milliseconds)")
+    fig = px.line(results, x='time', y='latency', color='check_name', title="Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 

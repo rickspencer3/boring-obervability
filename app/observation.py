@@ -47,7 +47,7 @@ class Observation(Point):
         super().__init__(measurement)
 
         # Add required tags
-        self.tag("name",f'"{check_name}"')
+        self.tag("check_name",f'"{check_name}"')
         self.tag("user_id", user_id)
         self.tag("check_id",check_id)
         self.tag("end_point", f'"{end_point}"')
