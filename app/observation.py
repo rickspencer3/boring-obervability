@@ -3,8 +3,8 @@ from time import time_ns
 
 class Observation(Point):
     """
-    This class represents an Observation, which is a special type of InfluxDB Point,
-    specifically, the result of Check.run(). Used to write results to InfluxDB.
+    This class represents an Observation, which is a special type of InfluxDB Point.
+    Specifically, the result of Check.run(). Used to write results to InfluxDB.
     """
     
     def __init__(self, 
@@ -12,6 +12,7 @@ class Observation(Point):
                  check_name = "",
                  user_id = "",
                  check_id = "",
+                 end_point = "",
                  error = 0,
                  error_type = None,
                  latency = None,
@@ -40,13 +41,16 @@ class Observation(Point):
             raise Exception("Empty user_id not allowed.")
         if id == "":
             raise Exception("Empty check_id not allowed.")
-        
+        if end_point == "":
+            raise Exception("Empty host not allowed.")
+              
         super().__init__(measurement)
 
         # Add required tags
-        self.tag("name",check_name)
+        self.tag("name",f'"{check_name}"')
         self.tag("user_id", user_id)
         self.tag("check_id",check_id)
+        self.tag("end_point", f'"{end_point}"')
 
         # Add fields
         self.field("error", error)

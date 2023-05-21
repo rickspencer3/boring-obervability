@@ -7,21 +7,19 @@ from requests import post
 from config import Config
 from flask import current_app
 
+from influxdb_client import InfluxDBClient, Point
+from influxdb_client.client.write_api import SYNCHRONOUS
+
 db = SQLAlchemy()
 mail = Mail()
 
-def influxdb_write(lp):
-    log_url = f"{Config.INFLUXDB_HOST}api/v2/write?bucket={Config.INFLUXDB_BUCKET}&org={Config.INFLUXDB_ORG_ID}"
-    log_headers = {"Authorization":f"Token {Config.INFLUXDB_WRITE_TOKEN}"}
-    log_response = post(log_url, headers=log_headers, data=lp)
-    log_dict = {"line_protocol":lp}
-    current_app.logger.info(log_dict)
-    if log_response.status_code > 299:
-        print(f"logging failed with {log_response.status_code}")
-        error_dict = {"response_code":log_response.status_code,
-                      "response_text":log_response.text,
-                      "line_protocol":lp}
-        current_app.logger.error(error_dict)
+def influxdb_write(point):
+    client = InfluxDBClient(url=Config.INFLUXDB_HOST, token=Config.INFLUXDB_WRITE_TOKEN)
+    write_api = client.write_api(write_options=SYNCHRONOUS)
+    write_api.write(bucket=Config.INFLUXDB_BUCKET, 
+                    org=Config.INFLUXDB_ORG_ID,
+                    record=point)
+
 
 def generate_id_string(length=8):
     return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(length))
