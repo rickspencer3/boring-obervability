@@ -1,9 +1,15 @@
 from influxdb_client.client.write.point import Point
 from time import time_ns
+
 class Observation(Point):
+    """
+    This class represents an Observation, which is a special type of InfluxDB Point,
+    specifically, the result of Check.run(). Used to write results to InfluxDB.
+    """
+    
     def __init__(self, 
                  measurement = "",
-                 name = "",
+                 check_name = "",
                  user_id = "",
                  check_id = "",
                  error = 0,
@@ -11,54 +17,63 @@ class Observation(Point):
                  latency = None,
                  tags={}, 
                  fields={}):
-        # gaurd conditions
+        """
+        Create a new Observation.
+
+        :param measurement: The name of the measurement (aka Table).
+        :param check_name: The name of the Check.
+        :param user_id: The user_id for the Check.
+        :param check_id: The id tag of the Check.
+        :param error: Set to 1 if an error was observed. Defaults to 0.
+        :param error_type: The error_type field of the Observation. Optional. Should be "client" or "server".
+        :param latency: The latency of the Check, in milliseconds. Optional, but almost always should be set.
+        :param tags: A dictionary of additional tags for the Observation. Optional.
+        :param fields: A dictionary of additional fields for the Observation. Optional.
+        """
+        
+        # Guard conditions
         if measurement == "":
-            raise Exception("empty measurement name not allowed")
-        if name == "":
-            raise Exception("empty name not allowed")
+            raise Exception("Empty measurement name not allowed.")
+        if check_name == "":
+            raise Exception("Empty name not allowed.")
         if user_id == "":
-            raise Exception("empty user_id not allowed")
+            raise Exception("Empty user_id not allowed.")
         if id == "":
-            raise Exception("empty check_id not allowed")
+            raise Exception("Empty check_id not allowed.")
         
         super().__init__(measurement)
 
-        # add required tags
-        self.tag("name",name)
+        # Add required tags
+        self.tag("name",check_name)
         self.tag("user_id", user_id)
         self.tag("check_id",check_id)
 
-        # add fields
+        # Add fields
         self.field("error", error)
         if error_type is not None:
-            self.field("error_type", error_type)
+            if error_type not in ["server","client"]:
+                raise Exception(""" 'server' and 'client' are the only valid error types """)
+            else:
+                self.field("error_type", error_type)
         if latency is not None:
             self.field("latency", latency)
 
-        # add additional keys and fields (if any)
-        for key, value in tags:
+        # Add additional keys and fields (if any)
+        for key, value in tags.items():
             self.tag(key,value)
-        for key, value in fields:
+        for key, value in fields.items():
             self.field(key,value)
 
-        #time stamp with current time
+        # Timestamp with current time
         self.time = time_ns()
-# """checks,url="{self.url}",
-# name={name},
-# method={self.method},
-# user_id={self.user_id},
-# id={self.id} 
-# 
-# status={check_response.status_code}i,
-# error={error}i,
-# elapsed={check_response.elapsed.microseconds}i"""
         
+
 if __name__ == "__main__":
     tags = {"name":"foo_name", "user_id":"foo_user_id","id":"foo_id"}
     fields = {"error":0,"latency":0}
     observation = Observation(
                             measurement="foo_measurement",
-                            name="foo_name",
+                            check_name="foo_name",
                             user_id="foo_user_id",
                             check_id="foo_check_id",
                             latency=1000
