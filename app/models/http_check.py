@@ -35,6 +35,7 @@ class HTTPCheck(Check):
         except ConnectionError as e:
             # the server is totally down, didn't response at all
             lp = f"""checks,url="{self.url}",name={self.name},method={self.method},user_id={self.user_id},id={self.id} status=404i,elapsed=0i"""
+            
             response = ConnectionErrorResponse()
             self.detect_anomolies_and_record(self, response, lp)
             self._log_response_error(self, e)
@@ -49,6 +50,16 @@ class HTTPCheck(Check):
                     "response_text":check_response.text}
         current_app.logger.info(log_dict)
         error = 1 if check_response.status_code > 399 else 0
+        fields={"method":self.method,
+                "status":check_response.status_code
+                }
+        error_type = ""
+        if check_response.status_code > 499:
+            error_type = "server"
+        elif check_response.status_code > 399:
+            error_type = "client"
+        if error_type != "":
+            fields["error_type"] = error_type
         observation = Observation(measurement="checks",
                                 end_point=self.url,
                                 check_name=self.name,
@@ -56,13 +67,11 @@ class HTTPCheck(Check):
                                 check_id=self.id,
                                 error=error,
                                 latency= check_response.elapsed.microseconds / 1000,
-                                  fields={"method":self.method,
-                                          "status":check_response.status_code
-                                          })
-        print("**************")
-        print(observation.to_line_protocol())
+                                fields=fields
+                                )
       
         self.detect_anomolies_and_record(self, check_response, observation)
+        current_app.logger.info(f'{observation.to_line_protocol()} at {observation.time}')
 
     def detect_anomolies_and_record(self, check, check_response, point):
         for anomaly_detector in check.anomaly_detectors:
