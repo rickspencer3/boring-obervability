@@ -20,12 +20,17 @@ def influxdb_write(point):
     )
     client.write(record=point)
 
-def generate_id_string(length=8):
-    return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(length))
-
-influxdb_read_client = InfluxDBClient3(
+def influxdb_query(sql):
+    client = InfluxDBClient3(
         host=Config.INFLUXDB_FLIGHT_HOST,
         org=Config.INFLUXDB_ORG_ID,
         database=Config.INFLUXDB_BUCKET,
         token=Config.INFLUXDB_READ_TOKEN
     )
+    return client.query(query=sql , language="sql")
+
+
+def generate_id_string(length=8):
+    return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(length))
+
+

@@ -9,8 +9,8 @@ from app.models import CheckClass
 from app.models.checks import Check
 from app.models.headers import Header
 from app.models.anomaly_detectors import AnomalyDetector
-from app.extensions import db, influxdb_read_client
-from config import Config
+from app.extensions import db, influxdb_query
+
 
 import plotly.io as pio
 import plotly.express as px
@@ -150,7 +150,7 @@ GROUP BY check_name, binned
 ORDER BY check_name, binned
     """
 
-    table = influxdb_read_client.query(sql, language="sql")
+    table = influxdb_query(sql)
   
     results = table.to_pandas()
     results.rename(columns={'binned':'time',"check_name":"Check Name"},inplace=True)
@@ -267,14 +267,7 @@ GROUP BY check_name, binned
 ORDER BY check_name, binned
     """
  
-    # client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
-    #             token=Config.INFLUXDB_READ_TOKEN,
-    #             metadata={'bucket-name': f"{Config.INFLUXDB_BUCKET}"})
-
-    # query = client.execute(sql)
-    # reader = client.do_get(query.endpoints[0].ticket)
-    # table = reader.read_all()
-    table = influxdb_read_client.query(sql, language="sql")
+    table = influxdb_query(sql)
     results = table.to_pandas()
     results.rename(columns={'binned':'time', 'check_name':"Check Name"}, inplace=True)
 
@@ -303,7 +296,7 @@ order by
     check_name, time
     """
 
-    table = influxdb_read_client.query(sql, language="sql")
+    table = influxdb_query(sql)
     results = table.to_pandas()
     results.rename(columns={'check_name':"Check Name"}, inplace=True)
 
