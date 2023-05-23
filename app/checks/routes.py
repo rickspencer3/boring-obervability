@@ -253,6 +253,10 @@ def new(type):
 
 
 def _latency_graph_aggregated(interval, time_range_start):
+    # The folowing clauses are to work around bugs in data that was written
+    # They can be removed at a later time if they are slowing down queries
+    # AND check_name IS NOT NULL
+    # AND latency > 0
     sql = f"""
 SELECT
     date_bin(interval '{interval}', time, TIMESTAMP '2001-01-01 00:00:00Z') as binned,
@@ -263,6 +267,7 @@ FROM checks
 WHERE time > now() - INTERVAL '{time_range_start}'
 AND user_id = '{current_user.id}'
 AND check_name IS NOT NULL
+AND latency > 0
 GROUP BY check_name, binned
 ORDER BY check_name, binned
     """
@@ -285,6 +290,10 @@ ORDER BY check_name, binned
                     div_id=None)
 
 def _latency_graph_1h():
+    # The folowing clauses are to work around bugs in data that was written
+    # They can be removed at a later time if they are slowing down queries
+    # AND check_name IS NOT NULL
+    # AND latency > 0
     sql = f"""
 select 
     check_name, latency, time  
@@ -292,6 +301,7 @@ from checks where
     time > now() - interval'60 minutes' 
 AND user_id = '{current_user.id}'
 AND check_name IS NOT NULL
+AND latency > 0
 order by 
     check_name, time
     """

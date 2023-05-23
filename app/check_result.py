@@ -1,14 +1,13 @@
 from influxdb_client.client.write.point import Point
 from time import time_ns
 
-class Observation(Point):
+class CheckResult(Point):
     """
     This class represents an Observation, which is a special type of InfluxDB Point.
     Specifically, the result of Check.run(). Used to write results to InfluxDB.
     """
     
-    def __init__(self, 
-                 measurement = "",
+    def __init__(self,
                  check_name = "",
                  user_id = "",
                  check_id = "",
@@ -33,8 +32,6 @@ class Observation(Point):
         """
         
         # Guard conditions
-        if measurement == "":
-            raise Exception("Empty measurement name not allowed.")
         if check_name == "":
             raise Exception("Empty name not allowed.")
         if user_id == "":
@@ -44,7 +41,7 @@ class Observation(Point):
         if end_point == "":
             raise Exception("Empty host not allowed.")
               
-        super().__init__(measurement)
+        super().__init__("checks")
 
         # Add required tags
         self.tag("check_name",f'"{check_name}"')
@@ -75,7 +72,7 @@ class Observation(Point):
 if __name__ == "__main__":
     tags = {"name":"foo_name", "user_id":"foo_user_id","id":"foo_id"}
     fields = {"error":0,"latency":0}
-    observation = Observation(
+    observation = CheckResult(
                             measurement="foo_measurement",
                             check_name="foo_name",
                             user_id="foo_user_id",

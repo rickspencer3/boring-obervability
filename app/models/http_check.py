@@ -5,7 +5,7 @@ from flask import current_app
 
 from app.extensions import db, influxdb_write
 from app.models.checks import Check
-from app.observation import Observation
+from app.check_result import CheckResult
 
 class HTTPCheck(Check):
     content = db.Column(db.String(600))
@@ -60,15 +60,14 @@ class HTTPCheck(Check):
             error_type = "client"
         if error_type != "":
             fields["error_type"] = error_type
-        observation = Observation(measurement="checks",
+        observation = CheckResult(
                                 end_point=self.url,
                                 check_name=self.name,
                                 user_id=self.user_id,
                                 check_id=self.id,
                                 error=error,
                                 latency= check_response.elapsed.microseconds / 1000,
-                                fields=fields
-                                )
+                                fields=fields)
       
         self.detect_anomolies_and_record(self, check_response, observation)
         current_app.logger.info(f'{observation.to_line_protocol()} at {observation.time}')

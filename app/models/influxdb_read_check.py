@@ -2,7 +2,7 @@ from datetime import timedelta
 from flask import current_app
 from app.extensions import db, influxdb_write
 from app.models.checks import InfluxDBCheck
-from app.observation import Observation
+from app.check_result import CheckResult
 from influxdb_client_3 import InfluxDBClient3
 import time
 from app.extensions import influxdb_write
@@ -28,8 +28,7 @@ class InfluxDBReadCheck(InfluxDBCheck):
         except Exception as e:
             error = 1
     
-        observation = Observation(
-            measurement="checks",
+        observation = CheckResult(
             check_name=self.name,
             user_id=self.user_id,
             check_id=self.id,
