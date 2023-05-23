@@ -49,6 +49,10 @@
         <TD>enabled</TD>
         <TD>{{ check.enabled }}</TD>
     </TR>
+    <TR>
+        <TD>Org</TD>
+        <TD>{{ check.org }}</TD>
+    </TR>
 </TABLE>
 <div>
     <A HREF="{{url_for('checks.edit', check_id=check.id)}}">Edit</A>

@@ -47,27 +47,3 @@ class InfluxDBCheck(Check):
     __mapper_args__ = {
     'polymorphic_identity': 'influxdb',
     }
-
-
-class InfluxDBWriteCheck(InfluxDBCheck):
-    line_protocol = db.Column(db.String(300))
-    api_version = db.Column(db.Integer)
-
-    @validates('api_version')
-    def validate_api_version(self, key, api_version):
-        if api_version not in (1, 2):
-            raise ValueError("api_version must be either 1 or 2")
-        return api_version
-
-    def run(self):
-        print(f"run InfluxDBWriteCheck {self.id}, {self.name}")
-
-    @property
-    def form_class(self):
-        import app.checks.forms as forms
-        return forms.InfluxDBWriteForm
-
-    __mapper_args__ = {
-    'polymorphic_identity': 'influxdb_write',
-    }
-

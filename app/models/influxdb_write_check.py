@@ -5,13 +5,14 @@ from influxdb_client_3 import InfluxDBClient3
 import time
 from app.extensions import influxdb_write
 
-class InfluxDBReadCheck(InfluxDBCheck):
-    sql = db.Column(db.String(300))
+class InfluxDBWriteCheck(InfluxDBCheck):
+    line_protocol = db.Column(db.String(300))
+
     latency = 0
     def run(self):
         error = 0
         try:
-            print(f"run InfluxDBReadCheck {self.id}, {self.name}")
+            print(f"run InfluxDBWriteCheck {self.id}, {self.name}")
             client = InfluxDBClient3(
                 token=self.token,
                 host=self.host,
@@ -19,7 +20,7 @@ class InfluxDBReadCheck(InfluxDBCheck):
                 org=self.org
             )
             t1 = time.perf_counter()
-            client.query(self.sql, language="sql")
+            client.write(record=self.line_protocol)
             t2 = time.perf_counter()
             
             latency = (t2 - t1) * 1000
@@ -39,8 +40,8 @@ class InfluxDBReadCheck(InfluxDBCheck):
     @property
     def form_class(self):
         import app.checks.forms as forms
-        return forms.InfluxDBReadForm
+        return forms.InfluxDBWriteForm
     
     __mapper_args__ = {
-    'polymorphic_identity': 'influxdb_read',
+    'polymorphic_identity': 'influxdb_write',
     }

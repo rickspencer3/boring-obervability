@@ -33,14 +33,14 @@ class InfluxDBForm(CheckForm):
     database = StringField('Database', validators=[DataRequired()]) 
     host = StringField('Host', validators=[DataRequired()])
     token = StringField('Token', validators=[DataRequired()])
+    org = StringField('Org')
 
 class InfluxDBReadForm(InfluxDBForm):
     sql = StringField('SQL', validators=[DataRequired()])
 
 class InfluxDBWriteForm(InfluxDBForm):
     line_protocol = StringField('Line Protocol', validators=[DataRequired()])
-    api_version = SelectField('API Version', choices=[(1, 'Version 1'), (2, 'Version 2')], coerce=int)
-
+   
 FormTypes = {"influxdb_write":InfluxDBWriteForm,
              "http":HTTPForm,
              "influxdb_read":InfluxDBReadForm}
