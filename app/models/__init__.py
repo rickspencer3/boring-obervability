@@ -1,5 +1,6 @@
-from app.models.checks import InfluxDBReadCheck, InfluxDBWriteCheck
+from app.models.checks import InfluxDBWriteCheck
 from app.models.http_check import HTTPCheck
+from app.models.influxdb_read_check import InfluxDBReadCheck
 
 CheckClass = {"http":HTTPCheck,
                 "influxdb_write":InfluxDBWriteCheck,

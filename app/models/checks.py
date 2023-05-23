@@ -32,6 +32,7 @@ class InfluxDBCheck(Check):
     database = db.Column(db.String(100))
     host = db.Column(db.String(100))
     _token = db.Column("token", db.LargeBinary)
+    org = db.Column(db.String(100))
 
     @property
     def token(self):
@@ -46,21 +47,7 @@ class InfluxDBCheck(Check):
     __mapper_args__ = {
     'polymorphic_identity': 'influxdb',
     }
-        
-class InfluxDBReadCheck(InfluxDBCheck):
-    sql = db.Column(db.String(300))
 
-    def run(self):
-        print(f"run InfluxDBReadCheck {self.id}, {self.name}")
-
-    @property
-    def form_class(self):
-        import app.checks.forms as forms
-        return forms.InfluxDBReadForm
-    
-    __mapper_args__ = {
-    'polymorphic_identity': 'influxdb_read',
-    }
 
 class InfluxDBWriteCheck(InfluxDBCheck):
     line_protocol = db.Column(db.String(300))
