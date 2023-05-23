@@ -1,0 +1,94 @@
+{% from "macros.html" import object_link%}
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    $("#checks-nav").addClass("selected-nav");
+
+    function test_check(check_id) {
+        $.ajax({
+            url: "{{url_for('checks.test')}}",
+            type: "post",
+            data: { "check_id": check_id, "csrf_token": "{{csrf_token()}}" },
+            success: function (data) {
+                $("#result_msg").html(data);
+                $("#test_result").show();
+            }
+        });
+    }
+    function hide_test_results() {
+        $("#test_result").hide();
+    }
+</script>
+<h2>{% block title %}InfluxDB Read Check Details {% endblock %}</h2>
+<TABLE>
+    <TR>
+        <TH></TH>
+    </TR>
+    <TR>
+        <TD>name</TD>
+        <TD>{{check.name}}</TD>
+    </TR>
+    <TR>
+        <TD>host</TD>
+        <TD>{{check.host}}</TD>
+    </TR>
+    <TR>
+        <TD>database</TD>
+        <TD>{{check.database}}</TD>
+    </TR>
+    <TR>
+        <TD>token</TD>
+        <TD>{{check.token}}</TD>
+    </TR>
+    <TR>
+        <TD>SQL Query</TD>
+        <TD>{{check.sql}}</TD>
+    </TR>
+    <TR>
+        <TD>enabled</TD>
+        <TD>{{ check.enabled }}</TD>
+    </TR>
+</TABLE>
+<div>
+    <A HREF="{{url_for('checks.edit', check_id=check.id)}}">Edit</A>
+</div>
+<div>
+    <BUTTON onclick="test_check('{{check.id}}')">Test</BUTTON>
+</div>
+<div style="display:none" id="test_result">
+    <div id="result_msg"></div>
+    <button onclick="hide_test_results()">hide results</button>
+</div>
+
+<h3>Anomaly Detectors</h3>
+<TABLE>
+    <TR>
+        <TH>Name</TH>
+        <TH>Type</TH>
+        <TH>Active Notification Channels</TH>
+        <TH></TH>
+    </TR>
+    {% for anomaly_detector in check.anomaly_detectors %}
+        {% set ns = namespace(enabled_channels_count=0) %}
+        {% for channel in anomaly_detector.notification_channels %}
+            {% if channel.enabled %}
+                {% set ns.enabled_channels_count = ns.enabled_channels_count + 1 %}
+            {% endif %}
+        {% endfor %}
+    <TR id="ad_row_{{anomaly_detector.id}}">
+        <TD>{{ object_link(url_for('anomaly_detectors.details',
+            anomaly_detector_id=anomaly_detector.id),anomaly_detector.name) }}</TD>
+        <TD>{{ anomaly_detector.type }}</TD>
+        <TD>{{ ns.enabled_channels_count }}</TD>
+        <TD>
+            <button onclick="remove_anomaly_dector('{{anomaly_detector.id}}','{{check.id}}')">Remove</button>
+        </TD>
+    </TR>
+
+    {% endfor %}
+</TABLE>
+<div class="add-to"><A HREF=" {{url_for('checks.add_anomaly_detector', check_id=check.id)}}">Add Anomoly Detector</A>
+</div>
+</div>
+{% endblock %}

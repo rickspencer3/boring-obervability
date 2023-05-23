@@ -5,23 +5,6 @@
 <script>
     $("#checks-nav").addClass("selected-nav");
 
-    function remove_anomaly_dector(ad_id, check_id) {
-        $.ajax({
-            url: "{{url_for('checks.remove_detector')}}",
-            type: "post",
-            data: { "anomaly_detector_id": ad_id, "check_id": check_id, "csrf_token": "{{csrf_token()}}" },
-            done: $("#ad_row_" + ad_id).remove()
-        });
-    }
-
-    function remove_header(header_id, check_id) {
-        $.ajax({
-            url: "{{url_for('checks.remove_header')}}",
-            type: "post",
-            data: { "header_id": header_id, "check_id": check_id, "csrf_token": "{{csrf_token()}}" },
-            done: $("#h_row_" + header_id).remove()
-        });
-    }
     function test_check(check_id) {
         $.ajax({
             url: "{{url_for('checks.test')}}",
@@ -37,7 +20,7 @@
         $("#test_result").hide();
     }
 </script>
-<h2>{% block title %}Check Details {% endblock %}</h2>
+<h2>{% block title %}InfluxDB Write Check Details {% endblock %}</h2>
 <TABLE>
     <TR>
         <TH></TH>
@@ -47,20 +30,28 @@
         <TD>{{check.name}}</TD>
     </TR>
     <TR>
-        <TD>url</TD>
-        <TD>{{check.url}}</TD>
+        <TD>host</TD>
+        <TD>{{check.host}}</TD>
     </TR>
     <TR>
-        <TD>method</TD>
-        <TD>{{check.method}}</TD>
+        <TD>database</TD>
+        <TD>{{check.database}}</TD>
     </TR>
     <TR>
-        <TD>content</TD>
-        <TD>{{check.content}}</TD>
+        <TD>token</TD>
+        <TD>{{check.token}}</TD>
+    </TR>
+    <TR>
+        <TD>line protocol</TD>
+        <TD>{{check.line_protocol}}</TD>
     </TR>
     <TR>
         <TD>enabled</TD>
         <TD>{{ check.enabled }}</TD>
+    </TR>
+    <TR>
+        <TD>Org</TD>
+        <TD>{{ check.org }}</TD>
     </TR>
 </TABLE>
 <div>
@@ -74,28 +65,6 @@
     <button onclick="hide_test_results()">hide results</button>
 </div>
 
-<h3>Headers</h3>
-<TABLE>
-    <TR>
-        <TH>Name</TH>
-        <TH>Key</TH>
-        <TH>Value</TH>
-        <TH></TH>
-        </TH>
-    </TR>
-    {% for header in check.headers %}
-    <TR id="h_row_{{header.id}}">
-        <TD>{{object_link(url_for('headers.details', header_id=header.id),header.name)}}</TD>
-        <TD>{{header.key}}</TD>
-        <TD>{{header.value}}</TD>
-        <TD>
-            <button onclick="remove_header('{{header.id}}','{{check.id}}')">Remove</button>
-        </TD>
-    </TR>
-    {% endfor %}
-</TABLE>
-
-<div class="add-to"><a href="{{ url_for('checks.add_header', check_id=check.id) }}">Add Header</a></div>
 <h3>Anomaly Detectors</h3>
 <TABLE>
     <TR>

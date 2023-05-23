@@ -3,31 +3,23 @@ from flask_user import login_required, current_user
 from requests import request as http_request
 from html import escape
 from flask import current_app
-
+from app.checks.forms import FormTypes
 from app.checks import bp
+from app.models import CheckClass
 from app.models.checks import Check
 from app.models.headers import Header
 from app.models.anomaly_detectors import AnomalyDetector
-from app.extensions import db
-from config import Config
+from app.extensions import db, influxdb_query
 
-from flightsql import FlightSQLClient
+
 import plotly.io as pio
 import plotly.express as px
-
-from app.checks.forms import CheckForm
 
 @bp.route('/')
 @login_required
 def index():
     all_checks = current_user.checks
     return render_template('checks/index.html', checks = all_checks)
-
-@bp.route('/<check_id>')
-@login_required
-def details(check_id):
-    check = Check.query.get(check_id)
-    return render_template('checks/details.html', check=check)
 
 @bp.route('<check_id>/add_anomaly_detector', methods = ["GET","POST"])
 @login_required
@@ -58,6 +50,13 @@ def add_header(check_id):
         db.session.add(check)
         db.session.commit()
         return redirect(url_for('checks.details', check_id=check_id))
+
+@bp.route('/<check_id>')
+@login_required
+def details(check_id):
+    check = Check.query.get(check_id)
+    type = check.type
+    return render_template(f'checks/details_{type}.html', check=check)
 
 @bp.route('/enabled', methods=["POST"])
 @login_required
@@ -119,20 +118,6 @@ def latency_graph(time_range=None):
     elif time_range == "m":
         grph = _latency_graph_aggregated('4 hour', '1 month')
         return grph, 200
-        
-def _check_ids_for_user():
-    checks = current_user.checks
-    list_str = "("
-    i = 0
-    while i < len(checks):
-        check = checks[i]
-        list_str += f"'{check.id}'"
-        if i < len(checks) - 1:
-            list_str += ","
-        i += 1
-    list_str += ")"
-
-    return list_str
 
 @bp.route('/status_graph/<time_range>', methods=["GET"])
 @login_required
@@ -155,26 +140,22 @@ def status_graph(time_range=None):
     sql = f"""
 SELECT
   DATE_BIN(INTERVAL '{bin_interval}', time, '1970-01-01T00:00:00Z'::TIMESTAMP) AS binned,
-    name,
-   SUM(CASE WHEN status >= 299 THEN 1 ELSE 0 END)::double / COUNT(status)::double  AS error_rate
+    check_name,
+   SUM(error)::double / COUNT(error)::double  AS error_rate
 FROM checks
 WHERE time > now() - interval'{interval}'
 AND user_id = '{current_user.id}'
-GROUP BY name, binned
-ORDER BY name, binned
+AND check_name IS NOT NULL
+GROUP BY check_name, binned
+ORDER BY check_name, binned
     """
 
-    client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
-                        token=Config.INFLUXDB_READ_TOKEN,
-                        metadata={'bucket-name': f"{Config.INFLUXDB_BUCKET}"})
-
-    query = client.execute(sql)
-    reader = client.do_get(query.endpoints[0].ticket)
-    table = reader.read_all()
+    table = influxdb_query(sql)
+  
     results = table.to_pandas()
-    results.rename(columns={'binned':'time'},inplace=True)
-    
-    fig = px.line(results, x='time', y='error_rate', color='name', title=f"Check Error Rates ({bin_interval})")
+    results.rename(columns={'binned':'time',"check_name":"Check Name"},inplace=True)
+
+    fig = px.line(results, x='time', y='error_rate', color='Check Name', title=f"Check Error Rates ({bin_interval})")
     return pio.to_html(fig, 
                         config=None, 
                         auto_play=True, 
@@ -188,26 +169,7 @@ ORDER BY name, binned
                         div_id=None), 200
 
 
-@bp.route('/new', methods=["GET","POST"])
-@login_required
-def new():
-    form = CheckForm()
-    if request.method == "GET":
-        return render_template('checks/new.html', form=form)
 
-    if request.method == "POST":
-        form.process(formdata=request.form)
-        if form.validate_on_submit():
-            new_check = Check()
-            form.populate_obj(new_check)
-            new_check.user_id = current_user.id
-            new_check.enabled = True
-            db.session.add(new_check)
-            db.session.commit()
-        
-            return redirect(url_for('checks.index'))
-        else:
-            return form.errors, 400
 
 @bp.route('remove_detector', methods=["POST"])
 @login_required
@@ -239,21 +201,22 @@ def remove_header():
         db.session.commit()
         return "",200
 
-@bp.route('<check_id>/edit', methods=["GET", "POST"])
+@bp.route('<check_id>/edit', methods=["GET","POST"])
 @login_required
 def edit(check_id):
-    form = CheckForm()
     check = Check.query.get(check_id)
-    form.id = check_id
-    form.process(obj=check)
-   
+
     if current_user.id is not check.user.id:
         return "", 404
-    
     if request.method == "GET":
-        return render_template('checks/edit.html', form=form, check=check)
-
-    elif request.method == "POST":
+        return render_template(f'checks/edit_{check.type}.html',
+                    form=check.form_class(obj=check),
+                    check=check)
+    else:
+        form = check.form_class()
+        check = Check.query.get(check_id)
+        form.id = check_id
+        form.process(obj=check)
         form.process(formdata=request.form)
         if form.validate_on_submit():
             form.populate_obj(check)
@@ -264,31 +227,56 @@ def edit(check_id):
         else:
             return form.errors, 400
 
+
+@bp.route('<type>/new', methods=["GET", "POST"])
+@login_required
+def new(type):
+    form = FormTypes[type]()
+    if request.method == "GET":
+        return render_template(f'checks/new_{type}.html', form=form)
+
+    if request.method == "POST":
+        form.process(formdata=request.form)
+        if form.validate_on_submit():
+            new_check = CheckClass[type]()
+            form.populate_obj(new_check)
+            
+            new_check.user_id = current_user.id
+            new_check.enabled = True
+            new_check.type = type
+            db.session.add(new_check)
+            db.session.commit()
+        
+            return redirect(url_for('checks.index'))
+        else:
+            return form.errors, 400
+
+
 def _latency_graph_aggregated(interval, time_range_start):
+    # The folowing clauses are to work around bugs in data that was written
+    # They can be removed at a later time if they are slowing down queries
+    # AND check_name IS NOT NULL
+    # AND latency > 0
     sql = f"""
 SELECT
     date_bin(interval '{interval}', time, TIMESTAMP '2001-01-01 00:00:00Z') as binned,
-  avg(elapsed) /1000 as elapsed,
-  name
+  avg(latency) latency,
+  check_name
 
 FROM checks
 WHERE time > now() - INTERVAL '{time_range_start}'
 AND user_id = '{current_user.id}'
-GROUP BY name, binned
-ORDER BY name, binned
+AND check_name IS NOT NULL
+AND latency > 0
+GROUP BY check_name, binned
+ORDER BY check_name, binned
     """
  
-    client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
-                token=Config.INFLUXDB_READ_TOKEN,
-                metadata={'bucket-name': f"{Config.INFLUXDB_BUCKET}"})
-
-    query = client.execute(sql)
-    reader = client.do_get(query.endpoints[0].ticket)
-    table = reader.read_all()
+    table = influxdb_query(sql)
     results = table.to_pandas()
-    results.rename(columns={'binned':'time'}, inplace=True)
+    results.rename(columns={'binned':'time', 'check_name':"Check Name"}, inplace=True)
 
-    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies Check Latencies (Milliseconds)")
+    fig = px.line(results, x='time', y='latency', color='Check Name', title="Check Latencies Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 
@@ -302,25 +290,27 @@ ORDER BY name, binned
                     div_id=None)
 
 def _latency_graph_1h():
+    # The folowing clauses are to work around bugs in data that was written
+    # They can be removed at a later time if they are slowing down queries
+    # AND check_name IS NOT NULL
+    # AND latency > 0
     sql = f"""
 select 
-    name, elapsed / 1000 as elapsed, time 
+    check_name, latency, time  
 from checks where  
     time > now() - interval'60 minutes' 
 AND user_id = '{current_user.id}'
+AND check_name IS NOT NULL
+AND latency > 0
 order by 
-    name, time
+    check_name, time
     """
-    client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
-                    token=Config.INFLUXDB_READ_TOKEN,
-                    metadata={'bucket-name': f"{Config.INFLUXDB_BUCKET}"})
 
-    query = client.execute(sql)
-    reader = client.do_get(query.endpoints[0].ticket)
-    table = reader.read_all()
-    
+    table = influxdb_query(sql)
     results = table.to_pandas()
-    fig = px.line(results, x='time', y='elapsed', color='name', title="Check Latencies (Milliseconds)")
+    results.rename(columns={'check_name':"Check Name"}, inplace=True)
+
+    fig = px.line(results, x='time', y='latency', color='Check Name', title="Check Latencies (Milliseconds)")
     return pio.to_html(fig, 
                     config=None, 
                     auto_play=True, 

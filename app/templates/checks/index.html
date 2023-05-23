@@ -18,11 +18,13 @@
   <table>
     <TR>
       <TH>Check Name</TH>
+      <TH>Type</TH>
       <TH>Enabled</TH>
     </TR>
     {% for check in checks %}
     <TR>
-      <TD><a href="{{ url_for('checks.details', check_id=check.id) }}">{{check.name}}</a>
+      <TD><a href="{{ url_for('checks.details', check_id=check.id) }}">{{check.name}}</a></TD>
+      <TD> {{ check.type }} </TD>
       {% if check.enabled %}
       <TD><input type="checkbox" id="{{check.id}}" onchange="toggleEnabled(this, '{{check.id}}')" checked /></TD>
       {% else %}
@@ -34,5 +36,8 @@
 </TR>
 </table>
 <hr>
-<a href="{{ url_for('checks.new') }}">New Check</a>
+<a href="{{ url_for('checks.new', type='http') }}">New HTTP Check</a>
+<a href="{{ url_for('checks.new', type='influxdb_write') }}">New InfluxDB Write Check</a>
+<a href="{{ url_for('checks.new', type='influxdb_read') }}">New InfluxDB Read Check</a>
+
 {% endblock %}

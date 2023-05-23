@@ -89,7 +89,7 @@ def issues_table(time_range=None):
         "m": "1 month"
     }[time_range]
  
-    sql = f"select check, type, value, observed, time from anomalies where user_id = {current_user.id} and time > now() - interval'{interval}' order by time desc"
+    sql = f"select check, type, value, observed, time from anomalies where user_id = '{current_user.id}' and time > now() - interval'{interval}' order by time desc"
     client = FlightSQLClient(host=Config.INFLUXDB_FLIGHT_HOST,
                         token=Config.INFLUXDB_READ_TOKEN,
                         metadata={'bucket-name': f"{Config.INFLUXDB_BUCKET}"})

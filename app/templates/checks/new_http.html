@@ -1,0 +1,20 @@
+{% from "macros.html" import form_row %}
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+       $("#checks-nav").addClass("selected-nav");
+</script>
+<h2>{% block title %}New HTTP Check{% endblock %}</h2>
+<form method="post">
+       <TABLE>
+              {{ form_row(form.name) }}
+              {{ form_row(form.url) }}
+              {{ form_row(form.method) }}
+              {{ form_row(form.content) }}
+       </TABLE>
+       {{form.type}}
+       {{form.send()}}
+       {{ form.csrf_token }}
+</form>
+{% endblock %}

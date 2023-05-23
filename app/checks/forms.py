@@ -1,14 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, TextAreaField, SubmitField, BooleanField
+from wtforms import HiddenField, StringField, SelectField, TextAreaField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, URL, Optional, ValidationError
 from app.models.checks import Check
 from flask_user import current_user
 
 class CheckForm(FlaskForm):
     name = StringField('Check Name', validators=[DataRequired()])
-    url = StringField('URL', validators=[DataRequired(), URL()])
-    method = SelectField('Method', choices=["GET", "POST"])
-    content = TextAreaField('Body Content', validators=[Optional()])
     enabled = BooleanField('Enabled', default=True)
     send = SubmitField("Submit")
 
@@ -25,3 +22,25 @@ class CheckForm(FlaskForm):
             existing_check = Check.query.filter_by(user_id=current_user.id, name=field.data).first()
             if existing_check:
                 raise ValidationError("You have already created a check with this name. Please choose a different name.")
+            
+class HTTPForm(CheckForm):
+    method = SelectField('Method', choices=["GET", "POST"])
+    content = TextAreaField('Body Content', validators=[Optional()])
+    url = StringField('URL', validators=[DataRequired(), URL()])
+    type = HiddenField(default="http")
+
+class InfluxDBForm(CheckForm):
+    database = StringField('Database', validators=[DataRequired()]) 
+    host = StringField('Host', validators=[DataRequired()])
+    token = StringField('Token', validators=[DataRequired()])
+    org = StringField('Org')
+
+class InfluxDBReadForm(InfluxDBForm):
+    sql = StringField('SQL', validators=[DataRequired()])
+
+class InfluxDBWriteForm(InfluxDBForm):
+    line_protocol = StringField('Line Protocol', validators=[DataRequired()])
+   
+FormTypes = {"influxdb_write":InfluxDBWriteForm,
+             "http":HTTPForm,
+             "influxdb_read":InfluxDBReadForm}

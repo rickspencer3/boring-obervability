@@ -21,14 +21,15 @@
               }
        }
 </script>
-<h2>{% block title %}Edit Check "{{check.name}}"{% endblock %}</h2>
+<h2>{% block title %}Edit InfluxDB Read Check "{{check.name}}"{% endblock %}</h2>
 
 <form method="post">
        <TABLE>
               {{ form_row(form.name) }}
-              {{ form_row(form.url) }}
-              {{ form_row(form.method) }}
-              {{ form_row(form.content) }}
+              {{ form_row(form.host) }}
+              {{ form_row(form.database) }}
+              {{ form_row(form.token) }}
+              {{ form_row(form.sql) }}
               {{ form_row(form.enabled) }}
        </TABLE>
        {{form.send()}}

@@ -5,14 +5,16 @@
 <script>
        $("#checks-nav").addClass("selected-nav");
 </script>
-<h2>{% block title %}New Check{% endblock %}</h2>
+<h2>{% block title %}New InfluxDB Write Check{% endblock %}</h2>
 <form method="post">
        <TABLE>
               {{ form_row(form.name) }}
-              {{ form_row(form.url) }}
-              {{ form_row(form.method) }}
-              {{ form_row(form.content) }}
+              {{ form_row(form.host) }}
+              {{ form_row(form.database) }}
+              {{ form_row(form.token) }}
+              {{ form_row(form.sql) }}
        </TABLE>
+       {{form.type}}
        {{form.send()}}
        {{ form.csrf_token }}
 </form>
