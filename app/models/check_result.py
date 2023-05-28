@@ -46,6 +46,8 @@ class CheckResult(Point):
 
         if latency is not None:
             self.field("latency", latency)
+        if error is not None:
+            self.field("error",error)
 
         # Add additional keys and fields (if any)
         for key, value in tags.items():
