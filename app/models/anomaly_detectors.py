@@ -65,17 +65,10 @@ class LatencyDetector(AnomalyDetector):
 class ErrorDetector(AnomalyDetector):
     status_lower_bound = db.Column(db.Integer)
 
-    def detect(self, check=None, check_result=None):
-        self._error = check_result.error
-
-        if self._error:
-            anomaly = Anomaly(check, self)
-            influxdb_write(anomaly)
-
-    @property
-    def error(self):
-        return self._error
-        # current_app.logger.info(log_dict)        
+    def detect(self, check_result=None):
+        if check_result.error:
+            anomaly = Anomaly(check_result, self)
+            influxdb_write(anomaly)     
 
     def _create_log_dict(self, check, response):
         d = super()._create_log_dict(check, response)

@@ -59,7 +59,7 @@ class HTTPCheck(Check):
         influxdb_write(check_result)
 
         for detector in self.anomaly_detectors:
-            detector.detect(self, check_result)
+            detector.detect(check_result)
         # self.detect_anomolies_and_record(self, check_response, check_result)
         # current_app.logger.info(f'{check_result.to_line_protocol()} at {check_result.time}')
 

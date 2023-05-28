@@ -34,6 +34,7 @@ class CheckResult(Point):
         super().__init__("checks")
         self._error = error
         self._check_id = check.id
+        self._check_name = check.name
         self._user_id = check.user.id
 
         # Add required tags
@@ -63,6 +64,14 @@ class CheckResult(Point):
     @property
     def check_id(self):
         return self._check_id
+
+    @property 
+    def check_name(self):
+        return self._check_name
+    
+    @property
+    def error(self):
+        return self._error
 
 
 

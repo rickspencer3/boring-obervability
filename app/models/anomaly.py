@@ -8,25 +8,19 @@ class Anomaly(Point):
     Specifically, the result of Check.run(). Used to write results to InfluxDB.
     """
     
-    def __init__(self, check, anomaly_detector, fields=[], tags=[]):
+    def __init__(self, check_result, anomaly_detector, fields={}, tags={}):
         super().__init__("anomalies")
-        # lp = f"anomalies,check={check.id},type={self.type},user_id={self.user_id},
-        # id={self.id} status_bound={self.status_lower_bound},observed={response.status_code}"
-        self.tag("check_id",check.id)
+        self.tag("check_id",check_result.check_id)
+        self.tag("check_name", check_result.check_name)
         self.tag("detector_type",anomaly_detector.type)
         self.tag("user_id",anomaly_detector.user.id)
         self.tag("detector_id",anomaly_detector.id)
-        self.field("error",anomaly_detector.error)
+        self.field("error",check_result.error)
         self.time = time_ns()
 
-if __name__ == "__main__":
-    tags = {"name":"foo_name", "user_id":"foo_user_id","id":"foo_id"}
-    fields = {"error":0,"latency":0}
-    observation = CheckResult(
-                            measurement="foo_measurement",
-                            check_name="foo_name",
-                            user_id="foo_user_id",
-                            check_id="foo_check_id",
-                            latency=1000
-                            )
-    print(observation.to_line_protocol())
+        for key, value in fields.items():
+            self.field(key, value)
+        for key,value in fields.items():
+            self.tag(key, value)
+
+
