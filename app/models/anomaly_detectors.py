@@ -47,7 +47,7 @@ class LatencyDetector(AnomalyDetector):
             anomaly = Anomaly(check_result, self)
             influxdb_write(anomaly)
             for notification_channel in self.notification_channels:
-                notification_channel.notify()
+                notification_channel.notify({})
     
     __mapper_args__ = {
         'polymorphic_identity': 'latency',
@@ -68,7 +68,7 @@ class ErrorDetector(AnomalyDetector):
             anomaly = Anomaly(check_result, self)
             influxdb_write(anomaly)     
             for notification_channel in self.notification_channels:
-                notification_channel.notify()
+                notification_channel.notify({})
                 
     __mapper_args__ = {
         'polymorphic_identity': 'error',
