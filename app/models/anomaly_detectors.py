@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from app.extensions import db, generate_id_string
 from app.models.anomaly_detector_check import anomaly_detector_check_table
 from app.models.anomaly_detector_notification_channel import anomaly_detector_notification_channel_table
+from app.models.anomaly import Anomaly
 from app.extensions import influxdb_write
 from flask import current_app
 
@@ -64,18 +65,17 @@ class LatencyDetector(AnomalyDetector):
 class ErrorDetector(AnomalyDetector):
     status_lower_bound = db.Column(db.Integer)
 
-    def detect(self, check=None, response=None):
-        log_dict = self._create_log_dict(check, response)
-        detected = response.status_code > self.status_lower_bound
-        log_dict['detected'] = detected
+    def detect(self, check=None, check_result=None):
+        self._error = check_result.error
 
-        if detected:
-            lp = f"anomalies,check={check.id},type={self.type},user_id={self.user_id},id={self.id} status_bound={self.status_lower_bound},observed={response.status_code}"
-            influxdb_write(lp)
-            for channel in self.notification_channels:
-                channel.notify(log_dict)
+        if self._error:
+            anomaly = Anomaly(check, self)
+            influxdb_write(anomaly)
 
-        current_app.logger.info(log_dict)        
+    @property
+    def error(self):
+        return self._error
+        # current_app.logger.info(log_dict)        
 
     def _create_log_dict(self, check, response):
         d = super()._create_log_dict(check, response)

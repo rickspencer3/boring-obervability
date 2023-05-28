@@ -2,10 +2,9 @@ from requests import request
 from datetime import timedelta
 
 from flask import current_app
-
 from app.extensions import db, influxdb_write
 from app.models.checks import Check
-from app.check_result import CheckResult
+from app.models.check_result import CheckResult
 
 class HTTPCheck(Check):
     content = db.Column(db.String(600))
@@ -27,54 +26,46 @@ class HTTPCheck(Check):
         # name = self.name.replace(" ","\ ")
         for header in self.headers:
             headers[header.key] = header.value
+        error_type = ""
+        fields = {"method": self.method}
+        check_response = None
         try:
             check_response = request(method=self.method, 
                                 url=self.url,
                                 data=self.content,
                                 headers=headers)
-        except ConnectionError as e:
-            # the server is totally down, didn't response at all
-            lp = f"""checks,url="{self.url}",name={self.name},method={self.method},user_id={self.user_id},id={self.id} status=404i,elapsed=0i"""
-            
-            response = ConnectionErrorResponse()
-            self.detect_anomolies_and_record(self, response, lp)
-            self._log_response_error(self, e)
-            return
+
+            # assuming the request worked, set up the info for the result
+            error = 1 if check_response.status_code > 399 else 0
+            if check_response.status_code > 499:
+                error_type = "server"
+            elif check_response.status_code > 399:
+                error_type = "client"
+            fields["status"] = check_response.status_code
         except Exception as e:
-            self._log_response_error(self, e)
-            return
-        
-        log_dict = {"check_id":self.id,
-                    "check_name":self.name,
-                    "anomaly_dectors": len(self.anomaly_detectors),
-                    "response_text":check_response.text}
-        current_app.logger.info(log_dict)
-        error = 1 if check_response.status_code > 399 else 0
-        fields={"method":self.method,
-                "status":check_response.status_code
-                }
-        error_type = ""
-        if check_response.status_code > 499:
-            error_type = "server"
-        elif check_response.status_code > 399:
-            error_type = "client"
+            error = 1
+            error_type = "exception"
+            fields["exception"] = str(e)
+
         if error_type != "":
             fields["error_type"] = error_type
-        observation = CheckResult(
-                                end_point=self.url,
-                                check_name=self.name,
-                                user_id=self.user_id,
-                                check_id=self.id,
+
+        check_result = CheckResult(
+                                self,
                                 error=error,
-                                latency= check_response.elapsed.microseconds / 1000,
+                                end_point=self.url,
+                                latency = check_response.elapsed.microseconds / 1000 if check_response is not None else None,
                                 fields=fields)
-      
-        self.detect_anomolies_and_record(self, check_response, observation)
-        current_app.logger.info(f'{observation.to_line_protocol()} at {observation.time}')
+        influxdb_write(check_result)
+
+        for detector in self.anomaly_detectors:
+            detector.detect(self, check_result)
+        # self.detect_anomolies_and_record(self, check_response, check_result)
+        # current_app.logger.info(f'{check_result.to_line_protocol()} at {check_result.time}')
 
     def detect_anomolies_and_record(self, check, check_response, point):
         for anomaly_detector in check.anomaly_detectors:
-            anomaly_detector.detect(check=check, response=check_response)
+            anomaly_detector.detect(check=check, check_result=check_response)
         influxdb_write(point)
 
     def _log_response_error(self, check, e):
