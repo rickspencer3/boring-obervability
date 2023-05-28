@@ -18,7 +18,7 @@ class CheckResult(Point):
         Create a new Observation.
 
         :param check: The Check that produced the result. Required.
-        :param error: Set to 1 if an error was observed. Defaults to 0.
+        :param error: Set to 1 if an error was observed, otherwise 0 if no error. Defaults to 0.
         :param latency: The latency of the Check, in milliseconds. Optional, but almost always should be set.
         :param end_point: The url or host name that the Check was targeting. Required.
         :param tags: A dictionary of additional tags for the Observation. Optional.
@@ -42,13 +42,11 @@ class CheckResult(Point):
         self.tag("user_id", check.user.id)
         self.tag("check_id",check.id)
         self.tag("end_point", f'"{end_point}"')
-
+        self.field("error",error)
 
         if latency is not None:
             self.field("latency", latency)
-        if error is not None:
-            self.field("error",error)
-
+            
         # Add additional keys and fields (if any)
         for key, value in tags.items():
             self.tag(key,value)
