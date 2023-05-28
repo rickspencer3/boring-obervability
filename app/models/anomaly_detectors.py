@@ -21,60 +21,34 @@ class AnomalyDetector(db.Model):
         'polymorphic_on': type
     }
 
-    def detect(self, check=None, response=None):
-        pass
+    def detect(self, check_result=None):
+        raise Exception("detect() Not implemented for AnomalyDetector base class")
 
-    def _create_log_dict(self, check, response):
-        log_dict = {"check_name": check.name,
-                    "check_id": check.id,
-                    "anomaly_detector_name": self.name,
-                    "anomaly_detector_id": self.id,
-                    "anomaly_detector_type": self.type,
-                    "response_status": response.status_code,
-                    "response_latency": response.elapsed.microseconds / 1000
-                    }
-
-        return log_dict
 
 class LatencyDetector(AnomalyDetector):
     latency_lower_bound = db.Column(db.Integer)
 
-    def detect(self, check=None, response=None):
-        log_dict = self._create_log_dict(check, response)
-        latency = response.elapsed.microseconds / 1000
-        detected = latency > self.latency_lower_bound
-        log_dict['detected'] = detected
-
-        if detected:
-            lp = f"anomalies,check={check.id},type={self.type},user_id={self.user_id},id={self.id} latency_bound={self.latency_lower_bound},observed={latency}"
-            influxdb_write(lp)
-            for channel in self.notification_channels:
-                channel.notify(log_dict)
-                
-        current_app.logger.info(log_dict)
-
-    def _create_log_dict(self, check, response):
-        d = super()._create_log_dict(check, response)
-        d["status_lower_bound"] = self.latency_lower_bound
-        return d
+    def detect(self, check_result = None):
+        if check_result.latency > self.latency_lower_bound:
+            anomaly = Anomaly(check_result, self)
+            influxdb_write(anomaly)
+            for notificaiton_channel in self.notification_channels:
+                notificaiton_channel.notify()
+   
+            
 
     __mapper_args__ = {
         'polymorphic_identity': 'latency',
     }
 
 class ErrorDetector(AnomalyDetector):
-    status_lower_bound = db.Column(db.Integer)
-
     def detect(self, check_result=None):
         if check_result.error:
             anomaly = Anomaly(check_result, self)
             influxdb_write(anomaly)     
-
-    def _create_log_dict(self, check, response):
-        d = super()._create_log_dict(check, response)
-        d["status_lower_bound"] = self.status_lower_bound
-        return d
-
+            for notificaiton_channel in self.notification_channels:
+                notificaiton_channel.notify()
+                
     __mapper_args__ = {
         'polymorphic_identity': 'error',
     }

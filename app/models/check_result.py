@@ -36,6 +36,7 @@ class CheckResult(Point):
         self._check_id = check.id
         self._check_name = check.name
         self._user_id = check.user.id
+        self._latency = latency
 
         # Add required tags
         self.tag("check_name",f'"{check.name}"')
@@ -50,13 +51,13 @@ class CheckResult(Point):
         # Add additional keys and fields (if any)
         for key, value in tags.items():
             self.tag(key,value)
-
         for key, value in fields.items():
             self.field(key,value)
 
         # Timestamp with current time
         self.time = time_ns()
 
+    #properties used by AnomalyDetectors
     @property 
     def error(self):
         return self._error
@@ -73,5 +74,8 @@ class CheckResult(Point):
     def error(self):
         return self._error
 
+    @property
+    def latency(self):
+        return self._latency
 
 

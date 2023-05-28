@@ -60,13 +60,6 @@ class HTTPCheck(Check):
 
         for detector in self.anomaly_detectors:
             detector.detect(check_result)
-        # self.detect_anomolies_and_record(self, check_response, check_result)
-        # current_app.logger.info(f'{check_result.to_line_protocol()} at {check_result.time}')
-
-    def detect_anomolies_and_record(self, check, check_response, point):
-        for anomaly_detector in check.anomaly_detectors:
-            anomaly_detector.detect(check=check, check_result=check_response)
-        influxdb_write(point)
 
     def _log_response_error(self, check, e):
         error_log_dict = {
