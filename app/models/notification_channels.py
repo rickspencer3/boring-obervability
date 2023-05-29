@@ -3,6 +3,7 @@ from app.models.anomaly_detector_notification_channel import anomaly_detector_no
 from app.extensions import mail
 from flask_mail import Message
 from config import Config
+import requests
 
 class NotificationChannel(db.Model):
     """
@@ -51,9 +52,6 @@ class EmailChannel(NotificationChannel):
     __mapper_args__ = {
         'polymorphic_identity': 'email',
     }
-
-import requests
-from sqlalchemy.dialects.postgresql import JSONB
 
 class WebhookChannel(NotificationChannel):
     """

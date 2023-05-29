@@ -4,7 +4,7 @@ from app.notification_channels import bp
 from app.extensions import db
 
 from app.models.notification_channels import NotificationChannel, EmailChannel
-from app.notification_channels.forms import EmailChannelForm
+from app.notification_channels.forms import EmailChannelForm, WebhookForm
 
 @bp.route("/")
 @login_required
@@ -28,6 +28,8 @@ def set_enabled():
 def new(channel_type):
     if channel_type == 'email':
         form = EmailChannelForm()
+    elif channel_type == 'webhook':
+        form = WebhookForm()
     else:
         return "Invalid channel type", 400
 

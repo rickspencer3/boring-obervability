@@ -13,5 +13,5 @@ class NotificationChannelForm(FlaskForm):
 class EmailChannelForm(NotificationChannelForm):
     email = StringField('Email Address', validators=[DataRequired(), Email()])
 
-class WebhookForm(NotADirectoryError):
-    url = StringField('URl', validators=[DataRequired(), URL()])
+class WebhookForm(NotificationChannelForm):
+    url = StringField('URL', validators=[DataRequired(), URL()])
