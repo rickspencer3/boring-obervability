@@ -51,3 +51,33 @@ class EmailChannel(NotificationChannel):
     __mapper_args__ = {
         'polymorphic_identity': 'email',
     }
+
+import requests
+from sqlalchemy.dialects.postgresql import JSONB
+
+class WebhookChannel(NotificationChannel):
+    """
+    Webhook Channel class used to send notifications to a specified URL.
+    Inherits from NotificationChannel.
+    """
+    url = db.Column(db.String(2048))  # URL to which the notifications should be sent
+
+    def notify(self, msg):
+        """
+        Method to send webhook notifications. A POST request with headers and body is created and sent
+        to the URL associated with this channel.
+        """
+        # create the headers dict from the related Header objects
+        headers_dict = {header.name: header.value for header in self.headers}
+        
+        # POST request to the webhook URL
+        response = requests.post(self.url, headers=headers_dict, json=msg)
+        
+        # You might want to handle possible HTTP errors here, or have a way of logging them
+        if response.status_code != 200:
+            print(f"Webhook POST request failed with status {response.status_code}")
+        
+    __mapper_args__ = {
+        'polymorphic_identity': 'webhook',
+    }
+
