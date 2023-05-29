@@ -3,7 +3,7 @@ from flask_user import login_required, current_user
 from app.notification_channels import bp
 from app.extensions import db
 
-from app.models.notification_channels import NotificationChannel, EmailChannel
+from app.models.notification_channels import NotificationChannel, EmailChannel, WebhookChannel
 from app.notification_channels.forms import EmailChannelForm, WebhookForm
 
 @bp.route("/")
@@ -44,6 +44,12 @@ def new(channel_type):
                     name=request.form['name'],
                     email=request.form['email'],
                     user_id=current_user.id
+                )
+            elif channel_type == 'webhook':
+                new_channel = WebhookChannel(
+                    name = request.form['name'],
+                    url = request.form['url'],
+                    user_id = current_user.id
                 )
             else:
                 return "Invalid channel type", 400
