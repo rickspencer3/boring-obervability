@@ -12,4 +12,4 @@ class LatencyDetectorForm(AnomalyDetectorForm):
 
 class ErrorDetectorForm(AnomalyDetectorForm):
     type = HiddenField(default="error")
-    status_lower_bound = IntegerField('Status Lower Bound', validators=[DataRequired()])
+    
