@@ -5,6 +5,18 @@
 <script>
     $("#channels-nav").addClass("selected-nav");
 </script>
+<script>
+    $("#checks-nav").addClass("selected-nav");
+
+    function remove_header(header_id, channel_id) {
+        $.ajax({
+            url: "{{url_for('notification_channels.remove_header')}}",
+            type: "post",
+            data: { "header_id": header_id, "channel_id": channel_id, "csrf_token": "{{csrf_token()}}" },
+            done: $("#h_row_" + header_id).remove()
+        });
+    }
+</SCRIPT>
     <h2>{% block title %}Notification Channel Details{% endblock %}</h2>
 <TABLE>
     <TR>
@@ -52,7 +64,7 @@
     <TD>{{header.key}}</TD>
     <TD>{{header.value}}</TD>
     <TD>
-        <button>Remove</button>
+        <button onclick="remove_header('{{header.id}}','{{notification_channel.id}}')">Remove</button>
     </TD>
 </TR>
 {% endfor %}

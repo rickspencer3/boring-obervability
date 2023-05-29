@@ -127,3 +127,18 @@ def add_header(channel_id):
         db.session.add(channel)
         db.session.commit()
         return redirect(url_for('notification_channels.details', channel_id=channel.id))
+
+@bp.route('remove_header', methods=["POST"])
+@login_required
+def remove_header():
+    header_id = request.form["header_id"]
+    header = Header.query.get(header_id)
+    channel_id = request.form["channel_id"]
+    channel = NotificationChannel.query.get(channel_id)
+
+    if current_user.id != header.user_id or current_user.id != channel.user.id:
+        return "", 404
+    else:
+        channel.headers.remove(header)
+        db.session.commit()
+        return "",200
