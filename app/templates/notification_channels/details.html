@@ -15,7 +15,7 @@
         <TR>
             <TD>Email</TD><TD>{{notification_channel.email}}</TD>
         </TR>
-    {% else notification_channel.type == 'webhook' %}
+    {% elif notification_channel.type == 'webhook' %}
         <TR>
             <TD>URL</TD><TD>{{notification_channel.url}}</TD>
         </TR>
