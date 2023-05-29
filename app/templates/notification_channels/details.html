@@ -37,4 +37,27 @@
     {% endfor %}
 </TABLE>
 {% endif %}
+{% if notification_channel.type == "webhook" %}
+<TABLE>
+    <TR>
+        <TH>Name</TH>
+        <TH>Key</TH>
+        <TH>Value</TH>
+        <TH></TH>
+        </TH>
+    </TR>
+{% for header in notification_channel.headers %}
+<TR id="h_row_{{header.id}}">
+    <TD>{{object_link(url_for('headers.details', header_id=header.id),header.name)}}</TD>
+    <TD>{{header.key}}</TD>
+    <TD>{{header.value}}</TD>
+    <TD>
+        <button>Remove</button>
+    </TD>
+</TR>
+{% endfor %}
+</TABLE>
+
+<div class="add-to"><a href="{{ url_for('notification_channels.add_header', channel_id=notification_channel.id) }}">Add Header</a></div>
+{% endif %}
 {% endblock %}

@@ -3,6 +3,7 @@ from flask_user import login_required, current_user
 from app.notification_channels import bp
 from app.extensions import db
 
+from app.models.headers import Header
 from app.models.notification_channels import NotificationChannel, EmailChannel, WebhookChannel
 from app.notification_channels.forms import EmailChannelForm, WebhookForm
 
@@ -112,3 +113,17 @@ def delete():
     db.session.delete(notification_channel)
     db.session.commit()
     return "success", 200
+
+@bp.route('/<channel_id>/headers', methods=["GET","POST"])
+@login_required
+def add_header(channel_id):
+    channel = NotificationChannel.query.get(channel_id)
+    if request.method == "GET":
+        headers = current_user.headers
+        return render_template('notification_channels/add_header.html', notification_channel=channel, headers=headers)
+    elif request.method == "POST":
+        header = Header.query.get(request.form["header_id"])
+        channel.headers.append(header)
+        db.session.add(channel)
+        db.session.commit()
+        return redirect(url_for('notification_channels.details', channel_id=channel.id))
