@@ -3,7 +3,7 @@ from app.models.anomaly_detector_notification_channel import anomaly_detector_no
 from app.extensions import mail
 from flask_mail import Message
 from config import Config
-import json
+
 class NotificationChannel(db.Model):
     __tablename__ = 'notification_channels'
     id = db.Column(db.String(8), primary_key=True, default=generate_id_string)
@@ -19,17 +19,17 @@ class NotificationChannel(db.Model):
         'polymorphic_on': type
     }
     
-    def notify(self, obj):
+    def notify(self, msg):
         pass
 
 class EmailChannel(NotificationChannel):
     email = db.Column(db.String(100))
 
-    def notify(self, obj):
+    def notify(self, msg):
         subj = f"Anomaly {self.type} from Anomaly Detector {self.name}"
         message = Message(subj,
                         sender=Config.MAIL_DEFAULT_SENDER,
-                        body=json.dumps(obj),
+                        body=msg,
                         recipients=[self.email])
         mail.send(message)
 

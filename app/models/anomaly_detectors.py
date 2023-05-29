@@ -3,6 +3,7 @@ from app.models.anomaly_detector_check import anomaly_detector_check_table
 from app.models.anomaly_detector_notification_channel import anomaly_detector_notification_channel_table
 from app.models.anomaly import Anomaly
 from app.extensions import influxdb_write
+import json
 
 class AnomalyDetector(db.Model):
     """
@@ -18,11 +19,23 @@ class AnomalyDetector(db.Model):
     checks = db.relationship('Check', secondary=anomaly_detector_check_table)  # List of checks associated with the detector
     notification_channels = db.relationship('NotificationChannel', secondary=anomaly_detector_notification_channel_table)  # List of notification channels associated with the detector
     user = db.relationship("User", back_populates="anomaly_detectors")  # User who owns this detector
-
+    
     __mapper_args__ = {
         'polymorphic_identity': 'anomaly_detector',
         'polymorphic_on': type
     }
+    
+    def _msg(self, check_result):
+        """
+        Bsed method for formatting a user message. Typically passed to a notification channel.
+        """
+        d = {"anomaly_type":self.type,
+             "detector_name": self.name,
+             "check_id": check_result.check_id,
+             "check_name": check_result.check_name,
+             "time":check_result.time
+             }
+        return json.dumps(d)
 
     def detect(self, check_result=None):
         """
@@ -47,8 +60,9 @@ class LatencyDetector(AnomalyDetector):
             anomaly = Anomaly(check_result, self)
             influxdb_write(anomaly)
             for notification_channel in self.notification_channels:
-                notification_channel.notify({})
+                notification_channel.notify(self._msg(check_result))
     
+
     __mapper_args__ = {
         'polymorphic_identity': 'latency',
     }
@@ -68,8 +82,8 @@ class ErrorDetector(AnomalyDetector):
             anomaly = Anomaly(check_result, self)
             influxdb_write(anomaly)     
             for notification_channel in self.notification_channels:
-                notification_channel.notify({})
-                
+                notification_channel.notify(self._msg(check_result))
+               
     __mapper_args__ = {
         'polymorphic_identity': 'error',
     }
