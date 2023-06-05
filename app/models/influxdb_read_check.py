@@ -8,9 +8,10 @@ from app.extensions import influxdb_write
 class InfluxDBReadCheck(InfluxDBCheck):
     sql = db.Column(db.String(300))
 
-    latency = 0
+
     def run(self):
         error = 0
+        latency = 0
         try:
             print(f"run InfluxDBReadCheck {self.id}, {self.name}")
             client = InfluxDBClient3(
