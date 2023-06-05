@@ -69,13 +69,16 @@ class WebhookChannel(NotificationChannel):
         for header in self.headers:
             headers_dict[header.key] = header.value
         
-        # POST request to the webhook URL
-        response = requests.post(self.url, headers=headers_dict, json=msg)
+        try:
+            # POST request to the webhook URL
+            response = requests.post(self.url, headers=headers_dict, json=msg)
         
-        # You might want to handle possible HTTP errors here, or have a way of logging them
-        if response.status_code != 200:
-            print(f"Webhook POST request failed with status {response.status_code}")
-        
+            # You might want to handle possible HTTP errors here, or have a way of logging them
+            if response.status_code != 200:
+                print(f"Webhook POST request failed with status {response.status_code}")
+        except Exception as e:
+            print(e)
+
     __mapper_args__ = {
         'polymorphic_identity': 'webhook',
     }
