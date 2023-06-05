@@ -5,6 +5,17 @@
 <script>
     $("#channels-nav").addClass("selected-nav");
 </script>
+<script>
+
+    function remove_header(header_id, channel_id) {
+        $.ajax({
+            url: "{{url_for('notification_channels.remove_header')}}",
+            type: "post",
+            data: { "header_id": header_id, "channel_id": channel_id, "csrf_token": "{{csrf_token()}}" },
+            done: $("#h_row_" + header_id).remove()
+        });
+    }
+</SCRIPT>
     <h2>{% block title %}Notification Channel Details{% endblock %}</h2>
 <TABLE>
     <TR>
@@ -15,9 +26,9 @@
         <TR>
             <TD>Email</TD><TD>{{notification_channel.email}}</TD>
         </TR>
-    {% else %}
+    {% elif notification_channel.type == 'webhook' %}
         <TR>
-            <TD>email or phone number</TD><TD>{{notification_channel.value}}</TD>
+            <TD>URL</TD><TD>{{notification_channel.url}}</TD>
         </TR>
     {% endif %}
     <TR>
@@ -36,5 +47,28 @@
         </TD></TR>
     {% endfor %}
 </TABLE>
+{% endif %}
+{% if notification_channel.type == "webhook" %}
+<TABLE>
+    <TR>
+        <TH>Name</TH>
+        <TH>Key</TH>
+        <TH>Value</TH>
+        <TH></TH>
+        </TH>
+    </TR>
+{% for header in notification_channel.headers %}
+<TR id="h_row_{{header.id}}">
+    <TD>{{object_link(url_for('headers.details', header_id=header.id),header.name)}}</TD>
+    <TD>{{header.key}}</TD>
+    <TD>{{header.value}}</TD>
+    <TD>
+        <button onclick="remove_header('{{header.id}}','{{notification_channel.id}}')">Remove</button>
+    </TD>
+</TR>
+{% endfor %}
+</TABLE>
+
+<div class="add-to"><a href="{{ url_for('notification_channels.add_header', channel_id=notification_channel.id) }}">Add Header</a></div>
 {% endif %}
 {% endblock %}

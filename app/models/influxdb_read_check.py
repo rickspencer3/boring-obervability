@@ -1,16 +1,17 @@
 from app.extensions import db, influxdb_write
 from app.models.checks import InfluxDBCheck
-from app.check_result import CheckResult
+from app.models.check_result import CheckResult
 from influxdb_client_3 import InfluxDBClient3
 import time
 from app.extensions import influxdb_write
 
 class InfluxDBReadCheck(InfluxDBCheck):
     sql = db.Column(db.String(300))
-    
-    latency = 0
+
+
     def run(self):
         error = 0
+        latency = 0
         try:
             print(f"run InfluxDBReadCheck {self.id}, {self.name}")
             client = InfluxDBClient3(
@@ -27,14 +28,12 @@ class InfluxDBReadCheck(InfluxDBCheck):
         except Exception as e:
             error = 1
     
-        observation = CheckResult(
-            check_name=self.name,
-            user_id=self.user_id,
-            check_id=self.id,
+        check_result = CheckResult(
+            self,
             end_point=self.host,
             error=error,
             latency=latency)
-        influxdb_write(observation)
+        influxdb_write(check_result)
         
 
     @property

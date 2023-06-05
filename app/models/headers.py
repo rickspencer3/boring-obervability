@@ -1,5 +1,7 @@
 from app.extensions import db, generate_id_string
 from app.models.header_check import header_check
+from app.models.header_notification_channel import header_notification_channel
+from app.models.notification_channels import WebhookChannel
 from cryptography.fernet import Fernet
 from flask import current_app
 
@@ -12,6 +14,7 @@ class Header(db.Model):
     _value = db.Column("value", db.LargeBinary) 
     user = db.relationship("User", back_populates = "headers")
     checks = db.relationship('Check', secondary=header_check, backref='headers')
+    webooks = db.relationship('WebhookChannel', secondary=header_notification_channel, backref='headers')
 
     @property
     def value(self):

@@ -1,16 +1,10 @@
 from flask import Flask
 from flask_user.user_manager import UserManager
-from flask_mail import Mail
 from config import Config
 from app.extensions import db, mail, influxdb_write
 
 from app.models.users import User
-from app.models.checks import Check
-from app.models.headers import Header
-from app.models.notification_channels import NotificationChannel
-from app.models.anomaly_detectors import AnomalyDetector
 from app.check_job import run_checks
-import app.models.anomaly_detector_notification_channel
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
@@ -59,7 +53,7 @@ def create_app(config_class=Config):
     # go ahead and run the checks one, then schedule
     run_checks()
     with app.app_context():
-            scheduler.add_job(run_checks, 'interval',   minutes=1)
+            scheduler.add_job(run_checks, 'interval',  max_instances=10, minutes=1)
             app.logger.info({"action":"registered_job"})
     scheduler.start()
 

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    $("#channels-nav").addClass("selected-nav");
+</script>
+
+<h2>{% block title %}Add Header to {{notification_channel.name}}{% endblock %}</h2>
+<FORM method="post">
+    <div class="input-div">
+        <label for="header_id">Choose Header</label>
+        <BR>
+        <select name="header_id" id="header_id">
+            {% for header in headers %}
+            <option value="{{header.id}}">{{header.name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit">Submit</button>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> 
+    </FROM>
+
+    {% endblock %}

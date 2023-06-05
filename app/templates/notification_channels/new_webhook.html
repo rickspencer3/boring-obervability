@@ -1,0 +1,20 @@
+{% from "macros.html" import form_row %}
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    $("#channels-nav").addClass("selected-nav");
+</script>
+<div>
+    <h2>{% block title %}New Webhook Notification Channel{% endblock %}</h2>
+    <form method="post">
+        <TABLE>
+            {{form_row(form.name)}}
+            {{form_row(form.url)}}
+        </TABLE>
+        <input type="hidden" name="type" value="webhook">
+        {{form.send()}}
+        {{ form.csrf_token }}
+    </form>
+</div>
+{% endblock %}
