@@ -65,8 +65,9 @@ class WebhookChannel(NotificationChannel):
         Method to send webhook notifications. A POST request with headers and body is created and sent
         to the URL associated with this channel.
         """
-        # create the headers dict from the related Header objects
-        headers_dict = {header.name: header.value for header in self.headers}
+        headers_dict = {}
+        for header in self.headers:
+            headers_dict[header.key] = header.value
         
         # POST request to the webhook URL
         response = requests.post(self.url, headers=headers_dict, json=msg)
