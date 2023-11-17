@@ -13,13 +13,13 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False    # Avoids SQLAlchemy warning
 
     # Flask-Mail SMTP server settings
-    MAIL_SERVER = 'smtp-relay.sendinblue.com'
+    MAIL_SERVER = ''
     MAIL_PORT = 587
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True
-    MAIL_USERNAME = 'richard.linger.spencer.3@gmail.com'
-    MAIL_PASSWORD = 'I8BzV0v4FWgjX5Rh'
-    MAIL_DEFAULT_SENDER = '"Boring Observability" <noreply@boring-observability.com>'
+    MAIL_USERNAME = ''
+    MAIL_PASSWORD = ''
+    MAIL_DEFAULT_SENDER = ''
 
     # Flask-User settings
     USER_APP_NAME = "Boring Observability"      # Shown in and email templates and page footers
