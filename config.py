@@ -28,11 +28,11 @@ class Config:
     USER_REQUIRE_RETYPE_PASSWORD = False    # Simplify register form
 
     # InfluxDB settings
-    INFLUXDB_BUCKET = "boring-observability"
-    INFLUXDB_WRITE_TOKEN = "iLX8GcxLlmC_KNWjDEKdH60PMkH8xDUiI5y0ID08tFNeqoRmqr4_SwCwKuGVLh_oyMruBPfNlRJAOEvHsvN1EQ=="
-    INFLUXDB_READ_TOKEN = "iLX8GcxLlmC_KNWjDEKdH60PMkH8xDUiI5y0ID08tFNeqoRmqr4_SwCwKuGVLh_oyMruBPfNlRJAOEvHsvN1EQ=="
-    INFLUXDB_HOST = "https://us-east-1-1.aws.cloud2.influxdata.com/"
-    INFLUXDB_FLIGHT_HOST = "us-east-1-1.aws.cloud2.influxdata.com"
-    INFLUXDB_ORG_ID = "847e9dbb25976492"
-    FERNET_KEY = "VxKtq48iHIg1-u3iiNeUuqY5eB-jqDlMVq0BMlmffjY="
+    INFLUXDB_BUCKET = ""
+    INFLUXDB_WRITE_TOKEN = "=="
+    INFLUXDB_READ_TOKEN = "=="
+    INFLUXDB_HOST = ""
+    INFLUXDB_FLIGHT_HOST = ""
+    INFLUXDB_ORG_ID = ""
+    FERNET_KEY = ""
     
