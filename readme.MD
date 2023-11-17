@@ -1,3 +1,5 @@
+This project is licensed under the Apache License version 2. See: https://www.apache.org/licenses/LICENSE-2.0
+
 ## Adding a new type of check
 ### 1. add the check to `app/models.checks.py`
 when you name the type, keep in mind that it will be used to select the proper templates for example:
