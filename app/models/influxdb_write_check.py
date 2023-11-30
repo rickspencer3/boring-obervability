@@ -8,8 +8,9 @@ from app.extensions import influxdb_write
 class InfluxDBWriteCheck(InfluxDBCheck):
     line_protocol = db.Column(db.String(300))
 
-    latency = 0
+
     def run(self):
+        latency = 0
         error = 0
         try:
             print(f"run InfluxDBWriteCheck {self.id}, {self.name}")
@@ -25,6 +26,7 @@ class InfluxDBWriteCheck(InfluxDBCheck):
             
             latency = (t2 - t1) * 1000
         except Exception as e:
+            print(f"Error running InfluxDBWriteCheck: {e}")
             error = 1
     
         check_result = CheckResult(
@@ -32,9 +34,9 @@ class InfluxDBWriteCheck(InfluxDBCheck):
             end_point=self.host,
             error=error,
             latency=latency)
+        print(check_result.to_line_protocol())
         influxdb_write(check_result)
         
-
     @property
     def form_class(self):
         import app.checks.forms as forms

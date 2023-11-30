@@ -35,7 +35,6 @@ class InfluxDBReadCheck(InfluxDBCheck):
             latency=latency)
         influxdb_write(check_result)
         
-
     @property
     def form_class(self):
         import app.checks.forms as forms
